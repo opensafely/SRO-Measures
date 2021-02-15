@@ -1,0 +1,53 @@
+,CTV3Code,Description
+0,.....,Read thesaurus
+1,0....,Occupations
+2,1....,History/symptoms
+3,2....,(Examination of patient) or (physical signs)
+4,3....,Diagnostic procedures
+5,4....,Laboratory procedures
+6,5....,(Radiol &/or physics in medicine) or (radiology) or (X-rays)
+7,6....,Preventive procedure
+8,7....,(Surgical operations) or (sites)
+9,8....,Other therapeutic procedures
+10,9....,Administration
+11,A....,Infective disorder
+12,B....,(Neoplasms) or (cancers)
+13,C....,"Endocrine &/or [nutritional], [metabol] and [immun] disords"
+14,D....,Diseases of blood and blood-forming organs
+15,E....,Mental health disorder
+16,F....,Nervous system/sense organ diseases (& (CNS)]
+17,G....,Cardiovascular system diseases (& [cardiac])
+18,H....,Respiratory disorder
+19,J....,Gastrointestinal and digestive disorder
+20,K....,Genitourinary system diseases
+21,L....,"Complications of pregnancy, childbirth and the puerperium"
+22,M....,Dermatological disorder
+23,N....,Musculoskeletal &/or connective tissue diseases
+24,P....,Congenital disorder
+25,Q....,Conditions: [perinatal] or [fetal and neonatal]
+26,R....,"[D]Symptoms, signs and ill-defined conditions"
+27,S....,Injury and poisoning
+28,T....,Causes of injury and poisoning
+29,U....,[X]External causes of morbidity and mortality
+30,Z....,Unspecified conditions
+31,a....,Gastro-intestinal drugs
+32,b....,Cardiovascular drug
+33,c....,Respiratory drugs
+34,d....,CNS drug
+35,e....,Drugs used in infections
+36,f....,Endocrine drugs
+37,g....,"Drugs used in obstetrics, gynaecology, and urinary tract dis"
+38,h....,Drugs used in malignant disease and for immunosuppression
+39,i....,Haematology/dietetic drugs
+40,j....,Drugs used in musculoskeletal/joint disorders
+41,k....,Drugs used in the eye
+42,l....,"Drugs used in the ear, nose and oropharynx"
+43,m....,Drugs acting on the skin
+44,n....,Immunological products and vaccines
+45,o....,Anaesthetic drugs
+46,p....,Appliance
+47,q....,Incontinence appliance
+48,r....,APPLIANCES & REAGENTS ETC(2)
+49,s....,Stoma appliance
+50,u....,Contrast media
+51,y....,Drug release administration
