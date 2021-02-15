@@ -61,7 +61,7 @@ study = StudyDefinition(
         codelist=holder_codelist,
         between=[start_date, end_date],
         returning="code",
-        return_expectations={"incidence": 0.1}
+        return_expectations={"category": {"ratios": {"A": 0.5, "B": 0.5}}, }
     ),
 )
 
@@ -71,6 +71,6 @@ measures = [
         id="sentinel_measure_x",
         numerator="sentinel_measure_x",
         denominator="population",
-        group_by=["practice"]
+        group_by=["practice", "event_code"]
     )
 ]
