@@ -70,15 +70,11 @@ def docker_run(tag):
 
     """
     print("Running docker...")
-    if not os.path.exists("environ.txt"):
-       sys.exit("No SQL credentials. Check that the file 'environ.txt' is present. Refer to readme for further information")
     runcmd = [
         "docker",
         "run",
         "--detach",  # in the background, so we can find out the port it's bound to
         "--rm",  # clean up the container after it's stopped
-        "--env-file",
-        "environ.txt",
         "--mount",
         f"source={current_dir},dst={target_dir},type=bind",
         "--publish-all",
