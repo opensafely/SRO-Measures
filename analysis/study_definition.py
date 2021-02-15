@@ -64,6 +64,6 @@ measures = [
         id="sentinel_measure_x",
         numerator="sentinel_measure_x",
         denominator="population",
-        group_by="population"
+        group_by=None
     )
 ]

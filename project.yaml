@@ -13,23 +13,20 @@ actions:
         cohort: output/input_*.csv
 
   generate_measures:
-      run: cohortextractor:latest generate_measures --study-definition study_definition --output-dir=output/measures
+      run: cohortextractor:latest generate_measures --study-definition study_definition --output-dir=output
       needs: [generate_study_population]
       outputs:
         moderately_sensitive:
-          measure_csv: output/measures/measure_*.csv
+          measure_csv: output/measure_*.csv
 
   generate_notebook:
-    run: jupyter:latest jupyter nbconvert notebooks/sentinel_measures.ipynb --execute --to html --output-dir=output --ExecutePreprocessor.timeout=86400
+    run: jupyter:latest jupyter nbconvert notebooks/sentinel_measures.ipynb --execute --to html --output-dir=output
 
     needs: [generate_study_population]
     outputs:
       moderately_sensitive:
         notebook: output/sentinel_measures.html 
-        figures: interim-outputs/figures/*
-        tables: interim-outputs/tables/*
-        csvs: machine_readable_outputs/*/* # two possible subfolders
-        text: interim-outputs/text/*
+        
         
         
   
