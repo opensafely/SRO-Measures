@@ -55,7 +55,14 @@ study = StudyDefinition(
         between=[start_date, end_date],
         returning="binary_flag",
         return_expectations={"incidence": 0.1}
-    )
+    ),
+
+    event_code=patients.with_these_clinical_events(
+        codelist=holder_codelist,
+        between=[start_date, end_date],
+        returning="code",
+        return_expectations={"incidence": 0.1}
+    ),
 )
 
 
