@@ -6,7 +6,7 @@ import numpy as np
 sentinel_measures = ["systolic_bp", "qrisk", "cholesterol", "bilirubin",
                      "serum_tsh", "rbc_fbc", "hba1c", "serum_sodium", "asthma"]
 
-sentinel_measures_test  = ['sentinel_measure_x']
+sentinel_measures_test  = ['chronic_respiratory_disease']
 patient_counts_dict = {}
 patient_dict = {}
 
@@ -33,7 +33,8 @@ for (key, value) in patient_dict.items():
     #get unique patients
     unique_patients = len(np.unique(patient_dict[key]))
 
-    patient_counts_dict[key] = unique_patients
+    #add to dictionary as num(mil)
+    patient_counts_dict[key] = (unique_patients/1000000)
       
 
 

@@ -50,27 +50,35 @@ study = StudyDefinition(
     ),
   
 
-    sentinel_measure_x = patients.with_these_clinical_events(
-        codelist = holder_codelist,
+    chronic_respiratory_disease = patients.with_these_clinical_events(
+        codelist = crd_codelist,
         between=[start_date, end_date],
         returning="binary_flag",
-        return_expectations={"incidence": 0.1}
+        return_expectations={"incidence": 0.5}
     ),
 
-    event_code=patients.with_these_clinical_events(
-        codelist=holder_codelist,
+    chronic_respiratory_disease_event_code=patients.with_these_clinical_events(
+        codelist=crd_codelist,
         between=[start_date, end_date],
         returning="code",
-        return_expectations={"category": {"ratios": {"A": 0.5, "B": 0.5}}, }
+        return_expectations={"category": {
+            "ratios": {"23E5.": 0.6, "663K.": 0.2, "7450.": 0.2}}, }
     ),
 )
 
 
 measures = [
     Measure(
-        id="sentinel_measure_x",
-        numerator="sentinel_measure_x",
+        id="chronic_respiratory_disease",
+        numerator="chronic_respiratory_disease",
         denominator="population",
-        group_by=["practice", "event_code"]
+        group_by=["practice", "chronic_respiratory_disease_event_code"]
+    ),
+
+    Measure(
+        id="chronic_respiratory_disease_practice_only",
+        numerator="chronic_respiratory_disease",
+        denominator="population",
+        group_by=["practice"]
     )
 ]
