@@ -3,10 +3,9 @@ import os
 import json
 import numpy as np
 
-sentinel_measures = ["systolic_bp", "qrisk", "cholesterol", "bilirubin",
-                     "serum_tsh", "rbc_fbc", "hba1c", "serum_sodium", "asthma"]
+sentinel_measures = ["systolic_bp", "qrisk2", "serum_cholesterol", "serum_bilirubin",
+                     "serum_tsh", "rbc", "hba1c", "serum_sodium", "asthma", "copd"]
 
-sentinel_measures_test  = ['chronic_respiratory_disease']
 patient_counts_dict = {}
 patient_dict = {}
 
@@ -15,7 +14,7 @@ for file in os.listdir('output'):
     if file.startswith('input'):
         df = pd.read_csv(os.path.join('output', file))
 
-        for measure in sentinel_measures_test:
+        for measure in sentinel_measures:
             df_subset = df[df[measure]==1]
             # get unique patients
             patients = list(df_subset['patient_id'])

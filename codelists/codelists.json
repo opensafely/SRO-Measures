@@ -1,11 +1,5 @@
 {
   "files": {
-    "opensafely-structured-medication-review-nhs-england.csv": {
-      "id": "opensafely/structured-medication-review-nhs-england/5459205f",
-      "url": "https://codelists.opensafely.org/codelist/opensafely/structured-medication-review-nhs-england/5459205f/",
-      "downloaded_at": "2021-02-15 12:11:21.767186Z",
-      "sha": "7bd4843c423ef7618c6d8f27164dc0939f2c9a9a"
-    },
     "opensafely-chronic-respiratory-disease.csv": {
       "id": "opensafely/chronic-respiratory-disease/2020-04-10",
       "url": "https://codelists.opensafely.org/codelist/opensafely/chronic-respiratory-disease/2020-04-10/",
