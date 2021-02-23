@@ -35,23 +35,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from utilities import *
 
+from pandas.plotting import register_matplotlib_converters
+register_matplotlib_converters()
+
 # %matplotlib inline
-
-# +
-
-HTML('''<script>
-code_show_err=false; 
-function code_toggle_err() {
- if (code_show_err){
- $('div.output_stderr').hide();
- } else {
- $('div.output_stderr').show();
- }
- code_show_err = !code_show_err
-} 
-$( document ).ready(code_toggle_err);
-</script>
-To toggle on/off output_stderr, click <a href="javascript:code_toggle_err()">here</a>.''')
 
 # +
 sentinel_measures = ["systolic_bp", "qrisk2", "serum_cholesterol", "serum_bilirubin", "serum_tsh", "rbc", "hba1c", "serum_sodium", "asthma", "copd"]
@@ -87,74 +74,42 @@ generate_sentinel_measure(data_dict, data_dict_practice, codelist_dict, 'systoli
 # <a id="qrisk"></a>
 # ### "XaQVY" - QRISK2 Cardiovascular Disease 10 year risk score
 
-# +
 generate_sentinel_measure(data_dict, data_dict_practice, codelist_dict, 'qrisk2', 'CTV3ID', 'CTV3PreferredTermDesc', ["2020-02-01", "2020-04-01", "2020-12-01"])
-
-
-# -
 
 # <a id="cholesterol"></a>
 # ### "XE2eD" - Serum Cholesterol Level
 
-# +
 generate_sentinel_measure(data_dict, data_dict_practice, codelist_dict, 'serum_cholesterol', 'CTV3ID', 'CTV3PreferredTermDesc', ["2020-02-01", "2020-04-01", "2020-12-01"])
-
-
-# -
 
 # <a id="bilirubin"></a>
 # ### "44E" - Serum Bilirubin Level
 
-# +
 generate_sentinel_measure(data_dict, data_dict_practice, codelist_dict, 'serum_bilirubin', 'CTV3ID', 'CTV3PreferredTermDesc', ["2020-02-01", "2020-04-01", "2020-12-01"])
-
-
-# -
 
 # <a id="serum_tsh"></a>
 # ### "XaELV" - Serum TSH Level
 
-# +
 generate_sentinel_measure(data_dict, data_dict_practice, codelist_dict, 'serum_tsh', 'CTV3ID', 'CTV3PreferredTermDesc', ["2020-02-01", "2020-04-01", "2020-12-01"])
-
-
-# -
 
 # <a id="rbc_fbc"></a>
 # ### "426" - Red Blood Cell Count
 
-# +
 generate_sentinel_measure(data_dict, data_dict_practice, codelist_dict, 'rbc', 'CTV3ID', 'CTV3PreferredTermDesc', ["2020-02-01", "2020-04-01", "2020-12-01"])
-
-
-# -
 
 # <a id="hba1c"></a>
 # ### "XaPbt" - Haemoglobin A1c Level - IFCC Standardised
 
-# +
 generate_sentinel_measure(data_dict, data_dict_practice, codelist_dict, 'hba1c', 'CTV3ID', 'CTV3PreferredTermDesc', ["2020-02-01", "2020-04-01", "2020-12-01"])
-
-
-# -
 
 # <a id="serum_sodium"></a>
 # ### "XE2q0" - Serum Sodium Level
 
-# +
 generate_sentinel_measure(data_dict, data_dict_practice, codelist_dict, 'serum_sodium', 'CTV3ID', 'CTV3PreferredTermDesc', ["2020-02-01", "2020-04-01", "2020-12-01"])
-
-
-# -
 
 # <a id="asthma"></a>
 # ### "Xaleq" - Asthma Annual Review
 
-# +
 generate_sentinel_measure(data_dict, data_dict_practice, codelist_dict, 'asthma', 'CTV3ID', 'CTV3PreferredTermDesc', ["2020-02-01", "2020-04-01", "2020-12-01"])
-
-
-# -
 
 # <a id="copd"></a>
 # ### "Xalet" - Chronic Obstructive Pulmonary Disease Annual Review

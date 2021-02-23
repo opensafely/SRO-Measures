@@ -107,7 +107,7 @@ def get_median(df, dates):
         df_subset = df[df['date'] == date]
 
         #order by value
-        df_subset.sort_values('date', inplace=True)
+        df = df_subset.sort_values('date')
         median = df_subset['num_per_thousand'].median()
         median_dict[date] = median
     return median_dict
@@ -120,7 +120,7 @@ def get_idr(df, dates):
         df_subset = df[df['date'] == date]
 
         #order by value
-        df_subset.sort_values('date', inplace=True)
+        df = df_subset.sort_values('date')
 
         #calculate idr
         ten = df_subset['num_per_thousand'].quantile(0.1)
