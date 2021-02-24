@@ -160,6 +160,83 @@ def calculate_statistics(df, measure_column, idr_dates):
 
     return practices_included, practices_included_percent, num_events_mil, num_patients
 
+
+def interactive_deciles_chart(
+    df,
+    period_column=None,
+    column=None,
+    title="",
+    ylabel=""
+):
+    """period_column must be dates / datetimes
+    """
+
+    df = charts.add_percentiles(
+        df,
+        period_column=period_column,
+        column=column,
+        show_outer_percentiles=False,
+    )
+
+    fig = go.Figure()
+
+    linestyles = {
+        "decile": {"color": "blue", "dash": "dash"},
+        "median": {"color": "blue", "dash": "solid"},
+        "percentile": {"color": "blue", "dash": "dash"},
+    }
+
+    for percentile in np.unique(df['percentile']):
+        df_subset = df[df['percentile'] == percentile]
+        if percentile == 50:
+            fig.add_trace(go.Scatter(x=df_subset[period_column], y=df_subset[column], line={
+                          "color": "blue", "dash": "solid", "width": 1.2}, name="median"))
+        else:
+            fig.add_trace(go.Scatter(x=df_subset[period_column], y=df_subset[column], line={
+                          "color": "blue", "dash": "dash", "width": 1}, name=f"decile {int(percentile/10)}"))
+
+     # Set title
+    fig.update_layout(
+        title_text=title,
+        hovermode='x',
+        title_x=0.5,
+
+
+    )
+
+    fig.update_yaxes(title=ylabel)
+    fig.update_xaxes(title="Date")
+
+    # Add range slider
+    fig.update_layout(
+        xaxis=go.layout.XAxis(
+            rangeselector=dict(
+                buttons=list([
+                    dict(count=1,
+                         label="1m",
+                         step="month",
+                         stepmode="backward"),
+                    dict(count=6,
+                         label="6m",
+                         step="month",
+                         stepmode="backward"),
+
+                    dict(count=1,
+                         label="1y",
+                         step="year",
+                         stepmode="backward"),
+                    dict(step="all")
+                ])
+            ),
+            rangeslider=dict(
+                visible=True
+            ),
+            type="date"
+        )
+    )
+
+    fig.show()
+
 def generate_sentinel_measure(data_dict, data_dict_practice, codelist_dict, measure, code_colum, term_column, dates_list):
     df = data_dict[measure]
     childs_df = create_child_table(df, codelist_dict[measure], 'CTV3ID', 'CTV3PreferredTermDesc', measure)
@@ -190,14 +267,12 @@ def generate_sentinel_measure(data_dict, data_dict_practice, codelist_dict, meas
     
     display(HTML(childs_df.to_html()))
 
-    charts.deciles_chart(
+    interactive_deciles_chart(
         data_dict_practice[measure],
         period_column="date",
         column="num_per_thousand",
         title=measure,
-        ylabel="rate per 1000",
-        show_outer_percentiles=False,
-        show_legend=True,
+        ylabel="rate per 1000"
     )
     
 
