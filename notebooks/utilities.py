@@ -1,3 +1,4 @@
+import plotly.graph_objects as go
 import pandas as pd
 import numpy as np
 from collections import Counter
@@ -107,7 +108,7 @@ def get_median(df, dates):
         df_subset = df[df['date'] == date]
 
         #order by value
-        df = df_subset.sort_values('date')
+        df_subset = df_subset.sort_values('date')
         median = df_subset['num_per_thousand'].median()
         median_dict[date] = median
     return median_dict
@@ -120,7 +121,7 @@ def get_idr(df, dates):
         df_subset = df[df['date'] == date]
 
         #order by value
-        df = df_subset.sort_values('date')
+        df_subset = df_subset.sort_values('date')
 
         #calculate idr
         ten = df_subset['num_per_thousand'].quantile(0.1)
@@ -199,4 +200,8 @@ def generate_sentinel_measure(data_dict, data_dict_practice, codelist_dict, meas
         show_legend=True,
     )
     
+
+
+
+
 

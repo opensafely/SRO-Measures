@@ -19,15 +19,15 @@
 #
 # The following sentinel measures are provided:
 # * [2469: O/E - Systolic BP reading](#systolic_bp)
-# * ["XaQVY" - QRISK2 cardiovascular disease 10 risk score](#qrisk2)
-# * ["XE2eD" - Serum Cholesterol level](#cholesterol)
-# * ["44E" - Serum Bilirubin level](#bilirubin)
-# * ["XaELV" - Serum TSH level](#serum_tsh)
-# * ["426" - Red blood cell count](#rbc_fbc)
-# * ["XaPbt" - Haemoglobin A1c level - IFCC standardised](#hba1c)
-# * ["XE2q0" - Serum Sodium level](#serum_sodium)
-# * ["Xaleq" - Asthma annual review](#asthma)
-# * ["Xalet" - Chronic obstrutive pulmonary disease annual review](#copd)
+# * [QRISK2 cardiovascular disease 10 risk score](#qrisk2)
+# * [Serum Cholesterol level](#cholesterol)
+# * [Serum Bilirubin level](#bilirubin)
+# * [Serum TSH level](#serum_tsh)
+# * [Red blood cell count](#rbc_fbc)
+# * [Haemoglobin A1c level - IFCC standardised](#hba1c)
+# * [Serum Sodium level](#serum_sodium)
+# * [Asthma annual review](#asthma)
+# * [Chronic obstrutive pulmonary disease annual review](#copd)
 
 # +
 from IPython.display import HTML
@@ -65,56 +65,141 @@ for measure in sentinel_measures:
 # -
 
 # <a id="systolic_bp"></a>
-# ### 2469: O/E - Systolic BP
+# ### O/E - Systolic BP
 #
 # Description:
 
 generate_sentinel_measure(data_dict, data_dict_practice, codelist_dict, 'systolic_bp', 'CTV3ID', 'CTV3PreferredTermDesc', ["2020-02-01", "2020-04-01", "2020-12-01"])
 
 # <a id="qrisk"></a>
-# ### "XaQVY" - QRISK2 Cardiovascular Disease 10 year risk score
+# ### QRISK2 Cardiovascular Disease 10 year risk score
 
 generate_sentinel_measure(data_dict, data_dict_practice, codelist_dict, 'qrisk2', 'CTV3ID', 'CTV3PreferredTermDesc', ["2020-02-01", "2020-04-01", "2020-12-01"])
 
 # <a id="cholesterol"></a>
-# ### "XE2eD" - Serum Cholesterol Level
+# ### Serum Cholesterol Level
 
 generate_sentinel_measure(data_dict, data_dict_practice, codelist_dict, 'serum_cholesterol', 'CTV3ID', 'CTV3PreferredTermDesc', ["2020-02-01", "2020-04-01", "2020-12-01"])
 
 # <a id="bilirubin"></a>
-# ### "44E" - Serum Bilirubin Level
+# ### Serum Bilirubin Level
 
 generate_sentinel_measure(data_dict, data_dict_practice, codelist_dict, 'serum_bilirubin', 'CTV3ID', 'CTV3PreferredTermDesc', ["2020-02-01", "2020-04-01", "2020-12-01"])
 
 # <a id="serum_tsh"></a>
-# ### "XaELV" - Serum TSH Level
+# ### Serum TSH Level
 
 generate_sentinel_measure(data_dict, data_dict_practice, codelist_dict, 'serum_tsh', 'CTV3ID', 'CTV3PreferredTermDesc', ["2020-02-01", "2020-04-01", "2020-12-01"])
 
 # <a id="rbc_fbc"></a>
-# ### "426" - Red Blood Cell Count
+# ### Red Blood Cell Count
 
 generate_sentinel_measure(data_dict, data_dict_practice, codelist_dict, 'rbc', 'CTV3ID', 'CTV3PreferredTermDesc', ["2020-02-01", "2020-04-01", "2020-12-01"])
 
 # <a id="hba1c"></a>
-# ### "XaPbt" - Haemoglobin A1c Level - IFCC Standardised
+# ### Haemoglobin A1c Level - IFCC Standardised
 
 generate_sentinel_measure(data_dict, data_dict_practice, codelist_dict, 'hba1c', 'CTV3ID', 'CTV3PreferredTermDesc', ["2020-02-01", "2020-04-01", "2020-12-01"])
 
 # <a id="serum_sodium"></a>
-# ### "XE2q0" - Serum Sodium Level
+# ### Serum Sodium Level
 
 generate_sentinel_measure(data_dict, data_dict_practice, codelist_dict, 'serum_sodium', 'CTV3ID', 'CTV3PreferredTermDesc', ["2020-02-01", "2020-04-01", "2020-12-01"])
 
 # <a id="asthma"></a>
-# ### "Xaleq" - Asthma Annual Review
+# ### Asthma Annual Review
 
 generate_sentinel_measure(data_dict, data_dict_practice, codelist_dict, 'asthma', 'CTV3ID', 'CTV3PreferredTermDesc', ["2020-02-01", "2020-04-01", "2020-12-01"])
 
 # <a id="copd"></a>
-# ### "Xalet" - Chronic Obstructive Pulmonary Disease Annual Review
+# ### Chronic Obstructive Pulmonary Disease Annual Review
 
 # +
 generate_sentinel_measure(data_dict, data_dict_practice, codelist_dict, 'copd', 'CTV3ID', 'CTV3PreferredTermDesc', ["2020-02-01", "2020-04-01", "2020-12-01"])
+
+
+# -
+
+
+
+
+
+
+
+df = pd.read_csv(f'../output/measure_copd_practice_only.csv')
+
+df[df['date'] == "2020-04-01"]
+
+
+# +
+def get_median(df, dates):
+    median_dict = {}
+    for date in dates:
+     
+        #subset by date
+        df_subset = df[df['date'] == date]
+        
+        #order by value
+        df_subset = df_subset.sort_values('date')
+        
+        median = df_subset['num_per_thousand'].median()
+        
+        median_dict[date] = median
+    return median_dict
+
+
+def generate_sentinel_measure(data_dict, data_dict_practice, codelist_dict, measure, code_colum, term_column, dates_list):
+    df = data_dict[measure]
+    childs_df = create_child_table(df, codelist_dict[measure], 'CTV3ID', 'CTV3PreferredTermDesc', measure)
+
+    practices_included, practices_included_percent, num_events_mil, num_patients = calculate_statistics(
+        df, measure, dates_list)
+
+
+    df = data_dict_practice[measure]
+    convert_datetime(df)
+    calculate_rate(df, measure, 'population')
+ 
+    
+    
+    idr_list = [get_idr(df, dates_list)[x]
+                for x in dates_list]
+
+
+    median_list = [get_median(df, dates_list)[x]
+               for x in dates_list]
+    
+    
+
+    change_list = calculate_change_median(median_list)
+
+    print(f'Practices included: {practices_included} ({practices_included_percent}%)')
+    print(f'2020 patients: {num_patients:.2f}M ({num_events_mil:.2f}M events)')
+    print(
+        f'Feb Median: {median_list[0]:.1f} (IDR: {idr_list[0]:.1f}), April Median: {median_list[1]:.1f} (IDR: {idr_list[1]:.1f}), Dec Median: {median_list[2]:.1f} (IDR: {idr_list[2]:.1f})')
+    print(
+        f'Change in median from Feb 2020: April: {change_list[0]:.2f}%; December: {change_list[1]:.2f}%')
+    
+    display(HTML(childs_df.to_html()))
+
+    charts.deciles_chart(
+        data_dict_practice[measure],
+        period_column="date",
+        column="num_per_thousand",
+        title=measure,
+        ylabel="rate per 1000",
+        show_outer_percentiles=False,
+        show_legend=True,
+    )
+    
+
+
+
+
+# +
+generate_sentinel_measure(data_dict, data_dict_practice, codelist_dict, 'copd', 'CTV3ID', 'CTV3PreferredTermDesc', ["2020-02-01", "2020-04-01", "2020-12-01"])
+
+
+# -
 
 
