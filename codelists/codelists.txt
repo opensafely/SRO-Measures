@@ -1,1 +1,4 @@
 opensafely/chronic-respiratory-disease/2020-04-10
+user/richard-croker/cvd-risk-assessment-score-qof/1adf44a5
+user/richard-croker/chronic-obstructive-pulmonary-disease-copd-review-qof/01cfd170
+user/richard-croker/asthma-annual-review-qof/33eeb7da
