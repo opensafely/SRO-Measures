@@ -70,14 +70,14 @@ study = StudyDefinition(
     ),
 
     qrisk2=patients.with_these_clinical_events(
-        codelist=crd_codelist,
+        codelist=qrisk_codelist,
         between=[start_date, end_date],
         returning="binary_flag",
         return_expectations={"incidence": 0.5}
     ),
 
     qrisk2_event_code=patients.with_these_clinical_events(
-        codelist=crd_codelist,
+        codelist=qrisk_codelist,
         between=[start_date, end_date],
         returning="code",
         return_expectations={"category": {
@@ -175,14 +175,14 @@ study = StudyDefinition(
     ),
 
     asthma=patients.with_these_clinical_events(
-        codelist=crd_codelist,
+        codelist=asthma_codelist,
         between=[start_date, end_date],
         returning="binary_flag",
         return_expectations={"incidence": 0.5}
     ),
 
     asthma_event_code=patients.with_these_clinical_events(
-        codelist=crd_codelist,
+        codelist=asthma_codelist,
         between=[start_date, end_date],
         returning="code",
         return_expectations={"category": {
@@ -190,14 +190,14 @@ study = StudyDefinition(
     ),
 
     copd=patients.with_these_clinical_events(
-        codelist=crd_codelist,
+        codelist=copd_codelist,
         between=[start_date, end_date],
         returning="binary_flag",
         return_expectations={"incidence": 0.5}
     ),
 
     copd_event_code=patients.with_these_clinical_events(
-        codelist=crd_codelist,
+        codelist=copd_codelist,
         between=[start_date, end_date],
         returning="code",
         return_expectations={"category": {
