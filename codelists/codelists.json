@@ -1,10 +1,22 @@
 {
   "files": {
-    "opensafely-chronic-respiratory-disease.csv": {
-      "id": "opensafely/chronic-respiratory-disease/2020-04-10",
-      "url": "https://codelists.opensafely.org/codelist/opensafely/chronic-respiratory-disease/2020-04-10/",
-      "downloaded_at": "2021-02-17 11:53:44.675259Z",
-      "sha": "77946d9b844f348daf5c8c9e81346b9776d13998"
+    "user-richard-croker-cvd-risk-assessment-score-qof.csv": {
+      "id": "user/richard-croker/cvd-risk-assessment-score-qof/1adf44a5",
+      "url": "https://codelists.opensafely.org/codelist/user/richard-croker/cvd-risk-assessment-score-qof/1adf44a5/",
+      "downloaded_at": "2021-03-01 12:43:14.681642Z",
+      "sha": "c341fab5432dd22087effcb036a98b7964b21be5"
+    },
+    "user-richard-croker-chronic-obstructive-pulmonary-disease-copd-review-qof.csv": {
+      "id": "user/richard-croker/chronic-obstructive-pulmonary-disease-copd-review-qof/01cfd170",
+      "url": "https://codelists.opensafely.org/codelist/user/richard-croker/chronic-obstructive-pulmonary-disease-copd-review-qof/01cfd170/",
+      "downloaded_at": "2021-03-01 12:43:14.774828Z",
+      "sha": "e2bd6c6bd876347a2546020c4ebfb4b8731d6b71"
+    },
+    "user-richard-croker-asthma-annual-review-qof.csv": {
+      "id": "user/richard-croker/asthma-annual-review-qof/33eeb7da",
+      "url": "https://codelists.opensafely.org/codelist/user/richard-croker/asthma-annual-review-qof/33eeb7da/",
+      "downloaded_at": "2021-03-01 12:43:14.886982Z",
+      "sha": "6f6f0221706d28a49d74f3c3edc5c627d2cc618c"
     }
   }
 }
