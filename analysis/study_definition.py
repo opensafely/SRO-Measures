@@ -81,7 +81,7 @@ study = StudyDefinition(
         between=[start_date, end_date],
         returning="code",
         return_expectations={"category": {
-            "ratios": {"23E5.": 0.6, "663K.": 0.2, "7450.": 0.2}}, }
+            "ratios": {str(1085871000000105): 0.6, str(450759008): 0.2, str(718087004): 0.2}}, }
     ),
 
     serum_cholesterol=patients.with_these_clinical_events(
@@ -171,7 +171,7 @@ study = StudyDefinition(
         between=[start_date, end_date],
         returning="code",
         return_expectations={"category": {
-            "ratios": {"23E5.": 0.6, "663K.": 0.2, "7450.": 0.2}}, }
+            "ratios": {"270442000": 0.6, "663K.": 0.2, "7450.": 0.2}}, }
     ),
 
     asthma=patients.with_these_clinical_events(
@@ -186,7 +186,7 @@ study = StudyDefinition(
         between=[start_date, end_date],
         returning="code",
         return_expectations={"category": {
-            "ratios": {"23E5.": 0.6, "663K.": 0.2, "7450.": 0.2}}, }
+            "ratios": {str(270442000): 0.6, str(390872009): 0.2, str(390877003): 0.2}}, }
     ),
 
     copd=patients.with_these_clinical_events(
@@ -201,7 +201,7 @@ study = StudyDefinition(
         between=[start_date, end_date],
         returning="code",
         return_expectations={"category": {
-            "ratios": {"23E5.": 0.6, "663K.": 0.2, "7450.": 0.2}}, }
+            "ratios": {str(394703002): 0.6, str(760601000000107): 0.2, str(760621000000103): 0.2}}, }
     ),
 )
 

@@ -4,13 +4,15 @@ from cohortextractor import (
 )
 
 
-
+crd_codelist = codelist_from_csv("codelists/opensafely-chronic-respiratory-disease.csv",
+                                 system="ctv3",
+                                 column="CTV3ID",)
 
 asthma_codelist = codelist_from_csv("codelists/user-richard-croker-asthma-annual-review-qof.csv",
                                  system="snomed",
                                  column="code",)
 
-cpod_codelist = codelist_from_csv("codelists/user-richard-croker-chronic-obstructive-pulmonary-disease-qof.csv",
+copd_codelist = codelist_from_csv("codelists/user-richard-croker-chronic-obstructive-pulmonary-disease-copd-review-qof.csv",
                                  system="snomed",
                                  column="code",)
 

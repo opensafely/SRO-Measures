@@ -237,9 +237,9 @@ def interactive_deciles_chart(
 
     fig.show()
 
-def generate_sentinel_measure(data_dict, data_dict_practice, codelist_dict, measure, code_colum, term_column, dates_list):
+def generate_sentinel_measure(data_dict, data_dict_practice, codelist_dict, measure, code_column, term_column, dates_list):
     df = data_dict[measure]
-    childs_df = create_child_table(df, codelist_dict[measure], 'CTV3ID', 'CTV3PreferredTermDesc', measure)
+    childs_df = create_child_table(df, codelist_dict[measure], code_column, term_column, measure)
 
     practices_included, practices_included_percent, num_events_mil, num_patients = calculate_statistics(
         df, measure, dates_list)
