@@ -5,3 +5,4 @@ __pycache__
 .python-version
 output/*
 metadata/*
+.DS_Store
