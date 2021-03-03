@@ -8,6 +8,7 @@ from IPython.display import display, HTML
 import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib
+import math
 
 # Legend locations for matplotlib
 # https://github.com/ebmdatalab/datalab-pandas/blob/master/ebmdatalab/charts.py
@@ -88,13 +89,14 @@ def create_child_table(df, code_df, code_column, term_column, measure, nrows=5):
     df = pd.DataFrame.from_dict(
         code_dict, orient="index", columns=["Events"])
     df[code_column] = df.index
+    df.reset_index(drop=True, inplace=True)
 
     #convert events to events/thousand
     df['Events (thousands)'] = df['Events'].apply(lambda x: x/1000)
     df.drop(columns=['Events'])
 
     #order by events
-    df.sort_values(by='Events (thousands)', inplace=True)
+    df = df.sort_values(by='Events (thousands)', ascending=False)
     df = df.iloc[:, [1, 0, 2]]
 
     #get description for each code
@@ -109,6 +111,11 @@ def create_child_table(df, code_df, code_column, term_column, measure, nrows=5):
 
     df['Description'] = df.apply(
         lambda row: get_description(row), axis=1)
+
+    
+    df[code_column] = df[code_column].astype(int)
+
+
 
     #return top n rows
     return df.iloc[:nrows, :]
@@ -187,8 +194,7 @@ def deciles_chart_ebm(
     ylabel="",
     show_outer_percentiles=True,
     show_legend=True,
-    ax=None,
-):
+    ax=None):
     """period_column must be dates / datetimes
     """
     sns.set_style("whitegrid", {"grid.color": ".9"})
@@ -294,8 +300,7 @@ def deciles_chart(
     column=None,
     title="",
     ylabel="",
-    interactive=True
-):
+    interactive=True):
     """period_column must be dates / datetimes
     """
 
@@ -384,21 +389,21 @@ def generate_sentinel_measure(data_dict, data_dict_practice, codelist_dict, meas
     convert_datetime(df)
     calculate_rate(df, measure, 'population')
     
-    idr_list = [get_idr(df, dates_list)[x]
-                for x in dates_list]
+    # idr_list = [get_idr(df, dates_list)[x]
+    #             for x in dates_list]
 
 
-    median_list = [get_median(df, dates_list)[x]
-               for x in dates_list]
+    # median_list = [get_median(df, dates_list)[x]
+    #            for x in dates_list]
 
-    change_list = calculate_change_median(median_list)
+    # change_list = calculate_change_median(median_list)
 
     print(f'Practices included: {practices_included} ({practices_included_percent}%)')
-    print(f'2020 patients: {num_patients:.2f}M ({num_events_mil:.2f}M events)')
-    print(
-        f'Feb Median: {median_list[0]:.1f} (IDR: {idr_list[0]:.1f}), April Median: {median_list[1]:.1f} (IDR: {idr_list[1]:.1f}), Dec Median: {median_list[2]:.1f} (IDR: {idr_list[2]:.1f})')
-    print(
-        f'Change in median from Feb 2020: April: {change_list[0]:.2f}%; December: {change_list[1]:.2f}%')
+    print(f'Total patients: {num_patients:.2f}M ({num_events_mil:.2f}M events)')
+    # print(
+    #     f'Feb Median: {median_list[0]:.1f} (IDR: {idr_list[0]:.1f}), April Median: {median_list[1]:.1f} (IDR: {idr_list[1]:.1f}), Dec Median: {median_list[2]:.1f} (IDR: {idr_list[2]:.1f})')
+    # print(
+    #     f'Change in median from Feb 2020: April: {change_list[0]:.2f}%; December: {change_list[1]:.2f}%')
     
     display(HTML(childs_df.to_html()))
 
