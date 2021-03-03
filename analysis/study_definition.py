@@ -23,7 +23,7 @@ end_date = date.today().isoformat()
 
 
 study = StudyDefinition(
-    index_date="2019-01-01"
+    index_date="2019-01-01",
     default_expectations={
         "date": {"earliest": start_date, "latest": end_date},
         "rate": "exponential_increase",

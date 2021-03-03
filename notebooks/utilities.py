@@ -8,6 +8,7 @@ from IPython.display import display, HTML
 import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib
+import math
 
 # Legend locations for matplotlib
 # https://github.com/ebmdatalab/datalab-pandas/blob/master/ebmdatalab/charts.py
@@ -88,6 +89,7 @@ def create_child_table(df, code_df, code_column, term_column, measure, nrows=5):
     df = pd.DataFrame.from_dict(
         code_dict, orient="index", columns=["Events"])
     df[code_column] = df.index
+    df.reset_index(drop=True, inplace=True)
 
     #convert events to events/thousand
     df['Events (thousands)'] = df['Events'].apply(lambda x: x/1000)
@@ -109,6 +111,11 @@ def create_child_table(df, code_df, code_column, term_column, measure, nrows=5):
 
     df['Description'] = df.apply(
         lambda row: get_description(row), axis=1)
+
+    
+    df[code_column] = df[code_column].astype(int)
+
+
 
     #return top n rows
     return df.iloc[:nrows, :]
