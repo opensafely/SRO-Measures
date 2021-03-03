@@ -4,8 +4,25 @@ import numpy as np
 from collections import Counter
 from numpy import nan
 import json
-from ebmdatalab import charts
 from IPython.display import display, HTML
+import seaborn as sns
+import matplotlib.pyplot as plt
+import matplotlib
+
+# Legend locations for matplotlib
+# https://github.com/ebmdatalab/datalab-pandas/blob/master/ebmdatalab/charts.py
+BEST = 0
+UPPER_RIGHT = 1
+UPPER_LEFT = 2
+LOWER_LEFT = 3
+LOWER_RIGHT = 4
+RIGHT = 5
+CENTER_LEFT = 6
+CENTER_RIGHT = 7
+LOWER_CENTER = 8
+UPPER_CENTER = 9
+CENTER = 10
+
 
 def convert_datetime(df):
     df['date'] = pd.to_datetime(df['date'])
@@ -161,83 +178,201 @@ def calculate_statistics(df, measure_column, idr_dates):
     return practices_included, practices_included_percent, num_events_mil, num_patients
 
 
-def interactive_deciles_chart(
+# https://github.com/ebmdatalab/datalab-pandas/blob/master/ebmdatalab/charts.py
+def deciles_chart_ebm(
     df,
     period_column=None,
     column=None,
     title="",
-    ylabel=""
+    ylabel="",
+    show_outer_percentiles=True,
+    show_legend=True,
+    ax=None,
+):
+    """period_column must be dates / datetimes
+    """
+    sns.set_style("whitegrid", {"grid.color": ".9"})
+    if not ax:
+        fig, ax = plt.subplots(1, 1)
+    df = add_percentiles(
+        df,
+        period_column=period_column,
+        column=column,
+        show_outer_percentiles=show_outer_percentiles,
+    )
+    linestyles = {
+        "decile": {"color": "b", "line": "b--", "linewidth": 1, "label": "decile"},
+        "median": {"color": "b", "line": "b-", "linewidth": 1.5, "label": "median"},
+        "percentile": {
+            "color": "b",
+            "line": "b:",
+            "linewidth": 0.8,
+            "label": "1st-9th, 91st-99th percentile",
+        },
+    }
+    label_seen = []
+    for percentile in range(1, 100):  # plot each decile line
+        data = df[df["percentile"] == percentile]
+        add_label = False
+
+        if percentile == 50:
+            style = linestyles["median"]
+            add_label = True
+        elif show_outer_percentiles and (percentile < 10 or percentile > 90):
+            style = linestyles["percentile"]
+            if "percentile" not in label_seen:
+                label_seen.append("percentile")
+                add_label = True
+        else:
+            style = linestyles["decile"]
+            if "decile" not in label_seen:
+                label_seen.append("decile")
+                add_label = True
+        if add_label:
+            label = style["label"]
+        else:
+            label = "_nolegend_"
+
+        ax.plot(
+            data[period_column],
+            data[column],
+            style["line"],
+            linewidth=style["linewidth"],
+            color=style["color"],
+            label=label,
+        )
+    ax.set_ylabel(ylabel, size=15, alpha=0.6)
+    if title:
+        ax.set_title(title, size=18)
+    # set ymax across all subplots as largest value across dataset
+    ax.set_ylim([0, df[column].max() * 1.05])
+    ax.tick_params(labelsize=12)
+    ax.set_xlim(
+        [df[period_column].min(), df[period_column].max()]
+    )  # set x axis range as full date range
+
+    plt.setp(ax.xaxis.get_majorticklabels(), rotation=90)
+    ax.xaxis.set_major_formatter(matplotlib.dates.DateFormatter("%B %Y"))
+    if show_legend:
+        ax.legend(
+            bbox_to_anchor=(1.1, 0.8),  # arbitrary location in axes
+            #  specified as (x0, y0, w, h)
+            loc=CENTER_LEFT,  # which part of the bounding box should
+            #  be placed at bbox_to_anchor
+            ncol=1,  # number of columns in the legend
+            fontsize=12,
+            borderaxespad=0.0,
+        )  # padding between the axes and legend
+        #  specified in font-size units
+    # rotates and right aligns the x labels, and moves the bottom of the
+    # axes up to make room for them
+    plt.gcf().autofmt_xdate()
+    return plt
+
+def add_percentiles(df, period_column=None, column=None, show_outer_percentiles=True):
+    """For each period in `period_column`, compute percentiles across that
+    range.
+    Adds `percentile` column.
+    """
+    deciles = np.arange(0.1, 1, 0.1)
+    bottom_percentiles = np.arange(0.01, 0.1, 0.01)
+    top_percentiles = np.arange(0.91, 1, 0.01)
+    if show_outer_percentiles:
+        quantiles = np.concatenate((deciles, bottom_percentiles, top_percentiles))
+    else:
+        quantiles = deciles
+    df = df.groupby(period_column)[column].quantile(quantiles).reset_index()
+    df = df.rename(index=str, columns={"level_1": "percentile"})
+    # create integer range of percentiles
+    df["percentile"] = df["percentile"].apply(lambda x: int(x * 100))
+    return df
+
+
+def deciles_chart(
+    df,
+    period_column=None,
+    column=None,
+    title="",
+    ylabel="",
+    interactive=True
 ):
     """period_column must be dates / datetimes
     """
 
-    df = charts.add_percentiles(
+    df = add_percentiles(
         df,
         period_column=period_column,
         column=column,
         show_outer_percentiles=False,
     )
 
-    fig = go.Figure()
+    if interactive:
 
-    linestyles = {
-        "decile": {"color": "blue", "dash": "dash"},
-        "median": {"color": "blue", "dash": "solid"},
-        "percentile": {"color": "blue", "dash": "dash"},
-    }
+        fig = go.Figure()
 
-    for percentile in np.unique(df['percentile']):
-        df_subset = df[df['percentile'] == percentile]
-        if percentile == 50:
-            fig.add_trace(go.Scatter(x=df_subset[period_column], y=df_subset[column], line={
-                          "color": "blue", "dash": "solid", "width": 1.2}, name="median"))
-        else:
-            fig.add_trace(go.Scatter(x=df_subset[period_column], y=df_subset[column], line={
-                          "color": "blue", "dash": "dash", "width": 1}, name=f"decile {int(percentile/10)}"))
+        linestyles = {
+            "decile": {"color": "blue", "dash": "dash"},
+            "median": {"color": "blue", "dash": "solid"},
+            "percentile": {"color": "blue", "dash": "dash"},
+        }
 
-     # Set title
-    fig.update_layout(
-        title_text=title,
-        hovermode='x',
-        title_x=0.5,
+        for percentile in np.unique(df['percentile']):
+            df_subset = df[df['percentile'] == percentile]
+            if percentile == 50:
+                fig.add_trace(go.Scatter(x=df_subset[period_column], y=df_subset[column], line={
+                            "color": "blue", "dash": "solid", "width": 1.2}, name="median"))
+            else:
+                fig.add_trace(go.Scatter(x=df_subset[period_column], y=df_subset[column], line={
+                            "color": "blue", "dash": "dash", "width": 1}, name=f"decile {int(percentile/10)}"))
+
+        # Set title
+        fig.update_layout(
+            title_text=title,
+            hovermode='x',
+            title_x=0.5,
 
 
-    )
-
-    fig.update_yaxes(title=ylabel)
-    fig.update_xaxes(title="Date")
-
-    # Add range slider
-    fig.update_layout(
-        xaxis=go.layout.XAxis(
-            rangeselector=dict(
-                buttons=list([
-                    dict(count=1,
-                         label="1m",
-                         step="month",
-                         stepmode="backward"),
-                    dict(count=6,
-                         label="6m",
-                         step="month",
-                         stepmode="backward"),
-
-                    dict(count=1,
-                         label="1y",
-                         step="year",
-                         stepmode="backward"),
-                    dict(step="all")
-                ])
-            ),
-            rangeslider=dict(
-                visible=True
-            ),
-            type="date"
         )
-    )
 
-    fig.show()
+        fig.update_yaxes(title=ylabel)
+        fig.update_xaxes(title="Date")
 
-def generate_sentinel_measure(data_dict, data_dict_practice, codelist_dict, measure, code_column, term_column, dates_list):
+        # Add range slider
+        fig.update_layout(
+            xaxis=go.layout.XAxis(
+                rangeselector=dict(
+                    buttons=list([
+                        dict(count=1,
+                            label="1m",
+                            step="month",
+                            stepmode="backward"),
+                        dict(count=6,
+                            label="6m",
+                            step="month",
+                            stepmode="backward"),
+
+                        dict(count=1,
+                            label="1y",
+                            step="year",
+                            stepmode="backward"),
+                        dict(step="all")
+                    ])
+                ),
+                rangeslider=dict(
+                    visible=True
+                ),
+                type="date"
+            )
+        )
+
+        fig.show()
+
+    else:
+        deciles_chart_ebm(df, period_column="date", column="num_per_thousand", ylabel="rate per 1000", show_outer_percentiles=False)
+        
+
+
+def generate_sentinel_measure(data_dict, data_dict_practice, codelist_dict, measure, code_column, term_column, dates_list, interactive=True):
     df = data_dict[measure]
     childs_df = create_child_table(df, codelist_dict[measure], code_column, term_column, measure)
 
@@ -267,12 +402,12 @@ def generate_sentinel_measure(data_dict, data_dict_practice, codelist_dict, meas
     
     display(HTML(childs_df.to_html()))
 
-    interactive_deciles_chart(
-        data_dict_practice[measure],
+    deciles_chart(
+        df,
         period_column="date",
         column="num_per_thousand",
-        title=measure,
-        ylabel="rate per 1000"
+        ylabel="rate per 1000",
+        interactive=interactive
     )
     
 
