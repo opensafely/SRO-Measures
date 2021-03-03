@@ -94,7 +94,7 @@ def create_child_table(df, code_df, code_column, term_column, measure, nrows=5):
     df.drop(columns=['Events'])
 
     #order by events
-    df.sort_values(by='Events (thousands)', inplace=True)
+    df = df.sort_values(by='Events (thousands)', ascending=False)
     df = df.iloc[:, [1, 0, 2]]
 
     #get description for each code
