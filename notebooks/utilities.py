@@ -392,7 +392,7 @@ def generate_sentinel_measure(data_dict, data_dict_practice, codelist_dict, meas
     # change_list = calculate_change_median(median_list)
 
     print(f'Practices included: {practices_included} ({practices_included_percent}%)')
-    print(f'2020 patients: {num_patients:.2f}M ({num_events_mil:.2f}M events)')
+    print(f'Total patients: {num_patients:.2f}M ({num_events_mil:.2f}M events)')
     # print(
     #     f'Feb Median: {median_list[0]:.1f} (IDR: {idr_list[0]:.1f}), April Median: {median_list[1]:.1f} (IDR: {idr_list[1]:.1f}), Dec Median: {median_list[2]:.1f} (IDR: {idr_list[2]:.1f})')
     # print(
