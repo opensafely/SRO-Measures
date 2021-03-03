@@ -51,11 +51,4 @@ actions:
         notebook: output/sentinel_measures.html
      
 
-  generate_notebook_pdf:
-    run: jupyter:latest jupyter nbconvert /workspace/notebooks/sentinel_measures.ipynb --execute --to pdf --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
-    needs: [generate_measures, get_practice_count, get_patient_count]
-    outputs:
-      moderately_sensitive:
-        notebook: output/sentinel_measures.pdf
-     
-  
+ 
