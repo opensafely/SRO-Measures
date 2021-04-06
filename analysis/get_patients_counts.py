@@ -3,8 +3,7 @@ import os
 import json
 import numpy as np
 
-sentinel_measures = ["systolic_bp", "qrisk2", "serum_cholesterol", "serum_bilirubin",
-                     "serum_tsh", "rbc", "hba1c", "serum_sodium", "asthma", "copd"]
+sentinel_measures = ["qrisk2", "asthma", "copd"]
 
 patient_counts_dict = {}
 patient_dict = {}
