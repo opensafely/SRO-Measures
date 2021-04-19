@@ -58,14 +58,14 @@ study = StudyDefinition(
   
     qrisk2=patients.with_these_clinical_events(
         codelist=qrisk_codelist,
-        between=["index_date", "index_date + 1 month"],
+        between=["index_date", "last_day_of_month(index_date)"],
         returning="binary_flag",
         return_expectations={"incidence": 0.5}
     ),
 
     qrisk2_event_code=patients.with_these_clinical_events(
         codelist=qrisk_codelist,
-        between=["index_date", "index_date + 1 month"],
+        between=["index_date", "last_day_of_month(index_date)"],
         returning="code",
         return_expectations={"category": {
             "ratios": {str(1085871000000105): 0.6, str(450759008): 0.2, str(718087004): 0.2}}, }
@@ -74,14 +74,14 @@ study = StudyDefinition(
   
     asthma=patients.with_these_clinical_events(
         codelist=asthma_codelist,
-        between=["index_date", "index_date + 1 month"],
+        between=["index_date", "last_day_of_month(index_date)"],
         returning="binary_flag",
         return_expectations={"incidence": 0.5}
     ),
 
     asthma_event_code=patients.with_these_clinical_events(
         codelist=asthma_codelist,
-        between=["index_date", "index_date + 1 month"],
+        between=["index_date", "last_day_of_month(index_date)"],
         returning="code",
         return_expectations={"category": {
             "ratios": {str(270442000): 0.6, str(390872009): 0.2, str(390877003): 0.2}}, }
@@ -89,14 +89,14 @@ study = StudyDefinition(
 
     copd=patients.with_these_clinical_events(
         codelist=copd_codelist,
-        between=["index_date", "index_date + 1 month"],
+        between=["index_date", "last_day_of_month(index_date)"],
         returning="binary_flag",
         return_expectations={"incidence": 0.5}
     ),
 
     copd_event_code=patients.with_these_clinical_events(
         codelist=copd_codelist,
-        between=["index_date", "index_date + 1 month"],
+        between=["index_date", "last_day_of_month(index_date)"],
         returning="code",
         return_expectations={"category": {
             "ratios": {str(394703002): 0.6, str(760601000000107): 0.2, str(760621000000103): 0.2}}, }
