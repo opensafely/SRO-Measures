@@ -100,15 +100,15 @@ study = StudyDefinition(
             "ratios": {str(1085871000000105): 0.6, str(450759008): 0.2, str(718087004): 0.2}}, }
     ),
     
-    bilirubin=patients.with_these_clinical_events(
-        codelist=bilirubin_codelist,
+    alt=patients.with_these_clinical_events(
+        codelist=alt_codelist,
         between=["index_date", "last_day_of_month(index_date)"],
         returning="binary_flag",
         return_expectations={"incidence": 0.5}
     ),
 
-    bilirubin_event_code=patients.with_these_clinical_events(
-        codelist=bilirubin_codelist,
+    alt_event_code=patients.with_these_clinical_events(
+        codelist=alt_codelist,
         between=["index_date", "last_day_of_month(index_date)"],
         returning="code",
         return_expectations={"category": {
@@ -252,15 +252,15 @@ measures = [
     ),
    
     Measure(
-        id="serum_bilirubin",
-        numerator="bilirubin",
+        id="alt",
+        numerator="alt",
         denominator="population",
-        group_by=["practice", "bilirubin_event_code"]
+        group_by=["practice", "alt_event_code"]
     ),
 
     Measure(
-        id="serum_bilirubin_practice_only",
-        numerator="bilirubin",
+        id="alt_practice_only",
+        numerator="alt",
         denominator="population",
         group_by=["practice"]
     ),
