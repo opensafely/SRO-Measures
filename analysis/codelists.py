@@ -4,10 +4,6 @@ from cohortextractor import (
 )
 
 
-crd_codelist = codelist_from_csv("codelists/opensafely-chronic-respiratory-disease.csv",
-                                 system="ctv3",
-                                 column="CTV3ID",)
-
 asthma_codelist = codelist_from_csv("codelists/user-richard-croker-asthma-annual-review-qof.csv",
                                  system="snomed",
                                  column="code",)
@@ -44,6 +40,6 @@ sodium_codelist = codelist_from_csv("codelists/user-richard-croker-sodium-tests-
                                  system="snomed",
                                  column="code",)
 
-systolic_bp_codelist = codelist_from_csv("codelists/user-richard-croker-systolic-blood-presssure-qof.csv",
+systolic_bp_codelist = codelist_from_csv("codelists/user-richard-croker-systolic-blood-pressure-qof.csv",
                                  system="snomed",
                                  column="code",)

@@ -51,12 +51,12 @@ actions:
         notebook: output/sentinel_measures.html
      
   
-  generate_notebook_practice:
-    run: jupyter:latest jupyter nbconvert /workspace/notebooks/sentinel_measures_by_practice.ipynb --execute --to html --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
-    needs: [generate_measures, get_practice_count, get_patient_count]
-    outputs:
-      moderately_sensitive:
-        notebook: output/sentinel_measures_by_practice.html
-        csvs: output/*_check.csv
+  # generate_notebook_practice:
+  #   run: jupyter:latest jupyter nbconvert /workspace/notebooks/sentinel_measures_by_practice.ipynb --execute --to html --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
+  #   needs: [generate_measures, get_practice_count, get_patient_count]
+  #   outputs:
+  #     moderately_sensitive:
+  #       notebook: output/sentinel_measures_by_practice.html
+  #       csvs: output/*_check.csv
 
   

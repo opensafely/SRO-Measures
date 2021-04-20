@@ -238,14 +238,14 @@ measures = [
     ),
 
     Measure(
-        id="serum_cholesterol",
+        id="cholesterol",
         numerator="cholesterol",
         denominator="population",
         group_by=["practice", "cholesterol_event_code"]
     ),
 
     Measure(
-        id="serum_cholesterol_practice_only",
+        id="cholesterol_practice_only",
         numerator="cholesterol",
         denominator="population",
         group_by=["practice"]
@@ -266,14 +266,14 @@ measures = [
     ),
 
     Measure(
-        id="serum_tsh",
+        id="tsh",
         numerator="tsh",
         denominator="population",
         group_by=["practice", "tsh_event_code"]
     ),
 
     Measure(
-        id="serum_tsh_practice_only",
+        id="tsh_practice_only",
         numerator="tsh",
         denominator="population",
         group_by=["practice"]
@@ -288,7 +288,7 @@ measures = [
 
     Measure(
         id="rbc_practice_only",
-        numerator="tsh",
+        numerator="rbc",
         denominator="population",
         group_by=["practice"]
     ),
@@ -308,14 +308,14 @@ measures = [
     ),
 
     Measure(
-        id="serum_sodium",
+        id="sodium",
         numerator="sodium",
         denominator="population",
         group_by=["practice", "sodium_event_code"]
     ),
 
     Measure(
-        id="serum_sodium_practice_only",
+        id="sodium_practice_only",
         numerator="sodium",
         denominator="population",
         group_by=["practice"]
