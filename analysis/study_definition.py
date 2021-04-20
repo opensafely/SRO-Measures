@@ -66,7 +66,7 @@ study = StudyDefinition(
         between=["index_date", "last_day_of_month(index_date)"],
         returning="code",
         return_expectations={"category": {
-            "ratios": {str(1085871000000105): 0.6, str(450759008): 0.2, str(718087004): 0.2}}, }
+            "ratios": {str(198081000000101): 0.6, str(251070002): 0.2, str(271649006): 0.2}}, }
     ),
     
   
@@ -97,7 +97,7 @@ study = StudyDefinition(
         between=["index_date", "last_day_of_month(index_date)"],
         returning="code",
         return_expectations={"category": {
-            "ratios": {str(1085871000000105): 0.6, str(450759008): 0.2, str(718087004): 0.2}}, }
+            "ratios": {str(1005671000000105): 0.8, str(1017161000000104): 0.2}}, }
     ),
     
     alt=patients.with_these_clinical_events(
@@ -112,7 +112,7 @@ study = StudyDefinition(
         between=["index_date", "last_day_of_month(index_date)"],
         returning="code",
         return_expectations={"category": {
-            "ratios": {str(1085871000000105): 0.6, str(450759008): 0.2, str(718087004): 0.2}}, }
+            "ratios": {str(1013211000000103): 0.8, str(1018251000000107): 0.2}}, }
     ),
 
     tsh=patients.with_these_clinical_events(
@@ -127,7 +127,7 @@ study = StudyDefinition(
         between=["index_date", "last_day_of_month(index_date)"],
         returning="code",
         return_expectations={"category": {
-            "ratios": {str(1085871000000105): 0.6, str(450759008): 0.2, str(718087004): 0.2}}, }
+            "ratios": {str(1022791000000101): 0.8, str(1022801000000102): 0.2}}, }
     ),
 
     rbc=patients.with_these_clinical_events(
@@ -142,7 +142,7 @@ study = StudyDefinition(
         between=["index_date", "last_day_of_month(index_date)"],
         returning="code",
         return_expectations={"category": {
-            "ratios": {str(1085871000000105): 0.6, str(450759008): 0.2, str(718087004): 0.2}}, }
+            "ratios": {str(1022451000000103): 1}}, }
     ),
 
     hba1c=patients.with_these_clinical_events(
@@ -157,7 +157,7 @@ study = StudyDefinition(
         between=["index_date", "last_day_of_month(index_date)"],
         returning="code",
         return_expectations={"category": {
-            "ratios": {str(1085871000000105): 0.6, str(450759008): 0.2, str(718087004): 0.2}}, }
+            "ratios": {str(1003671000000109): 0.6, str(144176003): 0.2, str(166902009): 0.2}}, }
     ),
 
     sodium=patients.with_these_clinical_events(
@@ -172,7 +172,7 @@ study = StudyDefinition(
         between=["index_date", "last_day_of_month(index_date)"],
         returning="code",
         return_expectations={"category": {
-            "ratios": {str(1085871000000105): 0.6, str(450759008): 0.2, str(718087004): 0.2}}, }
+            "ratios": {str(1000661000000107): 0.6, str(1017381000000106): 0.4}}, }
     ),
 
     asthma=patients.with_these_clinical_events(
