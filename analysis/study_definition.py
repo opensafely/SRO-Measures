@@ -66,7 +66,7 @@ study = StudyDefinition(
         between=["index_date", "last_day_of_month(index_date)"],
         returning="code",
         return_expectations={"category": {
-            "ratios": {str(1085871000000105): 0.6, str(450759008): 0.2, str(718087004): 0.2}}, }
+            "ratios": {str(198081000000101): 0.6, str(251070002): 0.2, str(271649006): 0.2}}, }
     ),
     
   
@@ -97,22 +97,22 @@ study = StudyDefinition(
         between=["index_date", "last_day_of_month(index_date)"],
         returning="code",
         return_expectations={"category": {
-            "ratios": {str(1085871000000105): 0.6, str(450759008): 0.2, str(718087004): 0.2}}, }
+            "ratios": {str(1005671000000105): 0.8, str(1017161000000104): 0.2}}, }
     ),
     
-    bilirubin=patients.with_these_clinical_events(
-        codelist=bilirubin_codelist,
+    alt=patients.with_these_clinical_events(
+        codelist=alt_codelist,
         between=["index_date", "last_day_of_month(index_date)"],
         returning="binary_flag",
         return_expectations={"incidence": 0.5}
     ),
 
-    bilirubin_event_code=patients.with_these_clinical_events(
-        codelist=bilirubin_codelist,
+    alt_event_code=patients.with_these_clinical_events(
+        codelist=alt_codelist,
         between=["index_date", "last_day_of_month(index_date)"],
         returning="code",
         return_expectations={"category": {
-            "ratios": {str(1085871000000105): 0.6, str(450759008): 0.2, str(718087004): 0.2}}, }
+            "ratios": {str(1013211000000103): 0.8, str(1018251000000107): 0.2}}, }
     ),
 
     tsh=patients.with_these_clinical_events(
@@ -127,7 +127,7 @@ study = StudyDefinition(
         between=["index_date", "last_day_of_month(index_date)"],
         returning="code",
         return_expectations={"category": {
-            "ratios": {str(1085871000000105): 0.6, str(450759008): 0.2, str(718087004): 0.2}}, }
+            "ratios": {str(1022791000000101): 0.8, str(1022801000000102): 0.2}}, }
     ),
 
     rbc=patients.with_these_clinical_events(
@@ -142,7 +142,7 @@ study = StudyDefinition(
         between=["index_date", "last_day_of_month(index_date)"],
         returning="code",
         return_expectations={"category": {
-            "ratios": {str(1085871000000105): 0.6, str(450759008): 0.2, str(718087004): 0.2}}, }
+            "ratios": {str(1022451000000103): 1}}, }
     ),
 
     hba1c=patients.with_these_clinical_events(
@@ -157,7 +157,7 @@ study = StudyDefinition(
         between=["index_date", "last_day_of_month(index_date)"],
         returning="code",
         return_expectations={"category": {
-            "ratios": {str(1085871000000105): 0.6, str(450759008): 0.2, str(718087004): 0.2}}, }
+            "ratios": {str(1003671000000109): 0.6, str(144176003): 0.2, str(166902009): 0.2}}, }
     ),
 
     sodium=patients.with_these_clinical_events(
@@ -172,7 +172,7 @@ study = StudyDefinition(
         between=["index_date", "last_day_of_month(index_date)"],
         returning="code",
         return_expectations={"category": {
-            "ratios": {str(1085871000000105): 0.6, str(450759008): 0.2, str(718087004): 0.2}}, }
+            "ratios": {str(1000661000000107): 0.6, str(1017381000000106): 0.4}}, }
     ),
 
     asthma=patients.with_these_clinical_events(
@@ -238,42 +238,42 @@ measures = [
     ),
 
     Measure(
-        id="serum_cholesterol",
+        id="cholesterol",
         numerator="cholesterol",
         denominator="population",
         group_by=["practice", "cholesterol_event_code"]
     ),
 
     Measure(
-        id="serum_cholesterol_practice_only",
+        id="cholesterol_practice_only",
         numerator="cholesterol",
         denominator="population",
         group_by=["practice"]
     ),
    
     Measure(
-        id="serum_bilirubin",
-        numerator="bilirubin",
+        id="alt",
+        numerator="alt",
         denominator="population",
-        group_by=["practice", "bilirubin_event_code"]
+        group_by=["practice", "alt_event_code"]
     ),
 
     Measure(
-        id="serum_bilirubin_practice_only",
-        numerator="bilirubin",
+        id="alt_practice_only",
+        numerator="alt",
         denominator="population",
         group_by=["practice"]
     ),
 
     Measure(
-        id="serum_tsh",
+        id="tsh",
         numerator="tsh",
         denominator="population",
         group_by=["practice", "tsh_event_code"]
     ),
 
     Measure(
-        id="serum_tsh_practice_only",
+        id="tsh_practice_only",
         numerator="tsh",
         denominator="population",
         group_by=["practice"]
@@ -288,7 +288,7 @@ measures = [
 
     Measure(
         id="rbc_practice_only",
-        numerator="tsh",
+        numerator="rbc",
         denominator="population",
         group_by=["practice"]
     ),
@@ -308,14 +308,14 @@ measures = [
     ),
 
     Measure(
-        id="serum_sodium",
+        id="sodium",
         numerator="sodium",
         denominator="population",
         group_by=["practice", "sodium_event_code"]
     ),
 
     Measure(
-        id="serum_sodium_practice_only",
+        id="sodium_practice_only",
         numerator="sodium",
         denominator="population",
         group_by=["practice"]
