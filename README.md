@@ -1,3 +1,28 @@
+# SRO-Measures
+
+## Local Development
+
+For local (non-Docker) development, first install [pyenv][] and execute:
+
+```sh
+pyenv install $(pyenv local)
+```
+
+Then, execute:
+
+```sh
+python3 -m venv venv
+source venv/bin/activate
+pip install --upgrade pip
+
+# Either one or the other of the following
+pip install -r requirements.txt
+pip install -r requirements.dev.txt # For also running bin/codestyle.sh
+
+# For QA
+bin/codestyle.sh .
+```
+[pyenv]: https://github.com/pyenv/pyenv
 
 # About the OpenSAFELY framework
 
