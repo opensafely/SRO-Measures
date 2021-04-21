@@ -59,4 +59,9 @@ actions:
   #       notebook: output/sentinel_measures_by_practice.html
   #       csvs: output/*_check.csv
 
-  
+  get_event_summary:
+    run: python:latest python analysis/get_event_summary.py
+    needs: [generate_study_population]
+    outputs:
+      moderately_sensitive:
+        text: output/*_event_summary.csv
