@@ -1,8 +1,6 @@
 *~
-model.log
-*/input.csv
-__pycache__
-.python-version
-output/*
-metadata/*
 .DS_Store
+.python-version
+__pycache__/
+metadata/
+output/
