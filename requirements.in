@@ -4,3 +4,4 @@ matplotlib
 opensafely
 pandas
 pyarrow
+seaborn
