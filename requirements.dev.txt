@@ -28,6 +28,7 @@ attrs==20.3.0
     # via
     #   -r requirements.txt
     #   jsonschema
+    #   pytest
 babel==2.9.0
     # via
     #   -r requirements.txt
@@ -85,6 +86,8 @@ idna==2.10
     #   -r requirements.txt
     #   anyio
     #   requests
+iniconfig==1.1.1
+    # via pytest
 ipykernel==5.5.3
     # via
     #   -r requirements.txt
@@ -232,6 +235,7 @@ packaging==20.9
     #   jupyter-packaging
     #   jupyterlab
     #   jupyterlab-server
+    #   pytest
 pandas==1.2.4
     # via
     #   -r requirements.txt
@@ -264,6 +268,8 @@ pip-tools==6.1.0
     # via -r requirements.dev.in
 plotly==4.14.3
     # via -r requirements.txt
+pluggy==0.13.1
+    # via pytest
 prometheus-client==0.10.1
     # via
     #   -r requirements.txt
@@ -278,6 +284,8 @@ ptyprocess==0.7.0
     #   -r requirements.txt
     #   pexpect
     #   terminado
+py==1.10.0
+    # via pytest
 pyarrow==3.0.0
     # via -r requirements.txt
 pycodestyle==2.7.0
@@ -303,6 +311,8 @@ pyrsistent==0.17.3
     # via
     #   -r requirements.txt
     #   jsonschema
+pytest==6.2.3
+    # via -r requirements.dev.in
 python-dateutil==2.8.1
     # via
     #   -r requirements.txt
@@ -365,7 +375,9 @@ testpath==0.4.4
     #   -r requirements.txt
     #   nbconvert
 toml==0.10.2
-    # via black
+    # via
+    #   black
+    #   pytest
 tomlkit==0.7.0
     # via
     #   -r requirements.txt
