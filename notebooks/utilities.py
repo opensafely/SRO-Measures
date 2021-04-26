@@ -47,6 +47,16 @@ def calculate_rate(df, value_col, population_col, per=1000):
 
 
 def drop_irrelevant_practices(df):
+    """Drops irrelevant practices from the given measure table.
+
+    An irrelevant practice has zero events during the study period.
+
+    Args:
+        df: A measure table.
+
+    Returns:
+        A copy of the given measure table with irrelevant practices dropped.
+    """
     # drop practices that do not use the code
     mean_value_df = df.groupby("practice")["value"].mean().reset_index()
 
