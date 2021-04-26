@@ -57,17 +57,8 @@ def drop_irrelevant_practices(df):
     Returns:
         A copy of the given measure table with irrelevant practices dropped.
     """
-    # drop practices that do not use the code
-    mean_value_df = df.groupby("practice")["value"].mean().reset_index()
-
-    practices_to_drop = list(
-        mean_value_df["practice"][mean_value_df["value"] == 0]
-    )
-
-    # drop
-    df = df[~df["practice"].isin(practices_to_drop)]
-
-    return df
+    is_relevant = df.groupby("practice").value.any()
+    return df[df.practice.isin(is_relevant[is_relevant is True].index)]
 
 
 # def get_child_codes(df, event_code_column):
