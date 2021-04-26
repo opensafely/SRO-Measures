@@ -175,7 +175,9 @@ markupsafe==1.1.1
     #   -r requirements.txt
     #   jinja2
 matplotlib==3.4.1
-    # via -r requirements.txt
+    # via
+    #   -r requirements.txt
+    #   seaborn
 mccabe==0.6.1
     # via flake8
 mistune==0.8.4
@@ -218,6 +220,8 @@ numpy==1.20.2
     #   matplotlib
     #   pandas
     #   pyarrow
+    #   scipy
+    #   seaborn
 opensafely==1.7.1
     # via -r requirements.txt
 packaging==20.9
@@ -229,7 +233,9 @@ packaging==20.9
     #   jupyterlab
     #   jupyterlab-server
 pandas==1.2.4
-    # via -r requirements.txt
+    # via
+    #   -r requirements.txt
+    #   seaborn
 pandocfilters==1.4.3
     # via
     #   -r requirements.txt
@@ -318,6 +324,12 @@ requests==2.25.1
     # via
     #   -r requirements.txt
     #   jupyterlab-server
+scipy==1.6.3
+    # via
+    #   -r requirements.txt
+    #   seaborn
+seaborn==0.11.1
+    # via -r requirements.txt
 send2trash==1.5.0
     # via
     #   -r requirements.txt
