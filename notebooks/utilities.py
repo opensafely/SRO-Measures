@@ -49,8 +49,7 @@ def load_and_drop(measure, practice=False):
     else:
         f_in = OUTPUT_DIR / f"measure_{measure}.csv"
 
-    df = pd.read_csv(f_in)
-    convert_datetime(df)
+    df = pd.read_csv(f_in, parse_dates=["date"])
     df = drop_irrelevant_practices(df)
     return df
 
