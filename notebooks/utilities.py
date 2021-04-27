@@ -83,7 +83,15 @@ def drop_irrelevant_practices(df):
 
 
 def get_child_codes(df, measure):
+    """Gets the numbers of events by event codes.
 
+    Args:
+        df: A measure table.
+        measure: A measure ID.
+
+    Returns:
+        A `dict`. Keys are event codes; values are the numbers of events.
+    """
     event_code_column = f"{measure}_event_code"
     event_column = f"{measure}"
 
