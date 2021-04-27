@@ -45,15 +45,14 @@ def load_and_drop(measure, practice=False):
         The table for the given measure ID and practice.
     """
     if practice:
-        df = pd.read_csv(OUTPUT_DIR / f"measure_{measure}_practice_only.csv")
-        convert_datetime(df)
-        df = drop_irrelevant_practices(df)
-        return df
+        f_in = OUTPUT_DIR / f"measure_{measure}_practice_only.csv"
     else:
-        df = pd.read_csv(OUTPUT_DIR / f"measure_{measure}.csv")
-        convert_datetime(df)
-        df = drop_irrelevant_practices(df)
-        return df
+        f_in = OUTPUT_DIR / f"measure_{measure}.csv"
+
+    df = pd.read_csv(f_in)
+    convert_datetime(df)
+    df = drop_irrelevant_practices(df)
+    return df
 
 
 def calculate_rate(df, value_col, population_col, per=1000):
