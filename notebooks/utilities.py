@@ -32,7 +32,18 @@ def convert_datetime(df):
 
 
 def load_and_drop(measure, practice=False):
+    """Loads the measure table for the measure with the given ID.
 
+    Drops irrelevant practices and casts the `date` column from a `str`
+    to a `datetime64`.
+
+    Args:
+        measure: The measure ID.
+        practice: Whether to load the "practice only" measure.
+
+    Returns:
+        The table for the given measure ID and practice.
+    """
     if practice:
         df = pd.read_csv(OUTPUT_DIR / f"measure_{measure}_practice_only.csv")
         convert_datetime(df)
