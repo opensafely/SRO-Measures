@@ -1,7 +1,9 @@
 from typing import NamedTuple
+from unittest.mock import patch
 
 import pandas
 import pytest
+from pandas.api.types import is_datetime64_dtype
 
 from notebooks import utilities
 
@@ -32,6 +34,32 @@ def measure_table_from_csv():
             MeasureTableRow(2, 1.0, 1.0, 1.0, 1.0, "2019-02-01"),
         ]
     )
+
+
+class TestLoadAndDrop:
+    def test_practice_is_false(self, tmp_path, measure_table_from_csv):
+        # What's going on here, then? We are patching, or temporarily
+        # replacing, `utilities.OUTPUT_DIR` with `tmp_path`, which is
+        # a pytest fixture that returns a temporary directory as
+        # a `pathlib.Path` object.
+        with patch.object(utilities, "OUTPUT_DIR", tmp_path):
+            measure = "systolic_bp"
+            f_name = f"measure_{measure}.csv"
+            measure_table_from_csv.to_csv(utilities.OUTPUT_DIR / f_name)
+
+            obs = utilities.load_and_drop(measure)
+            assert is_datetime64_dtype(obs.date)
+            assert all(obs.practice.values == [2, 2])
+
+    def test_practice_is_true(self, tmp_path, measure_table_from_csv):
+        with patch.object(utilities, "OUTPUT_DIR", tmp_path):
+            measure = "systolic_bp"
+            f_name = f"measure_{measure}_practice_only.csv"
+            measure_table_from_csv.to_csv(utilities.OUTPUT_DIR / f_name)
+
+            obs = utilities.load_and_drop(measure, practice=True)
+            assert is_datetime64_dtype(obs.date)
+            assert all(obs.practice.values == [2, 2])
 
 
 class TestDropIrrelevantPractices:
