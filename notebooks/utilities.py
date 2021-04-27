@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -22,6 +23,9 @@ LOWER_CENTER = 8
 UPPER_CENTER = 9
 CENTER = 10
 
+BASE_DIR = Path(__file__).parents[1]
+OUTPUT_DIR = BASE_DIR / "output"
+
 
 def convert_datetime(df):
     df["date"] = pd.to_datetime(df["date"])
@@ -30,12 +34,12 @@ def convert_datetime(df):
 def load_and_drop(measure, practice=False):
 
     if practice:
-        df = pd.read_csv(f"../output/measure_{measure}_practice_only.csv")
+        df = pd.read_csv(OUTPUT_DIR / f"measure_{measure}_practice_only.csv")
         convert_datetime(df)
         df = drop_irrelevant_practices(df)
         return df
     else:
-        df = pd.read_csv(f"../output/measure_{measure}.csv")
+        df = pd.read_csv(OUTPUT_DIR / f"measure_{measure}.csv")
         convert_datetime(df)
         df = drop_irrelevant_practices(df)
         return df
