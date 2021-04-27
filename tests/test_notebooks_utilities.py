@@ -72,3 +72,10 @@ class TestDropIrrelevantPractices:
     def test_return_copy(self, measure_table_from_csv):
         obs = utilities.drop_irrelevant_practices(measure_table_from_csv)
         assert id(obs) != id(measure_table_from_csv)
+
+
+def test_get_child_codes(measure_table_from_csv):
+    obs = utilities.get_child_codes(measure_table_from_csv, "systolic_bp")
+    # Dicts keep insertion order from Python 3.7.
+    assert list(obs.keys()) == [1]
+    assert list(obs.values()) == [2]
