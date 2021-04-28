@@ -65,6 +65,12 @@
       "url": "https://codelists.opensafely.org/codelist/opensafely/ethnicity/2020-04-27/",
       "downloaded_at": "2021-04-28 15:45:04.239924Z",
       "sha": "3d2f3998b71863a80b24d60f6f4282e14191ae13"
+    },
+    "opensafely-learning-disabilities.csv": {
+      "id": "opensafely/learning-disabilities/2020-07-06",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/learning-disabilities/2020-07-06/",
+      "downloaded_at": "2021-04-28 15:48:34.681198Z",
+      "sha": "ab5b5f60e8525af5898ec1066fc820501b8e5e29"
     }
   }
 }

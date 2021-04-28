@@ -50,3 +50,9 @@ ethnicity_codes = codelist_from_csv(
         column="Code",
         category_column="Grouping_6",
     )
+
+ld_codes = codelist_from_csv(
+    "codelists/opensafely-learning-disabilities.csv",
+    system="ctv3",
+    column="CTV3Code",
+)
