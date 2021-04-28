@@ -419,5 +419,228 @@ def generate_sentinel_measure(data_dict, data_dict_practice, codelist_dict, meas
 
 
 
+def calculate_imd_group(df, disease_column, rate_column):
+    imd_column = pd.to_numeric(df["imd"])
+    df["imd"] = pd.qcut(imd_column, q=5,duplicates="drop", labels=['Most deprived', '2', '3', '4', 'Least deprived'])      
+    df_rate = df.groupby(by=["date", "imd"])[[rate_column]].mean().reset_index()
+    df_population = df.groupby(by=["date", "imd"])[[disease_column, "population"]].sum().reset_index()
+    df = df_rate.merge(df_population, on=["date", "imd"], how="inner")
+    
+    df_rate = df.groupby(by=["date", "imd"])[[rate_column]].mean().reset_index()
+
+    df_population = df.groupby(by=["date", "imd"])[[disease_column, "population"]].sum().reset_index()
+    
+    df_merged = df_rate.merge(df_population, on=["date", "imd"], how="inner")
+    
+    return df_merged
+
+def redact_small_numbers(df, n, counts_columns):
+    """
+    Takes counts df as input and suppresses low numbers.  Sequentially redacts
+    low numbers from each column until count of redcted values >=n.
+    
+    df: input df
+    n: threshold for low number suppression
+    counts_columns: list of columns in df that contain counts to be suppressed.
+    """
+    
+    for column in counts_columns:
+        series = df[column]
+        
+         
+        count = min(series)
+        
+        while count <n:
+            min_index = np.argmin(series)
+
+            count+= series[min_index]
+            series.iloc[min_index] = np.nan
+            
+    return df  
+
+
+
+def calculate_rate(df, m, rate_per=1000, standardise=True, age_group_column="age_band", return_age=False):
+    num_per_thousand = df[m.numerator]/(df[m.denominator]/rate_per)
+    df['rate'] = num_per_thousand
+    
+    def standardise_row(row):
+    
+        age_group = row[age_group_column]
+        rate = row['rate']
+        
+        
+        standardised_rate = rate * standard_pop.loc[str(age_group)]
+        return standardised_rate
+        
+    if standardise:
+        path = "european_standard_population.csv"
+        
+            
+        standard_pop = pd.read_csv(path)
+
+        age_band_grouping_dict = {
+            '0-4 years': '0-19',
+            '5-9 years': '0-19',
+            '10-14 years': '0-19',
+            '15-19 years': '0-19',
+            '20-24 years': '20-29',
+            '25-29 years': '20-29',
+            '30-34 years': '30-39',
+            '35-39 years': '30-39',
+            '40-44 years': '40-49',
+            '45-49 years': '40-49',
+            '50-54 years': '50-59',
+            '55-59 years': '50-59',
+            '60-64 years': '60-69',
+            '65-69 years': '60-69',
+            '70-74 years': '70-79',
+            '75-79 years': '70-79',
+            '80-84 years': '80+',
+            '85-89 years': '80+',
+            '90plus years': '80+',
+        }
+
+        standard_pop.set_index('AgeGroup', inplace=True)
+        standard_pop = standard_pop.groupby(age_band_grouping_dict, axis=0).sum()
+        standard_pop = standard_pop.reset_index().rename(columns={'index': 'AgeGroup'})
+
+
+        standard_pop["AgeGroup"] = standard_pop["AgeGroup"].str.replace(" years", "")
+        standard_pop = standard_pop.set_index("AgeGroup")["EuropeanStandardPopulation"]
+        standard_pop = standard_pop / standard_pop.sum()
+        
+        #apply standardisation
+        df['rate_standardised'] = df.apply(standardise_row, axis=1)
+        
+        
+        if return_age:
+            df_count = df.groupby(by=["date"]+ m.group_by)[[m.numerator, m.denominator]].sum().reset_index()
+        
+        
+            df_rate = df.groupby(by=["date"]+m.group_by)[['rate', 'rate_standardised']].mean().reset_index()
+            
+            
+            df = df_count.merge(df_rate, on=["date"] + m.group_by, how="inner")
+        else:
+    
+            df_count = df.groupby(by=["date"]+ (lambda x: x[1:] if len(x)>1 else [])(m.group_by))[[m.numerator, m.denominator]].sum().reset_index()
+        
+        
+            df_rate = df.groupby(by=["date"]+(lambda x: x[1:] if len(x)>1 else [])(m.group_by))[['rate', 'rate_standardised']].mean().reset_index()
+            
+            
+            df = df_count.merge(df_rate, on=["date"] + (lambda x: x[1:] if len(x)>1 else [])(m.group_by), how="inner")
+           
+
+    
+    else:
+        if return_age:
+            df_count = df.groupby(by=["date"] + m.group_by)[[m.numerator, m.denominator]].sum().reset_index()
+            
+            df_rate = df.groupby(by=["date"]+m.group_by)[['rate']].mean().reset_index()
+            
+            df = df_count.merge(df_rate, on=["date"] + m.group_by, how="inner")
+        else:
+            df_count = df.groupby(by=["date"] + (lambda x: x[1:] if len(x)>1 else [])(m.group_by))[[m.numerator, m.denominator]].sum().reset_index()
+            
+            df_rate = df.groupby(by=["date"]+(lambda x: x[1:] if len(x)>1 else [])(m.group_by))[['rate']].mean().reset_index()
+            
+            df = df_count.merge(df_rate, on=["date"] + (lambda x: x[1:] if len(x)>1 else [])(m.group_by), how="inner")
+    return df
+        
+
+
+
+def plot_measures(df, title, column_to_plot, category=False, y_label='Rate per 1000', interactive=True):
+
+    if interactive:
+
+        fig = go.Figure()
+
+        if category:
+            for unique_category in df[category].unique():
+
+                df_subset = df[df[category] == unique_category]
+                fig.add_trace(go.Scatter(
+                    x=df_subset['date'], y=df_subset[column_to_plot], name=str(unique_category)))
+
+        else:
+            fig.add_trace(go.Scatter(
+                x=df['date'], y=df[column_to_plot]))
+
+        # Set title
+        fig.update_layout(
+            title_text=title,
+            hovermode='x',
+            title_x=0.5,
+
+
+        )
+
+        fig.update_yaxes(title=y_label)
+        fig.update_xaxes(title="Date")
+
+        # Add range slider
+        fig.update_layout(
+            xaxis=go.layout.XAxis(
+                rangeselector=dict(
+                    buttons=list([
+                        dict(count=1,
+                            label="1m",
+                            step="month",
+                            stepmode="backward"),
+                        dict(count=6,
+                            label="6m",
+                            step="month",
+                            stepmode="backward"),
+
+                        dict(count=1,
+                            label="1y",
+                            step="year",
+                            stepmode="backward"),
+                        dict(step="all")
+                    ])
+                ),
+                rangeslider=dict(
+                    visible=True
+                ),
+                type="date"
+            )
+        )
+
+        fig.show()
+        
+
+    else:
+
+        if category:
+            for unique_category in df[category].unique():
+
+                df_subset = df[df[category] == unique_category]
+
+                plt.plot(df_subset['date'], df_subset[column_to_plot], marker='o')
+        else:
+            plt.plot(df['date'], df[column_to_plot], marker='o')
+
+        plt.ylabel(y_label)
+        plt.xlabel('Date')
+        plt.xticks(rotation='vertical')
+        plt.title(title)
+
+        if category:
+            plt.legend(df[category].unique(), bbox_to_anchor=(
+                1.04, 1), loc="upper left")
+
+        else:
+            pass
+
+
+        plt.show()
+        plt.clf()
+
+
+
+
 
 
