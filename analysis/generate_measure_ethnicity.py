@@ -20,8 +20,12 @@ ethnicity_df = pd.concat(ethnicity_data)
 
 population = ethnicity_df.groupby(by=['age_band', 'ethnicity', 'date']).size().reset_index(name='population')
 
-event = ethnicity_df.groupby(by=['age_band', 'ethnicity', 'date'])[['event', 'date']].sum().reset_index()
+sentinel_measures = ["qrisk2", "asthma", "copd", "sodium", "cholesterol", "alt", "tsh", "alt", "rbc", 'hba1c', 'systolic_bp']
 
-measures_df = population.merge(event, on=['age_band', 'ethnicity', 'date'])
+for measure in sentinel_measures:
 
-measures_df.to_csv('output/measure_ethnicity.csv')
+    event = ethnicity_df.groupby(by=['age_band', 'ethnicity', 'date'])[[measure, 'date']].sum().reset_index()
+
+    measures_df = population.merge(event, on=['age_band', 'ethnicity', 'date'])
+
+    measures_df.to_csv(f'output/measure_{measure}_ethnicity.csv')

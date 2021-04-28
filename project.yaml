@@ -43,7 +43,7 @@ actions:
     needs: [join_ethnicity]
     outputs:
       moderately_sensitive:
-        measure: output/measure_ethnicity.csv
+        measure: output/measure_*_ethnicity.csv
   
   get_practice_count:
     run: python:latest python analysis/get_practice_count.py
