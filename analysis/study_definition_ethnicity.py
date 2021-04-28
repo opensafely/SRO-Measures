@@ -5,6 +5,9 @@ from cohortextractor import (
     codelist_from_csv,
     Measure,
 )
+
+from datetime import date
+
 start_date = "2019-01-01"
 end_date = date.today().isoformat()
 
