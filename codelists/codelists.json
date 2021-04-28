@@ -59,6 +59,12 @@
       "url": "https://codelists.opensafely.org/codelist/user/richard-croker/alanine-aminotransferase-alt-tests-numerical-value/16fdc2da/",
       "downloaded_at": "2021-04-20 13:33:36.144044Z",
       "sha": "6ea9e6cda703d5929f9bec49347eae9c01b9ebfa"
+    },
+    "opensafely-ethnicity.csv": {
+      "id": "opensafely/ethnicity/2020-04-27",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/ethnicity/2020-04-27/",
+      "downloaded_at": "2021-04-28 15:45:04.239924Z",
+      "sha": "3d2f3998b71863a80b24d60f6f4282e14191ae13"
     }
   }
 }

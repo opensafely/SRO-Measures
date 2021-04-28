@@ -43,3 +43,10 @@ sodium_codelist = codelist_from_csv("codelists/user-richard-croker-sodium-tests-
 systolic_bp_codelist = codelist_from_csv("codelists/user-richard-croker-systolic-blood-pressure-qof.csv",
                                  system="snomed",
                                  column="code",)
+
+ethnicity_codes = codelist_from_csv(
+        "codelists/opensafely-ethnicity.csv",
+        system="ctv3",
+        column="Code",
+        category_column="Grouping_6",
+    )

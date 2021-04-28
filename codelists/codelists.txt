@@ -8,3 +8,4 @@ user/richard-croker/red-blood-cell-rbc-tests-numerical-value/64dedc6f
 user/richard-croker/glycated-haemoglobin-hba1c-tests/62358576
 user/richard-croker/cholesterol-tests-numerical-value/7dee4fa4
 user/richard-croker/alanine-aminotransferase-alt-tests-numerical-value/16fdc2da
+opensafely/ethnicity/2020-04-27
