@@ -12,6 +12,12 @@ actions:
       highly_sensitive:
         cohort: output/input_*.csv
 
+  generate_study_population_ethnicity:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_ethnicity --output-dir=output
+    outputs:
+      highly_sensitive:
+        cohort: output/input_ethnicity.csv
+        
   generate_study_population_practice_count:
     run: cohortextractor:latest generate_cohort --study-definition study_definition_practice_count --output-dir=output
     outputs:
