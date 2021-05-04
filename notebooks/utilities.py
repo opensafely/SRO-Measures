@@ -445,18 +445,16 @@ def redact_small_numbers(df, n, counts_columns):
     """
     
     for column in counts_columns:
-        series = df[column]
-        
-         
-        count = min(series)
+    
+        count = min(df[column])
         
         while count <n:
-            min_index = np.argmin(series)
+            min_index = np.argmin(df[column])
 
-            count+= series[min_index]
-            series.iloc[min_index] = np.nan
-            
-    return df  
+            count+= df.loc[min_index, column]
+            df.loc[min_index,column] = np.nan
+        
+    return df   
 
 
 
