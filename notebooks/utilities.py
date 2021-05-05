@@ -129,8 +129,8 @@ def calculate_statistics(df, measure_column, idr_dates):
         idr_dates: A list of dates of the form `YYYY-MM-DD`. (Not used.)
     """
     # load total number of practices from practice count json object
-    f = open("../output/practice_count.json")
-    num_practices = json.load(f)["num_practices"]
+    with open(OUTPUT_DIR / "practice_count.json") as f:
+        num_practices = json.load(f)["num_practices"]
 
     # calculate number of unique practices and caluclate as % of total
     practices_included = get_number_practices(df)
@@ -142,8 +142,8 @@ def calculate_statistics(df, measure_column, idr_dates):
     num_events_mil = float(f"{df[measure_column].sum()/1000000:.2f}")
 
     # load total number of patients from json object
-    f = open("../output/patient_count.json")
-    num_patients_dict = json.load(f)["num_patients"]
+    with open(OUTPUT_DIR / "patient_count.json") as f:
+        num_patients_dict = json.load(f)["num_patients"]
     num_patients = num_patients_dict[measure_column]
 
     return (
