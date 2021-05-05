@@ -124,7 +124,7 @@ def create_child_table(
         .reset_index()
     )
 
-    df["Events (thousands)"] = df["Events"].apply(lambda x: x / 1000)
+    df["Events (thousands)"] = df["Events"] / 1000
 
     # order by events
     df = df.sort_values(by="Events (thousands)", ascending=False)
