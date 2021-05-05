@@ -116,30 +116,18 @@ def create_child_table(
     Returns:
         A table of the top `nrows` codes.
     """
-    # pass in df from data_dict
-    # code df contains first digits and descriptions
+    df = (
+        df.groupby(f"{measure}_event_code")[f"{measure}"]
+        .sum()  # We can't use .count() because the measure column contains zeros.
+        .rename_axis(code_column)
+        .rename("Events")
+        .reset_index()
+    )
 
-    # get codes counts
-    # Keys are event codes; values are the numbers of events.
-    code_dict = get_child_codes(df, measure)
-
-    # make df of events for each subcode
-    # Convert `code_dict` into a one-column data frame.
-    # Keys are put into the index; values are put into the "Events" column.
-    df = pd.DataFrame.from_dict(code_dict, orient="index", columns=["Events"])
-    # Add a column called "code" (this is always the name of the code column).
-    # Put values from the index into it.
-    df[code_column] = df.index
-    # Reset the index. Its now a range index.
-    df.reset_index(drop=True, inplace=True)
-
-    # convert events to events/thousand
     df["Events (thousands)"] = df["Events"].apply(lambda x: x / 1000)
 
     # order by events
     df = df.sort_values(by="Events (thousands)", ascending=False)
-    # Reorder the columns.
-    df = df.iloc[:, [1, 0, 2]]
 
     # get description for each code
 
