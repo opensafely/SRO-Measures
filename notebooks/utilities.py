@@ -122,6 +122,12 @@ def get_number_practices(df):
 
 
 def calculate_statistics(df, measure_column, idr_dates):
+    """
+    Args:
+        df: A measure table.
+        measure_column: The measure ID.
+        idr_dates: A list of dates of the form `YYYY-MM-DD`. (Not used.)
+    """
     # load total number of practices from practice count json object
     f = open("../output/practice_count.json")
     num_practices = json.load(f)["num_practices"]
