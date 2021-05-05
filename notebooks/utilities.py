@@ -104,27 +104,51 @@ def get_child_codes(df, measure):
 def create_child_table(
     df, code_df, code_column, term_column, measure, nrows=5
 ):
+    """
+    Args:
+        df: A measure table.
+        code_df: A codelist table.
+        code_column: The name of the code column in the codelist table.
+        term_column: The name of the term column in the codelist table.
+        measure: The measure ID.
+        nrows: The number of rows to display.
+
+    Returns:
+        A table of the top `nrows` codes.
+    """
     # pass in df from data_dict
     # code df contains first digits and descriptions
 
     # get codes counts
+    # Keys are event codes; values are the numbers of events.
     code_dict = get_child_codes(df, measure)
 
     # make df of events for each subcode
+    # Convert `code_dict` into a one-column data frame.
+    # Keys are put into the index; values are put into the "Events" column.
     df = pd.DataFrame.from_dict(code_dict, orient="index", columns=["Events"])
+    # Add a column called "code" (this is always the name of the code column).
+    # Put values from the index into it.
     df[code_column] = df.index
+    # Reset the index. Its now a range index.
     df.reset_index(drop=True, inplace=True)
 
     # convert events to events/thousand
     df["Events (thousands)"] = df["Events"].apply(lambda x: x / 1000)
+    # This doesn't work. We either need to perform the operation in-place
+    # (`inplace=True`) or we need to write the return value back to `df`.
     df.drop(columns=["Events"])
 
     # order by events
     df = df.sort_values(by="Events (thousands)", ascending=False)
+    # Reorder the columns. We expect three columns, meaning that we probably
+    # didn't want to drop one above after all.
     df = df.iloc[:, [1, 0, 2]]
 
     # get description for each code
 
+    # Gets the human-friendly description of the code for the given row
+    # e.g. "Systolic blood pressure".
     def get_description(row):
         code = row[code_column]
 
@@ -136,6 +160,7 @@ def create_child_table(
 
     df["Description"] = df.apply(lambda row: get_description(row), axis=1)
 
+    # Cast the code to an integer.
     df[code_column] = df[code_column].astype(int)
 
     # return top n rows
