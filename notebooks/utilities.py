@@ -121,24 +121,6 @@ def get_number_practices(df):
     return num_practices
 
 
-def get_idr(df, dates):
-    idr_dict = {}
-    for date in dates:
-        # subset by date
-        df_subset = df[df["date"] == date]
-
-        # order by value
-        df_subset = df_subset.sort_values("date")
-
-        # calculate idr
-        ten = df_subset["num_per_thousand"].quantile(0.1)
-        ninety = df_subset["num_per_thousand"].quantile(0.9)
-        idr = ninety - ten
-
-        idr_dict[date] = idr
-    return idr_dict
-
-
 def calculate_change_median(median_list):
     change_list = []
     for i in range(len(median_list)):
@@ -422,9 +404,6 @@ def generate_sentinel_measure(
     df = data_dict_practice[measure]
     convert_datetime(df)
     calculate_rate(df, measure, "population")
-
-    # idr_list = [get_idr(df, dates_list)[x]
-    #             for x in dates_list]
 
     # change_list = calculate_change_median(median_list)
 
