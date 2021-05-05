@@ -121,15 +121,6 @@ def get_number_practices(df):
     return num_practices
 
 
-def calculate_change_median(median_list):
-    change_list = []
-    for i in range(len(median_list)):
-        if i > 0:
-            percent = ((median_list[i] / median_list[0]) - 1) * 100
-            change_list.append(percent)
-    return change_list
-
-
 def calculate_statistics(df, measure_column, idr_dates):
     # load total number of practices from practice count json object
     f = open("../output/practice_count.json")
@@ -404,8 +395,6 @@ def generate_sentinel_measure(
     df = data_dict_practice[measure]
     convert_datetime(df)
     calculate_rate(df, measure, "population")
-
-    # change_list = calculate_change_median(median_list)
 
     print(
         f"Practices included: {practices_included} ({practices_included_percent}%)"
