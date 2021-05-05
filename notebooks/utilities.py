@@ -58,6 +58,12 @@ def drop_irrelevant_practices(df):
 
     return df
 
+def convert_ethnicity(df):
+    ethnicity_codes = {1.0: "White", 2.0: "Mixed", 3.0: "Asian", 4.0: "Black", 5.0:"Other", np.nan: "unknown", 0: "unknown"}
+
+    df = df.replace({"ethnicity": ethnicity_codes})
+    return df
+
 
 # def get_child_codes(df, event_code_column):
 #     codes = df[event_code_column]
@@ -458,9 +464,18 @@ def redact_small_numbers(df, n, counts_columns):
 
 
 
-def calculate_rate(df, m, rate_per=1000, standardise=True, age_group_column="age_band", return_age=False):
-    num_per_thousand = df[m.numerator]/(df[m.denominator]/rate_per)
-    df['rate'] = num_per_thousand
+def calculate_rate(df, numerator, denominator, rate_per=1000, standardise=False, age_group_column=False):
+    """
+    df: measures df
+    numerator: numerator column in df
+    denominator: denominator column in df
+    groupby: list containing columns to group by when calculating rate
+    rate_per: defines level of rate measure
+    standardise: Boolean, whether to apply age standardisation
+    age_group_column: if applying age standardisation, defines column that is age
+    """
+    rate = df[numerator]/(df[denominator]/rate_per)
+    df['rate'] = rate
     
     def standardise_row(row):
     
@@ -470,13 +485,12 @@ def calculate_rate(df, m, rate_per=1000, standardise=True, age_group_column="age
         
         standardised_rate = rate * standard_pop.loc[str(age_group)]
         return standardised_rate
-        
+    
+   
     if standardise:
         path = "european_standard_population.csv"
-        
-            
         standard_pop = pd.read_csv(path)
-
+        
         age_band_grouping_dict = {
             '0-4 years': '0-19',
             '5-9 years': '0-19',
@@ -499,7 +513,7 @@ def calculate_rate(df, m, rate_per=1000, standardise=True, age_group_column="age
             '90plus years': '80+',
         }
 
-        standard_pop.set_index('AgeGroup', inplace=True)
+        standard_pop = standard_pop.set_index('AgeGroup')
         standard_pop = standard_pop.groupby(age_band_grouping_dict, axis=0).sum()
         standard_pop = standard_pop.reset_index().rename(columns={'index': 'AgeGroup'})
 
@@ -511,40 +525,6 @@ def calculate_rate(df, m, rate_per=1000, standardise=True, age_group_column="age
         #apply standardisation
         df['rate_standardised'] = df.apply(standardise_row, axis=1)
         
-        
-        if return_age:
-            df_count = df.groupby(by=["date"]+ m.group_by)[[m.numerator, m.denominator]].sum().reset_index()
-        
-        
-            df_rate = df.groupby(by=["date"]+m.group_by)[['rate', 'rate_standardised']].mean().reset_index()
-            
-            
-            df = df_count.merge(df_rate, on=["date"] + m.group_by, how="inner")
-        else:
-    
-            df_count = df.groupby(by=["date"]+ (lambda x: x[1:] if len(x)>1 else [])(m.group_by))[[m.numerator, m.denominator]].sum().reset_index()
-        
-        
-            df_rate = df.groupby(by=["date"]+(lambda x: x[1:] if len(x)>1 else [])(m.group_by))[['rate', 'rate_standardised']].mean().reset_index()
-            
-            
-            df = df_count.merge(df_rate, on=["date"] + (lambda x: x[1:] if len(x)>1 else [])(m.group_by), how="inner")
-           
-
-    
-    else:
-        if return_age:
-            df_count = df.groupby(by=["date"] + m.group_by)[[m.numerator, m.denominator]].sum().reset_index()
-            
-            df_rate = df.groupby(by=["date"]+m.group_by)[['rate']].mean().reset_index()
-            
-            df = df_count.merge(df_rate, on=["date"] + m.group_by, how="inner")
-        else:
-            df_count = df.groupby(by=["date"] + (lambda x: x[1:] if len(x)>1 else [])(m.group_by))[[m.numerator, m.denominator]].sum().reset_index()
-            
-            df_rate = df.groupby(by=["date"]+(lambda x: x[1:] if len(x)>1 else [])(m.group_by))[['rate']].mean().reset_index()
-            
-            df = df_count.merge(df_rate, on=["date"] + (lambda x: x[1:] if len(x)>1 else [])(m.group_by), how="inner")
     return df
         
 
@@ -617,9 +597,9 @@ def plot_measures(df, title, column_to_plot, category=False, y_label='Rate per 1
 
                 df_subset = df[df[category] == unique_category]
 
-                plt.plot(df_subset['date'], df_subset[column_to_plot], marker='o')
+                plt.plot(df_subset['date'], df_subset[column_to_plot])
         else:
-            plt.plot(df['date'], df[column_to_plot], marker='o')
+            plt.plot(df['date'], df[column_to_plot])
 
         plt.ylabel(y_label)
         plt.xlabel('Date')
