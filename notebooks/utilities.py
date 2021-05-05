@@ -116,7 +116,7 @@ def create_child_table(
     Returns:
         A table of the top `nrows` codes.
     """
-    df = (
+    event_counts = (
         df.groupby(f"{measure}_event_code")[f"{measure}"]
         .sum()  # We can't use .count() because the measure column contains zeros.
         .rename_axis(code_column)
@@ -124,23 +124,27 @@ def create_child_table(
         .reset_index()
     )
 
-    df["Events (thousands)"] = df["Events"] / 1000
+    event_counts["Events (thousands)"] = event_counts["Events"] / 1000
 
     # order by events
-    df = df.sort_values(by="Events (thousands)", ascending=False)
+    event_counts = event_counts.sort_values(
+        by="Events (thousands)", ascending=False
+    )
 
     # Gets the human-friendly description of the code for the given row
     # e.g. "Systolic blood pressure".
     code_df = code_df.set_index(code_column).rename(
         columns={term_column: "Description"}
     )
-    df = df.set_index(code_column).join(code_df).reset_index()
+    event_counts = (
+        event_counts.set_index(code_column).join(code_df).reset_index()
+    )
 
     # Cast the code to an integer.
-    df[code_column] = df[code_column].astype(int)
+    event_counts[code_column] = event_counts[code_column].astype(int)
 
     # return top n rows
-    return df.iloc[:nrows, :]
+    return event_counts.iloc[:nrows, :]
 
 
 def get_number_practices(df):
