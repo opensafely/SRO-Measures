@@ -3,6 +3,7 @@ from unittest.mock import patch
 
 import pandas
 import pytest
+from pandas import testing
 from pandas.api.types import is_datetime64_dtype
 
 from notebooks import utilities
@@ -32,6 +33,23 @@ def measure_table_from_csv():
             MeasureTableRow(2, 1.0, 1.0, 1.0, 1.0, "2019-01-01"),
             MeasureTableRow(1, 1.0, 0.0, 1.0, 0.0, "2019-02-01"),
             MeasureTableRow(2, 1.0, 1.0, 1.0, 1.0, "2019-02-01"),
+        ]
+    )
+
+
+class CodelistTableRow(NamedTuple):
+    """Represents a row in a codelist table."""
+
+    code: int
+    term: str
+
+
+@pytest.fixture
+def codelist_table_from_csv():
+    """Returns a codelist table the could have been read from a CSV file."""
+    return pandas.DataFrame(
+        [
+            CodelistTableRow(1.0, "Code 1"),
         ]
     )
 
@@ -79,3 +97,24 @@ def test_get_child_codes(measure_table_from_csv):
     # Dicts keep insertion order from Python 3.7.
     assert list(obs.keys()) == [1]
     assert list(obs.values()) == [2]
+
+
+def test_create_child_table(measure_table_from_csv, codelist_table_from_csv):
+    obs = utilities.create_child_table(
+        measure_table_from_csv,
+        codelist_table_from_csv,
+        "code",
+        "term",
+        "systolic_bp",
+    )
+    exp = pandas.DataFrame(
+        [
+            {
+                "code": 1,
+                "Events": 2.0,
+                "Events (thousands)": 0.002,
+                "Description": "Code 1",
+            }
+        ],
+    )
+    testing.assert_frame_equal(obs, exp)
