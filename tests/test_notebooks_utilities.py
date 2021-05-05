@@ -31,6 +31,7 @@ def measure_table_from_csv():
         [
             MeasureTableRow(1, 1.0, 0.0, 1.0, 0.0, "2019-01-01"),
             MeasureTableRow(2, 1.0, 1.0, 1.0, 1.0, "2019-01-01"),
+            MeasureTableRow(3, 2.0, 1.0, 1.0, 1.0, "2019-01-01"),
             MeasureTableRow(1, 1.0, 0.0, 1.0, 0.0, "2019-02-01"),
             MeasureTableRow(2, 1.0, 1.0, 1.0, 1.0, "2019-02-01"),
         ]
@@ -50,6 +51,7 @@ def codelist_table_from_csv():
     return pandas.DataFrame(
         [
             CodelistTableRow(1.0, "Code 1"),
+            CodelistTableRow(2.0, "Code 2"),
         ]
     )
 
@@ -67,7 +69,7 @@ class TestLoadAndDrop:
 
             obs = utilities.load_and_drop(measure)
             assert is_datetime64_dtype(obs.date)
-            assert all(obs.practice.values == [2, 2])
+            assert all(obs.practice.values == [2, 3, 2])
 
     def test_practice_is_true(self, tmp_path, measure_table_from_csv):
         with patch.object(utilities, "OUTPUT_DIR", tmp_path):
@@ -77,7 +79,7 @@ class TestLoadAndDrop:
 
             obs = utilities.load_and_drop(measure, practice=True)
             assert is_datetime64_dtype(obs.date)
-            assert all(obs.practice.values == [2, 2])
+            assert all(obs.practice.values == [2, 3, 2])
 
 
 class TestDropIrrelevantPractices:
@@ -85,7 +87,7 @@ class TestDropIrrelevantPractices:
         obs = utilities.drop_irrelevant_practices(measure_table_from_csv)
         # Practice ID #1, which is irrelevant, has been dropped from
         # the measure table.
-        assert all(obs.practice.values == [2, 2])
+        assert all(obs.practice.values == [2, 3, 2])
 
     def test_return_copy(self, measure_table_from_csv):
         obs = utilities.drop_irrelevant_practices(measure_table_from_csv)
@@ -95,8 +97,8 @@ class TestDropIrrelevantPractices:
 def test_get_child_codes(measure_table_from_csv):
     obs = utilities.get_child_codes(measure_table_from_csv, "systolic_bp")
     # Dicts keep insertion order from Python 3.7.
-    assert list(obs.keys()) == [1]
-    assert list(obs.values()) == [2]
+    assert list(obs.keys()) == [1, 2]
+    assert list(obs.values()) == [2, 1]
 
 
 def test_create_child_table(measure_table_from_csv, codelist_table_from_csv):
@@ -114,7 +116,13 @@ def test_create_child_table(measure_table_from_csv, codelist_table_from_csv):
                 "Events": 2.0,
                 "Events (thousands)": 0.002,
                 "Description": "Code 1",
-            }
+            },
+            {
+                "code": 2,
+                "Events": 1.0,
+                "Events (thousands)": 0.001,
+                "Description": "Code 2",
+            },
         ],
     )
     testing.assert_frame_equal(obs, exp)
