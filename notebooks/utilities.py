@@ -129,20 +129,12 @@ def create_child_table(
     # order by events
     df = df.sort_values(by="Events (thousands)", ascending=False)
 
-    # get description for each code
-
     # Gets the human-friendly description of the code for the given row
     # e.g. "Systolic blood pressure".
-    def get_description(row):
-        code = row[code_column]
-
-        description = code_df[code_df[code_column] == code][
-            term_column
-        ].values[0]
-
-        return description
-
-    df["Description"] = df.apply(lambda row: get_description(row), axis=1)
+    code_df = code_df.set_index(code_column).rename(
+        columns={term_column: "Description"}
+    )
+    df = df.set_index(code_column).join(code_df).reset_index()
 
     # Cast the code to an integer.
     df[code_column] = df[code_column].astype(int)
