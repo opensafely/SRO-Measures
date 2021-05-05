@@ -122,14 +122,10 @@ def create_child_table(
         .rename_axis(code_column)
         .rename("Events")
         .reset_index()
+        .sort_values("Events", ascending=False)
     )
 
     event_counts["Events (thousands)"] = event_counts["Events"] / 1000
-
-    # order by events
-    event_counts = event_counts.sort_values(
-        by="Events (thousands)", ascending=False
-    )
 
     # Gets the human-friendly description of the code for the given row
     # e.g. "Systolic blood pressure".
