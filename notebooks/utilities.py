@@ -74,33 +74,6 @@ def drop_irrelevant_practices(df):
     return df[df.practice.isin(is_relevant[is_relevant == True].index)]
 
 
-# def get_child_codes(df, event_code_column):
-#     codes = df[event_code_column]
-#     code_dict = Counter(codes)
-
-#     del code_dict[nan]
-#     return dict(code_dict)
-
-
-def get_child_codes(df, measure):
-    """Gets the numbers of events by event codes.
-
-    Args:
-        df: A measure table.
-        measure: A measure ID.
-
-    Returns:
-        A `dict`. Keys are event codes; values are the numbers of events.
-    """
-    event_code_column = f"{measure}_event_code"
-    event_column = f"{measure}"
-
-    counts = df.groupby(event_code_column)[event_column].sum()
-    code_dict = dict(counts)
-
-    return code_dict
-
-
 def create_child_table(
     df, code_df, code_column, term_column, measure, nrows=5
 ):
