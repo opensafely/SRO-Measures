@@ -135,14 +135,10 @@ def create_child_table(
 
     # convert events to events/thousand
     df["Events (thousands)"] = df["Events"].apply(lambda x: x / 1000)
-    # This doesn't work. We either need to perform the operation in-place
-    # (`inplace=True`) or we need to write the return value back to `df`.
-    df.drop(columns=["Events"])
 
     # order by events
     df = df.sort_values(by="Events (thousands)", ascending=False)
-    # Reorder the columns. We expect three columns, meaning that we probably
-    # didn't want to drop one above after all.
+    # Reorder the columns.
     df = df.iloc[:, [1, 0, 2]]
 
     # get description for each code
