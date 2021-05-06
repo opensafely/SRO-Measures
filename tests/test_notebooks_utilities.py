@@ -119,3 +119,7 @@ def test_create_child_table(measure_table_from_csv, codelist_table_from_csv):
         ],
     )
     testing.assert_frame_equal(obs, exp)
+
+
+def test_get_number_practices(measure_table_from_csv):
+    assert utilities.get_number_practices(measure_table_from_csv) == 3
