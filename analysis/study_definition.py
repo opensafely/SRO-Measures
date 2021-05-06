@@ -441,7 +441,7 @@ for sentinel_measure in sentinel_measures:
             id=f'{sentinel_measure}_{d}',
             numerator=sentinel_measure,
             denominator="population",
-            group_by=["age_band"]
+            group_by=["age_band", "practice"]
             )
                 
             
@@ -453,7 +453,7 @@ for sentinel_measure in sentinel_measures:
                 id=f'{sentinel_measure}_{d}',
                 numerator=sentinel_measure,
                 denominator="population",
-                group_by=["age_band", d]
+                group_by=["age_band", d, "practice"]
             )
         
         measures.append(m)
