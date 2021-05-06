@@ -18,14 +18,14 @@ for file in os.listdir('output'):
             
 ethnicity_df = pd.concat(ethnicity_data)
 
-population = ethnicity_df.groupby(by=['age_band', 'ethnicity', 'date']).size().reset_index(name='population')
+population = ethnicity_df.groupby(by=['age_band', 'ethnicity', 'date', 'practice']).size().reset_index(name='population')
 
 sentinel_measures = ["qrisk2", "asthma", "copd", "sodium", "cholesterol", "alt", "tsh", "alt", "rbc", 'hba1c', 'systolic_bp']
 
 for measure in sentinel_measures:
 
-    event = ethnicity_df.groupby(by=['age_band', 'ethnicity', 'date'])[[measure, 'date']].sum().reset_index()
+    event = ethnicity_df.groupby(by=['age_band', 'ethnicity', 'date', 'practice'])[[measure, 'date']].sum().reset_index()
 
-    measures_df = population.merge(event, on=['age_band', 'ethnicity', 'date'])
+    measures_df = population.merge(event, on=['age_band', 'ethnicity', 'date', 'practice'])
 
     measures_df.to_csv(f'output/measure_{measure}_ethnicity.csv')
