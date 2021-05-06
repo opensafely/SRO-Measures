@@ -126,6 +126,15 @@ def test_get_number_practices(measure_table_from_csv):
     assert utilities.get_number_practices(measure_table_from_csv) == 3
 
 
+def test_get_percentage_practices(tmp_path, measure_table_from_csv):
+    with patch.object(utilities, "OUTPUT_DIR", tmp_path):
+        with open(utilities.OUTPUT_DIR / "practice_count.json", "w") as f:
+            json.dump({"num_practices": 3}, f)
+
+        obs = utilities.get_percentage_practices(measure_table_from_csv)
+        assert obs == 100
+
+
 def test_calculate_statistics(tmp_path, measure_table_from_csv):
     measure = "systolic_bp"
 
