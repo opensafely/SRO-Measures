@@ -1,3 +1,4 @@
+import json
 from typing import NamedTuple
 from unittest.mock import patch
 
@@ -123,3 +124,21 @@ def test_create_child_table(measure_table_from_csv, codelist_table_from_csv):
 
 def test_get_number_practices(measure_table_from_csv):
     assert utilities.get_number_practices(measure_table_from_csv) == 3
+
+
+def test_calculate_statistics(tmp_path, measure_table_from_csv):
+    measure = "systolic_bp"
+
+    with patch.object(utilities, "OUTPUT_DIR", tmp_path):
+        with open(utilities.OUTPUT_DIR / "practice_count.json", "w") as f:
+            json.dump({"num_practices": 3}, f)
+
+        with open(utilities.OUTPUT_DIR / "patient_count.json", "w") as f:
+            json.dump({"num_patients": {measure: 3}}, f)
+
+        obs = utilities.calculate_statistics(
+            measure_table_from_csv,
+            measure,
+            None,
+        )
+        assert obs == (3, 100, 0.0, 3)
