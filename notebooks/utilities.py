@@ -139,6 +139,16 @@ def get_percentage_practices(measure_table):
     return (num_practices_in_study / num_practices) * 100
 
 
+def get_number_events_mil(measure_table, measure_id):
+    """Gets the number of events per million, rounded to 2DP.
+
+    Args:
+        measure_table: A measure table.
+        measure_id: The measure ID.
+    """
+    return np.round(measure_table[measure_id].sum() / 1_000_000, 2)
+
+
 def calculate_statistics(df, measure_column, idr_dates):
     """
     Args:
@@ -148,9 +158,7 @@ def calculate_statistics(df, measure_column, idr_dates):
     """
     practices_included = get_number_practices(df)
     practices_included_percent = get_percentage_practices(df)
-
-    # calculate number of events per mil
-    num_events_mil = float(f"{df[measure_column].sum()/1000000:.2f}")
+    num_events_mil = get_number_events_mil(df, measure_column)
 
     # load total number of patients from json object
     with open(OUTPUT_DIR / "patient_count.json") as f:

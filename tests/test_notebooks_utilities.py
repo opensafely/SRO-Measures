@@ -135,6 +135,14 @@ def test_get_percentage_practices(tmp_path, measure_table_from_csv):
         assert obs == 100
 
 
+def test_get_number_events_mil(measure_table_from_csv):
+    obs = utilities.get_number_events_mil(
+        measure_table_from_csv,
+        "systolic_bp",
+    )
+    assert obs == 0.0
+
+
 def test_calculate_statistics(tmp_path, measure_table_from_csv):
     measure = "systolic_bp"
 
