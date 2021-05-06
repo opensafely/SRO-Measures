@@ -117,6 +117,11 @@ def create_child_table(
 
 
 def get_number_practices(df):
+    """Gets the number of practices in the given measure table.
+
+    Args:
+        df: A measure table.
+    """
     num_practices = len(np.unique(df["practice"]))
     return num_practices
 
