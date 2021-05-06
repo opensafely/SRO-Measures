@@ -160,25 +160,6 @@ def get_number_patients(measure_id):
     return d["num_patients"][measure_id]
 
 
-def calculate_statistics(df, measure_column, idr_dates):
-    """
-    Args:
-        df: A measure table.
-        measure_column: The measure ID.
-        idr_dates: A list of dates of the form `YYYY-MM-DD`. (Not used.)
-    """
-    practices_included = get_number_practices(df)
-    practices_included_percent = get_percentage_practices(df)
-    num_events_mil = get_number_events_mil(df, measure_column)
-    num_patients = get_number_patients(measure_column)
-    return (
-        practices_included,
-        practices_included_percent,
-        num_events_mil,
-        num_patients,
-    )
-
-
 # https://github.com/ebmdatalab/datalab-pandas/blob/master/ebmdatalab/charts.py
 def deciles_chart_ebm(
     df,
@@ -416,12 +397,10 @@ def generate_sentinel_measure(
         df, codelist_dict[measure], code_column, term_column, measure
     )
 
-    (
-        practices_included,
-        practices_included_percent,
-        num_events_mil,
-        num_patients,
-    ) = calculate_statistics(df, measure, dates_list)
+    practices_included = get_number_practices(df)
+    practices_included_percent = get_percentage_practices(df)
+    num_events_mil = get_number_events_mil(df, measure)
+    num_patients = get_number_patients(measure)
 
     df = data_dict_practice[measure]
     convert_datetime(df)
