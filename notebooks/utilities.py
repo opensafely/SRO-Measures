@@ -122,8 +122,7 @@ def get_number_practices(df):
     Args:
         df: A measure table.
     """
-    num_practices = len(np.unique(df["practice"]))
-    return num_practices
+    return len(df.practice.unique())
 
 
 def calculate_statistics(df, measure_column, idr_dates):
