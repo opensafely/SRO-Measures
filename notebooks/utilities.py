@@ -125,6 +125,20 @@ def get_number_practices(df):
     return len(df.practice.unique())
 
 
+def get_percentage_practices(measure_table):
+    """Gets the percentage of practices in the given measure table.
+
+    Args:
+        measure_table: A measure table.
+    """
+    with open(OUTPUT_DIR / "practice_count.json") as f:
+        num_practices = json.load(f)["num_practices"]
+
+    num_practices_in_study = get_number_practices(measure_table)
+
+    return (num_practices_in_study / num_practices) * 100
+
+
 def calculate_statistics(df, measure_column, idr_dates):
     """
     Args:
@@ -132,15 +146,8 @@ def calculate_statistics(df, measure_column, idr_dates):
         measure_column: The measure ID.
         idr_dates: A list of dates of the form `YYYY-MM-DD`. (Not used.)
     """
-    # load total number of practices from practice count json object
-    with open(OUTPUT_DIR / "practice_count.json") as f:
-        num_practices = json.load(f)["num_practices"]
-
-    # calculate number of unique practices and caluclate as % of total
     practices_included = get_number_practices(df)
-    practices_included_percent = float(
-        f"{((practices_included/num_practices)*100):.2f}"
-    )
+    practices_included_percent = get_percentage_practices(df)
 
     # calculate number of events per mil
     num_events_mil = float(f"{df[measure_column].sum()/1000000:.2f}")
