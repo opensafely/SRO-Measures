@@ -461,7 +461,7 @@ def redact_small_numbers(df, n, counts_columns):
 
 
 
-def calculate_rate(df, numerator, denominator, rate_per=1000, standardise=False, age_group_column=False):
+def calculate_rate_standardise(df, numerator, denominator, rate_per=1000, standardise=False, age_group_column=False):
     """
     df: measures df
     numerator: numerator column in df
