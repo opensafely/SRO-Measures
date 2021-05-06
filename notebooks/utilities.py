@@ -149,6 +149,17 @@ def get_number_events_mil(measure_table, measure_id):
     return np.round(measure_table[measure_id].sum() / 1_000_000, 2)
 
 
+def get_number_patients(measure_id):
+    """Gets the number of patients.
+
+    Args:
+        measure_id: The measure ID.
+    """
+    with open(OUTPUT_DIR / "patient_count.json") as f:
+        d = json.load(f)
+    return d["num_patients"][measure_id]
+
+
 def calculate_statistics(df, measure_column, idr_dates):
     """
     Args:
@@ -159,12 +170,7 @@ def calculate_statistics(df, measure_column, idr_dates):
     practices_included = get_number_practices(df)
     practices_included_percent = get_percentage_practices(df)
     num_events_mil = get_number_events_mil(df, measure_column)
-
-    # load total number of patients from json object
-    with open(OUTPUT_DIR / "patient_count.json") as f:
-        num_patients_dict = json.load(f)["num_patients"]
-    num_patients = num_patients_dict[measure_column]
-
+    num_patients = get_number_patients(measure_column)
     return (
         practices_included,
         practices_included_percent,

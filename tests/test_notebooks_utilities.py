@@ -143,6 +143,17 @@ def test_get_number_events_mil(measure_table_from_csv):
     assert obs == 0.0
 
 
+def test_get_number_patients(tmp_path):
+    measure = "systolic_bp"
+
+    with patch.object(utilities, "OUTPUT_DIR", tmp_path):
+        with open(utilities.OUTPUT_DIR / "patient_count.json", "w") as f:
+            json.dump({"num_patients": {measure: 3}}, f)
+
+        obs = utilities.get_number_patients(measure)
+        assert obs == 3
+
+
 def test_calculate_statistics(tmp_path, measure_table_from_csv):
     measure = "systolic_bp"
 
