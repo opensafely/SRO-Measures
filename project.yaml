@@ -70,7 +70,13 @@ actions:
       moderately_sensitive:
         notebook: output/sentinel_measures.html
      
-  
+  generate_notebook_demographics:
+    run: jupyter:latest jupyter nbconvert /workspace/notebooks/sentinel_measures_demographics.ipynb --execute --to html --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
+    needs: [generate_measures, get_practice_count, get_patient_count, generate_measure_ethnicity, join_ethnicity]
+    outputs:
+      moderately_sensitive:
+        notebook: output/sentinel_measures_demographics.html
+     
   # generate_notebook_practice:
   #   run: jupyter:latest jupyter nbconvert /workspace/notebooks/sentinel_measures_by_practice.ipynb --execute --to html --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
   #   needs: [generate_measures, get_practice_count, get_patient_count]
@@ -79,9 +85,9 @@ actions:
   #       notebook: output/sentinel_measures_by_practice.html
   #       csvs: output/*_check.csv
 
-  get_event_summary:
-    run: python:latest python analysis/get_event_summary.py
-    needs: [generate_study_population]
-    outputs:
-      moderately_sensitive:
-        text: output/*_event_summary.csv
+#   get_event_summary:
+#     run: python:latest python analysis/get_event_summary.py
+#     needs: [generate_study_population]
+#     outputs:
+#       moderately_sensitive:
+#         text: output/*_event_summary.csv
