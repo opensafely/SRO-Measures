@@ -16,15 +16,15 @@ qrisk_codelist = codelist_from_csv("codelists/opensafely-cvd-risk-assessment-sco
                                  system="snomed",
                                  column="code",)
 
-tsh_codelist = codelist_from_csv("codelists/opensafely-thyroid-stimulating-hormone-tsh-tests-numerical-value.csv",
+tsh_codelist = codelist_from_csv("codelists/opensafely-thyroid-stimulating-hormone-tsh-testing.csv",
                                  system="snomed",
                                  column="code",)
 
-alt_codelist = codelist_from_csv("codelists/opensafely-alanine-aminotransferase-alt-tests-numerical-value.csv",
+alt_codelist = codelist_from_csv("codelists/opensafely-alanine-aminotransferase-alt-tests.csv",
                                  system="snomed",
                                  column="code",)
 
-cholesterol_codelist = codelist_from_csv("codelists/opensafely-cholesterol-tests-numerical-value.csv",
+cholesterol_codelist = codelist_from_csv("codelists/opensafely-cholesterol-tests.csv",
                                  system="snomed",
                                  column="code",)
 
@@ -32,7 +32,7 @@ hba1c_codelist = codelist_from_csv("codelists/opensafely-glycated-haemoglobin-hb
                                  system="snomed",
                                  column="code",)
 
-rbc_codelist = codelist_from_csv("codelists/opensafely-red-blood-cell-rbc-tests-numerical-value.csv",
+rbc_codelist = codelist_from_csv("codelists/opensafely-red-blood-cell-rbc-tests.csv",
                                  system="snomed",
                                  column="code",)
 
