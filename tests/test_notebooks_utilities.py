@@ -152,3 +152,47 @@ def test_get_number_patients(tmp_path):
 
         obs = utilities.get_number_patients(measure)
         assert obs == 3
+
+
+class TestGenerateSentinelMeasure:
+    def test_print_to_stdout(
+        self,
+        capsys,  # pytest fixture that captures output stdout and stderr
+        measure_table_from_csv,
+        codelist_table_from_csv,
+    ):
+        measure = "systolic_bp"
+        data_dict = {measure: measure_table_from_csv}
+        data_dict_practice = {measure: measure_table_from_csv}
+        codelist_dict = {measure: codelist_table_from_csv}
+        code_column = "code"
+        term_column = "term"
+        dates_list = None
+        interactive = False
+
+        # It's easier to patch each function that returns a value
+        # that's printed to stdout than it is to patch each file
+        # upon which each function depends.
+        with patch(
+            "notebooks.utilities.get_number_practices", return_value=1
+        ), patch(
+            "notebooks.utilities.get_percentage_practices", return_value=100
+        ), patch(
+            "notebooks.utilities.get_number_events_mil", return_value=0.0
+        ), patch(
+            "notebooks.utilities.get_number_patients", return_value=1
+        ):
+            utilities.generate_sentinel_measure(
+                data_dict,
+                data_dict_practice,
+                codelist_dict,
+                measure,
+                code_column,
+                term_column,
+                dates_list,
+                interactive,
+            )
+            captured = capsys.readouterr()
+            assert captured.out.startswith(
+                "Practices included: 1 (100%)\nTotal patients: 1.00M (0.00M events)\n"
+            )
