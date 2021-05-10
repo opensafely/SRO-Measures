@@ -3,4 +3,6 @@ jupyterlab-spellchecker
 matplotlib
 opensafely
 pandas
+plotly
 pyarrow
+seaborn
