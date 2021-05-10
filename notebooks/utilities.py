@@ -420,10 +420,6 @@ def generate_sentinel_measure(
     print(
         f"Total patients: {num_patients:.2f}M ({num_events_mil:.2f}M events)"
     )
-    # print(
-    #     f'Feb Median: {median_list[0]:.1f} (IDR: {idr_list[0]:.1f}), April Median: {median_list[1]:.1f} (IDR: {idr_list[1]:.1f}), Dec Median: {median_list[2]:.1f} (IDR: {idr_list[2]:.1f})')
-    # print(
-    #     f'Change in median from Feb 2020: April: {change_list[0]:.2f}%; December: {change_list[1]:.2f}%')
 
     df = data_dict_practice[measure]
     convert_datetime(df)
