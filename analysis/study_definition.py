@@ -15,7 +15,7 @@ from datetime import date
 
 
 start_date = "2019-01-01"
-end_date = date.today().isoformat()
+end_date = "2021-04-30"
 # Specifiy study definition
 
 
