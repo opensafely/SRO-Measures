@@ -4,42 +4,42 @@ from cohortextractor import (
 )
 
 
-asthma_codelist = codelist_from_csv("codelists/user-richard-croker-asthma-annual-review-qof.csv",
+asthma_codelist = codelist_from_csv("codelists/opensafely-asthma-annual-review-qof.csv",
                                  system="snomed",
                                  column="code",)
 
-copd_codelist = codelist_from_csv("codelists/user-richard-croker-chronic-obstructive-pulmonary-disease-copd-review-qof.csv",
+copd_codelist = codelist_from_csv("codelists/opensafely-chronic-obstructive-pulmonary-disease-copd-review-qof.csv",
                                  system="snomed",
                                  column="code",)
 
-qrisk_codelist = codelist_from_csv("codelists/user-richard-croker-cvd-risk-assessment-score-qof.csv",
+qrisk_codelist = codelist_from_csv("codelists/opensafely-cvd-risk-assessment-score-qof.csv",
                                  system="snomed",
                                  column="code",)
 
-tsh_codelist = codelist_from_csv("codelists/user-richard-croker-thyroid-stimulating-hormone-tsh-tests-numerical-value.csv",
+tsh_codelist = codelist_from_csv("codelists/opensafely-thyroid-stimulating-hormone-tsh-testing.csv",
                                  system="snomed",
                                  column="code",)
 
-alt_codelist = codelist_from_csv("codelists/user-richard-croker-alanine-aminotransferase-alt-tests-numerical-value.csv",
+alt_codelist = codelist_from_csv("codelists/opensafely-alanine-aminotransferase-alt-tests.csv",
                                  system="snomed",
                                  column="code",)
 
-cholesterol_codelist = codelist_from_csv("codelists/user-richard-croker-cholesterol-tests-numerical-value.csv",
+cholesterol_codelist = codelist_from_csv("codelists/opensafely-cholesterol-tests.csv",
                                  system="snomed",
                                  column="code",)
 
-hba1c_codelist = codelist_from_csv("codelists/user-richard-croker-glycated-haemoglobin-hba1c-tests.csv",
+hba1c_codelist = codelist_from_csv("codelists/opensafely-glycated-haemoglobin-hba1c-tests.csv",
                                  system="snomed",
                                  column="code",)
 
-rbc_codelist = codelist_from_csv("codelists/user-richard-croker-red-blood-cell-rbc-tests-numerical-value.csv",
+rbc_codelist = codelist_from_csv("codelists/opensafely-red-blood-cell-rbc-tests.csv",
                                  system="snomed",
                                  column="code",)
 
-sodium_codelist = codelist_from_csv("codelists/user-richard-croker-sodium-tests-numerical-value.csv",
+sodium_codelist = codelist_from_csv("codelists/opensafely-sodium-tests-numerical-value.csv",
                                  system="snomed",
                                  column="code",)
 
-systolic_bp_codelist = codelist_from_csv("codelists/user-richard-croker-systolic-blood-pressure-qof.csv",
+systolic_bp_codelist = codelist_from_csv("codelists/opensafely-systolic-blood-pressure-qof.csv",
                                  system="snomed",
                                  column="code",)
