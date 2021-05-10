@@ -39,6 +39,20 @@ def measure_table_from_csv():
     )
 
 
+@pytest.fixture
+def measure_table():
+    """Returns a measure table that could have been read by calling `load_and_drop`."""
+    mt = pandas.DataFrame(
+        [
+            MeasureTableRow(2, 1.0, 1.0, 1.0, 1.0, "2019-01-01"),
+            MeasureTableRow(3, 2.0, 1.0, 1.0, 1.0, "2019-01-01"),
+            MeasureTableRow(2, 1.0, 1.0, 1.0, 1.0, "2019-02-01"),
+        ]
+    )
+    mt["date"] = pandas.to_datetime(mt["date"])
+    return mt
+
+
 class CodelistTableRow(NamedTuple):
     """Represents a row in a codelist table."""
 
@@ -158,12 +172,12 @@ class TestGenerateSentinelMeasure:
     def test_print_to_stdout(
         self,
         capsys,  # pytest fixture that captures output stdout and stderr
-        measure_table_from_csv,
+        measure_table,
         codelist_table_from_csv,
     ):
         measure = "systolic_bp"
-        data_dict = {measure: measure_table_from_csv}
-        data_dict_practice = {measure: measure_table_from_csv}
+        data_dict = {measure: measure_table}
+        data_dict_practice = {measure: measure_table}
         codelist_dict = {measure: codelist_table_from_csv}
         code_column = "code"
         term_column = "term"
