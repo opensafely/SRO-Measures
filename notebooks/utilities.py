@@ -8,7 +8,6 @@ import pandas as pd
 import plotly.graph_objects as go
 import seaborn as sns
 from IPython.display import HTML, display
-from pandas.api.types import is_datetime64_dtype
 
 # Legend locations for matplotlib
 # https://github.com/ebmdatalab/datalab-pandas/blob/master/ebmdatalab/charts.py
@@ -26,10 +25,6 @@ CENTER = 10
 
 BASE_DIR = Path(__file__).parents[1]
 OUTPUT_DIR = BASE_DIR / "output"
-
-
-def convert_datetime(df):
-    df["date"] = pd.to_datetime(df["date"])
 
 
 def load_and_drop(measure, practice=False):
@@ -423,8 +418,6 @@ def generate_sentinel_measure(
     )
 
     df = data_dict_practice[measure]
-    assert is_datetime64_dtype(df.date)
-    convert_datetime(df)
     calculate_rate(df, measure, "population")
 
     display(HTML(childs_df.to_html()))
