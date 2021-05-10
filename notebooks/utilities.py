@@ -392,6 +392,18 @@ def generate_sentinel_measure(
     dates_list,
     interactive=True,
 ):
+    """Generates tables and charts for the measure with the given ID.
+
+    Args:
+        data_dict: A mapping of measure IDs to measure tables.
+        data_dict_practice: A mapping of measure IDs to "practice only" measure tables.
+        codelist_dict: A mapping of measure IDs to codelist tables.
+        measure: A measure ID.
+        code_column: The name of the code column in the codelist table.
+        term_column: The name of the term column in the codelist table.
+        dates_list: Not used.
+        interactive: Flag indicating whether or not the chart should be interactive.
+    """
     df = data_dict[measure]
     childs_df = create_child_table(
         df, codelist_dict[measure], code_column, term_column, measure
