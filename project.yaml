@@ -61,7 +61,7 @@ actions:
         
 
 
-        
+   
   
   generate_notebook:
     run: jupyter:latest jupyter nbconvert /workspace/notebooks/sentinel_measures.ipynb --execute --to html --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
@@ -92,8 +92,8 @@ actions:
 #       moderately_sensitive:
 #         text: output/*_event_summary.csv
 
-  run_tests:
-    run: python:latest python -m pytest --junit-xml=output/pytest.xml --verbose
-    outputs:
-      moderately_sensitive:
-        log: output/pytest.xml
+#   run_tests:
+#     run: python:latest python -m pytest --junit-xml=output/pytest.xml --verbose
+#     outputs:
+#       moderately_sensitive:
+#         log: output/pytest.xml
