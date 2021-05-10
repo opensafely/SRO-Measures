@@ -109,9 +109,9 @@ class TestDropIrrelevantPractices:
         assert id(obs) != id(measure_table_from_csv)
 
 
-def test_create_child_table(measure_table_from_csv, codelist_table_from_csv):
+def test_create_child_table(measure_table, codelist_table_from_csv):
     obs = utilities.create_child_table(
-        measure_table_from_csv,
+        measure_table,
         codelist_table_from_csv,
         "code",
         "term",
@@ -136,22 +136,22 @@ def test_create_child_table(measure_table_from_csv, codelist_table_from_csv):
     testing.assert_frame_equal(obs, exp)
 
 
-def test_get_number_practices(measure_table_from_csv):
-    assert utilities.get_number_practices(measure_table_from_csv) == 3
+def test_get_number_practices(measure_table):
+    assert utilities.get_number_practices(measure_table) == 2
 
 
-def test_get_percentage_practices(tmp_path, measure_table_from_csv):
+def test_get_percentage_practices(tmp_path, measure_table):
     with patch.object(utilities, "OUTPUT_DIR", tmp_path):
         with open(utilities.OUTPUT_DIR / "practice_count.json", "w") as f:
-            json.dump({"num_practices": 3}, f)
+            json.dump({"num_practices": 2}, f)
 
-        obs = utilities.get_percentage_practices(measure_table_from_csv)
+        obs = utilities.get_percentage_practices(measure_table)
         assert obs == 100
 
 
-def test_get_number_events_mil(measure_table_from_csv):
+def test_get_number_events_mil(measure_table):
     obs = utilities.get_number_events_mil(
-        measure_table_from_csv,
+        measure_table,
         "systolic_bp",
     )
     assert obs == 0.0
