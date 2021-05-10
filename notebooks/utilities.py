@@ -51,6 +51,17 @@ def load_and_drop(measure, practice=False):
 
 
 def calculate_rate(df, value_col, population_col, per=1000):
+    """Calculates the number of events per 1,000 of the population.
+
+    This function operates on the given measure table in-place, adding
+    a `num_per_thousand` column.
+
+    Args:
+        df: A measure table.
+        value_col: The name of the numerator column in the measure table.
+        population_col: The name of the denominator column in the measure table.
+        per: Not used.
+    """
     num_per_thousand = df[value_col] / (df[population_col] / 1000)
     df["num_per_thousand"] = num_per_thousand
 
