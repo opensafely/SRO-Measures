@@ -11,17 +11,6 @@ from pandas.testing import assert_index_equal, assert_series_equal
 from notebooks import utilities
 
 
-class MeasureTableRow(NamedTuple):
-    """Represents a row in a measure table."""
-
-    practice: int  # group_by 0 (PK)
-    systolic_bp_event_code: float  # group_by 1 (PK)
-    systolic_bp: float  # numerator
-    population: float  # denominator
-    value: float  # numerator / denominator
-    date: str  # index_date (PK)
-
-
 @pytest.fixture
 def measure_table_from_csv():
     """Returns a measure table that could have been read from a CSV file.
@@ -30,13 +19,22 @@ def measure_table_from_csv():
     the study period.
     """
     return pandas.DataFrame(
-        [
-            MeasureTableRow(1, 1.0, 0.0, 1.0, 0.0, "2019-01-01"),
-            MeasureTableRow(2, 1.0, 1.0, 1.0, 1.0, "2019-01-01"),
-            MeasureTableRow(3, 2.0, 1.0, 1.0, 1.0, "2019-01-01"),
-            MeasureTableRow(1, 1.0, 0.0, 1.0, 0.0, "2019-02-01"),
-            MeasureTableRow(2, 1.0, 1.0, 1.0, 1.0, "2019-02-01"),
-        ]
+        {
+            "practice": pandas.Series([1, 2, 3, 1, 2]),
+            "systolic_bp_event_code": pandas.Series([1, 1, 2, 1, 1]),
+            "systolic_bp": pandas.Series([0, 1, 1, 0, 1]),
+            "population": pandas.Series([1, 1, 1, 1, 1]),
+            "value": pandas.Series([0, 1, 1, 0, 1]),
+            "date": pandas.Series(
+                [
+                    "2019-01-01",
+                    "2019-01-01",
+                    "2019-01-01",
+                    "2019-02-01",
+                    "2019-02-01",
+                ]
+            ),
+        }
     )
 
 
@@ -44,11 +42,14 @@ def measure_table_from_csv():
 def measure_table():
     """Returns a measure table that could have been read by calling `load_and_drop`."""
     mt = pandas.DataFrame(
-        [
-            MeasureTableRow(2, 1.0, 1.0, 1.0, 1.0, "2019-01-01"),
-            MeasureTableRow(3, 2.0, 1.0, 1.0, 1.0, "2019-01-01"),
-            MeasureTableRow(2, 1.0, 1.0, 1.0, 1.0, "2019-02-01"),
-        ]
+        {
+            "practice": pandas.Series([2, 3, 2]),
+            "systolic_bp_event_code": pandas.Series([1, 2, 1]),
+            "systolic_bp": pandas.Series([1, 1, 1]),
+            "population": pandas.Series([1, 1, 1]),
+            "value": pandas.Series([1, 1, 1]),
+            "date": pandas.Series(["2019-01-01", "2019-01-01", "2019-02-01"]),
+        }
     )
     mt["date"] = pandas.to_datetime(mt["date"])
     return mt
@@ -146,13 +147,13 @@ def test_create_child_table(measure_table, codelist_table_from_csv):
         [
             {
                 "code": 1,
-                "Events": 2.0,
+                "Events": 2,
                 "Events (thousands)": 0.002,
                 "Description": "Code 1",
             },
             {
                 "code": 2,
-                "Events": 1.0,
+                "Events": 1,
                 "Events (thousands)": 0.001,
                 "Description": "Code 2",
             },
