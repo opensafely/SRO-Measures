@@ -31,51 +31,51 @@ actions:
       highly_sensitive:
         cohort: output/input_practice_count.csv
 
-  generate_measures:
-      run: cohortextractor:latest generate_measures --study-definition study_definition --output-dir=output
-      needs: [generate_study_population]
-      outputs:
-        moderately_sensitive:
-          measure_csv: output/measure_*.csv
+#   generate_measures:
+#       run: cohortextractor:latest generate_measures --study-definition study_definition --output-dir=output
+#       needs: [generate_study_population]
+#       outputs:
+#         moderately_sensitive:
+#           measure_csv: output/measure_*.csv
 
-  generate_measure_ethnicity:
-    run: python:latest python analysis/generate_measure_ethnicity.py
-    needs: [join_ethnicity]
-    outputs:
-      moderately_sensitive:
-        measure: output/measure_*_ethnicity.csv
+#   generate_measure_ethnicity:
+#     run: python:latest python analysis/generate_measure_ethnicity.py
+#     needs: [join_ethnicity]
+#     outputs:
+#       moderately_sensitive:
+#         measure: output/measure_*_ethnicity.csv
   
-  get_practice_count:
-    run: python:latest python analysis/get_practice_count.py
-    needs: [generate_study_population_practice_count]
-    outputs:
-      moderately_sensitive:
-        text: output/practice_count.json
+#   get_practice_count:
+#     run: python:latest python analysis/get_practice_count.py
+#     needs: [generate_study_population_practice_count]
+#     outputs:
+#       moderately_sensitive:
+#         text: output/practice_count.json
   
-  get_patient_count:
-    run: python:latest python analysis/get_patients_counts.py
-    needs: [generate_study_population]
-    outputs:
-      moderately_sensitive:
-        text: output/patient_count.json
+#   get_patient_count:
+#     run: python:latest python analysis/get_patients_counts.py
+#     needs: [generate_study_population]
+#     outputs:
+#       moderately_sensitive:
+#         text: output/patient_count.json
         
 
 
    
   
-  generate_notebook:
-    run: jupyter:latest jupyter nbconvert /workspace/notebooks/sentinel_measures.ipynb --execute --to html --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
-    needs: [generate_measures, get_practice_count, get_patient_count, generate_measure_ethnicity, join_ethnicity]
-    outputs:
-      moderately_sensitive:
-        notebook: output/sentinel_measures.html
+#   generate_notebook:
+#     run: jupyter:latest jupyter nbconvert /workspace/notebooks/sentinel_measures.ipynb --execute --to html --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
+#     needs: [generate_measures, get_practice_count, get_patient_count, generate_measure_ethnicity, join_ethnicity]
+#     outputs:
+#       moderately_sensitive:
+#         notebook: output/sentinel_measures.html
      
-  generate_notebook_demographics:
-    run: jupyter:latest jupyter nbconvert /workspace/notebooks/sentinel_measures_demographics.ipynb --execute --to html --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
-    needs: [generate_measures, get_practice_count, get_patient_count, generate_measure_ethnicity, join_ethnicity]
-    outputs:
-      moderately_sensitive:
-        notebook: output/sentinel_measures_demographics.html
+#   generate_notebook_demographics:
+#     run: jupyter:latest jupyter nbconvert /workspace/notebooks/sentinel_measures_demographics.ipynb --execute --to html --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
+#     needs: [generate_measures, get_practice_count, get_patient_count, generate_measure_ethnicity, join_ethnicity]
+#     outputs:
+#       moderately_sensitive:
+#         notebook: output/sentinel_measures_demographics.html
      
   # generate_notebook_practice:
   #   run: jupyter:latest jupyter nbconvert /workspace/notebooks/sentinel_measures_by_practice.ipynb --execute --to html --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
