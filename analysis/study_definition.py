@@ -431,29 +431,29 @@ measures = [
     ),
 ]
 
-demographics = ['region', 'sex', 'imd', 'learning_disability', 'age_band']
-sentinel_measures = ['systolic_bp', 'qrisk2', 'cholesterol', 'alt', 'tsh', 'rbc', 'hba1c', 'sodium', 'asthma', 'copd']
+# demographics = ['region', 'sex', 'imd', 'learning_disability', 'age_band']
+# sentinel_measures = ['systolic_bp', 'qrisk2', 'cholesterol', 'alt', 'tsh', 'rbc', 'hba1c', 'sodium', 'asthma', 'copd']
 
-for sentinel_measure in sentinel_measures:
-    for d in demographics:
-        if d=='age_band':
-            m = Measure(
-            id=f'{sentinel_measure}_{d}',
-            numerator=sentinel_measure,
-            denominator="population",
-            group_by=["age_band", "practice"]
-            )
+# for sentinel_measure in sentinel_measures:
+#     for d in demographics:
+#         if d=='age_band':
+#             m = Measure(
+#             id=f'{sentinel_measure}_{d}',
+#             numerator=sentinel_measure,
+#             denominator="population",
+#             group_by=["age_band", "practice"]
+#             )
                 
             
 
         
-        else:
+#         else:
 
-            m = Measure(
-                id=f'{sentinel_measure}_{d}',
-                numerator=sentinel_measure,
-                denominator="population",
-                group_by=["age_band", d, "practice"]
-            )
+#             m = Measure(
+#                 id=f'{sentinel_measure}_{d}',
+#                 numerator=sentinel_measure,
+#                 denominator="population",
+#                 group_by=["age_band", d, "practice"]
+#             )
         
-        measures.append(m)
+#         measures.append(m)
