@@ -5,7 +5,6 @@ import pandas
 import pytest
 from pandas import testing
 from pandas.api.types import is_datetime64_dtype
-from pandas.testing import assert_index_equal, assert_series_equal
 
 from notebooks import utilities
 
@@ -98,18 +97,18 @@ def test_calculate_rate():
             "population": pandas.Series([1_000, 2_000]),
         }
     )
-    assert_index_equal(
+    testing.assert_index_equal(
         mt.columns,
         pandas.Index(["systolic_bp", "population"]),
     )
 
     utilities.calculate_rate(mt, "systolic_bp", "population")
 
-    assert_index_equal(
+    testing.assert_index_equal(
         mt.columns,
         pandas.Index(["systolic_bp", "population", "num_per_thousand"]),
     )
-    assert_series_equal(
+    testing.assert_series_equal(
         mt.num_per_thousand,
         pandas.Series([1.0, 1.0], name="num_per_thousand"),
     )
