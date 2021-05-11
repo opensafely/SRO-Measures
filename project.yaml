@@ -31,12 +31,12 @@ actions:
       highly_sensitive:
         cohort: output/input_practice_count.csv
 
-#   generate_measures:
-#       run: cohortextractor:latest generate_measures --study-definition study_definition --output-dir=output
-#       needs: [generate_study_population]
-#       outputs:
-#         moderately_sensitive:
-#           measure_csv: output/measure_*.csv
+  generate_measures:
+      run: cohortextractor:latest generate_measures --study-definition study_definition --output-dir=output
+      needs: [generate_study_population]
+      outputs:
+        moderately_sensitive:
+          measure_csv: output/measure_*.csv
 
 #   generate_measure_ethnicity:
 #     run: python:latest python analysis/generate_measure_ethnicity.py
