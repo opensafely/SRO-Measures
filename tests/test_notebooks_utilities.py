@@ -1,5 +1,4 @@
 import json
-from typing import NamedTuple
 from unittest.mock import patch
 
 import pandas
@@ -55,21 +54,14 @@ def measure_table():
     return mt
 
 
-class CodelistTableRow(NamedTuple):
-    """Represents a row in a codelist table."""
-
-    code: int
-    term: str
-
-
 @pytest.fixture
 def codelist_table_from_csv():
     """Returns a codelist table the could have been read from a CSV file."""
     return pandas.DataFrame(
-        [
-            CodelistTableRow(1.0, "Code 1"),
-            CodelistTableRow(2.0, "Code 2"),
-        ]
+        {
+            "code": pandas.Series([1, 2]),
+            "term": pandas.Series(["Code 1", "Code 2"]),
+        }
     )
 
 
