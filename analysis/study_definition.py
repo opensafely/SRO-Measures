@@ -290,19 +290,19 @@ study = StudyDefinition(
 
 measures = [
     
-#     Measure(
-#         id="systolic_bp",
-#         numerator="systolic_bp",
-#         denominator="population",
-#         group_by=["practice", "systolic_bp_event_code"]
-#     ),
+    Measure(
+        id="systolic_bp",
+        numerator="systolic_bp",
+        denominator="population",
+        group_by=["practice", "systolic_bp_event_code"]
+    ),
 
-#     Measure(
-#         id="systolic_bp_practice_only",
-#         numerator="systolic_bp",
-#         denominator="population",
-#         group_by=["practice"]
-#     ),
+    Measure(
+        id="systolic_bp_practice_only",
+        numerator="systolic_bp",
+        denominator="population",
+        group_by=["practice"]
+    ),
 
 #     Measure(
 #         id="qrisk2",
