@@ -290,170 +290,170 @@ study = StudyDefinition(
 
 measures = [
     
-    Measure(
-        id="systolic_bp",
-        numerator="systolic_bp",
-        denominator="population",
-        group_by=["practice", "systolic_bp_event_code"]
-    ),
+#     Measure(
+#         id="systolic_bp",
+#         numerator="systolic_bp",
+#         denominator="population",
+#         group_by=["practice", "systolic_bp_event_code"]
+#     ),
 
-    Measure(
-        id="systolic_bp_practice_only",
-        numerator="systolic_bp",
-        denominator="population",
-        group_by=["practice"]
-    ),
+#     Measure(
+#         id="systolic_bp_practice_only",
+#         numerator="systolic_bp",
+#         denominator="population",
+#         group_by=["practice"]
+#     ),
 
-    Measure(
-        id="qrisk2",
-        numerator="qrisk2",
-        denominator="population",
-        group_by=["practice", "qrisk2_event_code"]
-    ),
+#     Measure(
+#         id="qrisk2",
+#         numerator="qrisk2",
+#         denominator="population",
+#         group_by=["practice", "qrisk2_event_code"]
+#     ),
 
-    Measure(
-        id="qrisk2_practice_only",
-        numerator="qrisk2",
-        denominator="population",
-        group_by=["practice"]
-    ),
+#     Measure(
+#         id="qrisk2_practice_only",
+#         numerator="qrisk2",
+#         denominator="population",
+#         group_by=["practice"]
+#     ),
 
-    Measure(
-        id="cholesterol",
-        numerator="cholesterol",
-        denominator="population",
-        group_by=["practice", "cholesterol_event_code"]
-    ),
+#     Measure(
+#         id="cholesterol",
+#         numerator="cholesterol",
+#         denominator="population",
+#         group_by=["practice", "cholesterol_event_code"]
+#     ),
 
-    Measure(
-        id="cholesterol_practice_only",
-        numerator="cholesterol",
-        denominator="population",
-        group_by=["practice"]
-    ),
+#     Measure(
+#         id="cholesterol_practice_only",
+#         numerator="cholesterol",
+#         denominator="population",
+#         group_by=["practice"]
+#     ),
    
-    Measure(
-        id="alt",
-        numerator="alt",
-        denominator="population",
-        group_by=["practice", "alt_event_code"]
-    ),
+#     Measure(
+#         id="alt",
+#         numerator="alt",
+#         denominator="population",
+#         group_by=["practice", "alt_event_code"]
+#     ),
 
-    Measure(
-        id="alt_practice_only",
-        numerator="alt",
-        denominator="population",
-        group_by=["practice"]
-    ),
+#     Measure(
+#         id="alt_practice_only",
+#         numerator="alt",
+#         denominator="population",
+#         group_by=["practice"]
+#     ),
 
-    Measure(
-        id="tsh",
-        numerator="tsh",
-        denominator="population",
-        group_by=["practice", "tsh_event_code"]
-    ),
+#     Measure(
+#         id="tsh",
+#         numerator="tsh",
+#         denominator="population",
+#         group_by=["practice", "tsh_event_code"]
+#     ),
 
-    Measure(
-        id="tsh_practice_only",
-        numerator="tsh",
-        denominator="population",
-        group_by=["practice"]
-    ),
+#     Measure(
+#         id="tsh_practice_only",
+#         numerator="tsh",
+#         denominator="population",
+#         group_by=["practice"]
+#     ),
 
-    Measure(
-        id="rbc",
-        numerator="rbc",
-        denominator="population",
-        group_by=["practice", "rbc_event_code"]
-    ),
+#     Measure(
+#         id="rbc",
+#         numerator="rbc",
+#         denominator="population",
+#         group_by=["practice", "rbc_event_code"]
+#     ),
 
-    Measure(
-        id="rbc_practice_only",
-        numerator="rbc",
-        denominator="population",
-        group_by=["practice"]
-    ),
+#     Measure(
+#         id="rbc_practice_only",
+#         numerator="rbc",
+#         denominator="population",
+#         group_by=["practice"]
+#     ),
 
-    Measure(
-        id="hba1c",
-        numerator="hba1c",
-        denominator="population",
-        group_by=["practice", "hba1c_event_code"]
-    ),
+#     Measure(
+#         id="hba1c",
+#         numerator="hba1c",
+#         denominator="population",
+#         group_by=["practice", "hba1c_event_code"]
+#     ),
 
-    Measure(
-        id="hba1c_practice_only",
-        numerator="hba1c",
-        denominator="population",
-        group_by=["practice"]
-    ),
+#     Measure(
+#         id="hba1c_practice_only",
+#         numerator="hba1c",
+#         denominator="population",
+#         group_by=["practice"]
+#     ),
 
-    Measure(
-        id="sodium",
-        numerator="sodium",
-        denominator="population",
-        group_by=["practice", "sodium_event_code"]
-    ),
+#     Measure(
+#         id="sodium",
+#         numerator="sodium",
+#         denominator="population",
+#         group_by=["practice", "sodium_event_code"]
+#     ),
 
-    Measure(
-        id="sodium_practice_only",
-        numerator="sodium",
-        denominator="population",
-        group_by=["practice"]
-    ),
+#     Measure(
+#         id="sodium_practice_only",
+#         numerator="sodium",
+#         denominator="population",
+#         group_by=["practice"]
+#     ),
 
-    Measure(
-        id="asthma",
-        numerator="asthma",
-        denominator="population",
-        group_by=["practice", "asthma_event_code"]
-    ),
+#     Measure(
+#         id="asthma",
+#         numerator="asthma",
+#         denominator="population",
+#         group_by=["practice", "asthma_event_code"]
+#     ),
 
-    Measure(
-        id="asthma_practice_only",
-        numerator="asthma",
-        denominator="population",
-        group_by=["practice"]
-    ),
+#     Measure(
+#         id="asthma_practice_only",
+#         numerator="asthma",
+#         denominator="population",
+#         group_by=["practice"]
+#     ),
 
-    Measure(
-        id="copd",
-        numerator="copd",
-        denominator="population",
-        group_by=["practice", "copd_event_code"]
-    ),
+#     Measure(
+#         id="copd",
+#         numerator="copd",
+#         denominator="population",
+#         group_by=["practice", "copd_event_code"]
+#     ),
 
-    Measure(
-        id="copd_practice_only",
-        numerator="copd",
-        denominator="population",
-        group_by=["practice"]
-    ),
+#     Measure(
+#         id="copd_practice_only",
+#         numerator="copd",
+#         denominator="population",
+#         group_by=["practice"]
+#     ),
 ]
 
-demographics = ['region', 'sex', 'imd', 'learning_disability', 'age_band']
-sentinel_measures = ['systolic_bp', 'qrisk2', 'cholesterol', 'alt', 'tsh', 'rbc', 'hba1c', 'sodium', 'asthma', 'copd']
+demographics = ['region', 'age_band', 'imd']
+sentinel_measures = ['systolic_bp']
 
-# for sentinel_measure in sentinel_measures:
-#     for d in demographics:
-#         if d=='age_band':
-#             m = Measure(
-#             id=f'{sentinel_measure}_{d}',
-#             numerator=sentinel_measure,
-#             denominator="population",
-#             group_by=["age_band", "practice"]
-#             )
+for sentinel_measure in sentinel_measures:
+    for d in demographics:
+        if d=='age_band':
+            m = Measure(
+            id=f'{sentinel_measure}_{d}',
+            numerator=sentinel_measure,
+            denominator="population",
+            group_by=["age_band", "practice"]
+            )
                 
             
 
         
-#         else:
+        else:
 
-#             m = Measure(
-#                 id=f'{sentinel_measure}_{d}',
-#                 numerator=sentinel_measure,
-#                 denominator="population",
-#                 group_by=["age_band", d, "practice"]
-#             )
+            m = Measure(
+                id=f'{sentinel_measure}_{d}',
+                numerator=sentinel_measure,
+                denominator="population",
+                group_by=["age_band", d, "practice"]
+            )
         
-#         measures.append(m)
+        measures.append(m)
