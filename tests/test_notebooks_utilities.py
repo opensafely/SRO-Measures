@@ -4,7 +4,7 @@ from unittest.mock import patch
 import pandas
 import pytest
 from pandas import testing
-from pandas.api.types import is_datetime64_dtype
+from pandas.api.types import is_datetime64_dtype, is_numeric_dtype
 
 from notebooks import utilities
 
@@ -183,6 +183,32 @@ def test_get_number_patients(tmp_path):
 
         obs = utilities.get_number_patients(measure)
         assert obs == 3
+
+
+@pytest.mark.parametrize(
+    "show_outer_percentiles,num_rows",
+    [
+        (True, 54),  # Fifteen percentiles for two dates
+        (False, 18),  # Nine deciles for two dates
+    ],
+)
+def test_add_percentiles(measure_table, show_outer_percentiles, num_rows):
+    obs = utilities.add_percentiles(
+        measure_table,
+        "date",
+        "value",
+        show_outer_percentiles=show_outer_percentiles,
+    )
+    # We expect Pandas to check that it computes deciles correctly,
+    # leaving us to check the shape and the type of the data.
+    testing.assert_index_equal(
+        obs.columns,
+        pandas.Index(["date", "percentile", "value"]),
+    )
+    assert len(obs) == num_rows
+    assert is_datetime64_dtype(obs.date)
+    assert is_numeric_dtype(obs.percentile)
+    assert is_numeric_dtype(obs.value)
 
 
 class TestGenerateSentinelMeasure:
