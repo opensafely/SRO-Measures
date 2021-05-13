@@ -270,9 +270,17 @@ def deciles_chart_ebm(
 def add_percentiles(
     df, period_column=None, column=None, show_outer_percentiles=True
 ):
-    """For each period in `period_column`, compute percentiles across that
-    range.
-    Adds `percentile` column.
+    """Computes deciles.
+
+    Args:
+        df: A measure table.
+        period_column: The name of the column to group by.
+        column: The name of the column for which deciles are computed.
+        show_outer_percentiles: Whether to compute the nine largest and nine smallest
+            percentiles as well as the deciles.
+
+    Returns:
+        A data frame with `period_column`, `column`, and `percentile` columns.
     """
     deciles = np.arange(0.1, 1, 0.1)
     bottom_percentiles = np.arange(0.01, 0.1, 0.01)
