@@ -181,12 +181,7 @@ def deciles_chart_ebm(
     sns.set_style("whitegrid", {"grid.color": ".9"})
     if not ax:
         fig, ax = plt.subplots(1, 1)
-    df = add_percentiles(
-        df,
-        period_column=period_column,
-        column=column,
-        show_outer_percentiles=show_outer_percentiles,
-    )
+    df = compute_deciles(df, period_column, column, show_outer_percentiles)
     linestyles = {
         "decile": {
             "color": "b",
@@ -267,35 +262,34 @@ def deciles_chart_ebm(
     return plt
 
 
-def add_percentiles(
-    df, period_column=None, column=None, show_outer_percentiles=True
+def compute_deciles(
+    measure_table, groupby_col, values_col, has_outer_percentiles=True
 ):
     """Computes deciles.
 
     Args:
-        df: A measure table.
-        period_column: The name of the column to group by.
-        column: The name of the column for which deciles are computed.
-        show_outer_percentiles: Whether to compute the nine largest and nine smallest
+        measure_table: A measure table.
+        groupby_col: The name of the column to group by.
+        values_col: The name of the column for which deciles are computed.
+        has_outer_percentiles: Whether to compute the nine largest and nine smallest
             percentiles as well as the deciles.
 
     Returns:
-        A data frame with `period_column`, `column`, and `percentile` columns.
+        A data frame with `groupby_col`, `values_col`, and `percentile` columns.
     """
-    deciles = np.arange(0.1, 1, 0.1)
-    bottom_percentiles = np.arange(0.01, 0.1, 0.01)
-    top_percentiles = np.arange(0.91, 1, 0.01)
-    if show_outer_percentiles:
+    quantiles = np.arange(0.1, 1, 0.1)
+    if has_outer_percentiles:
         quantiles = np.concatenate(
-            (deciles, bottom_percentiles, top_percentiles)
+            [quantiles, np.arange(0.01, 0.1, 0.01), np.arange(0.91, 1, 0.01)]
         )
-    else:
-        quantiles = deciles
-    df = df.groupby(period_column)[column].quantile(quantiles).reset_index()
-    df = df.rename(index=str, columns={"level_1": "percentile"})
-    # create integer range of percentiles
-    df["percentile"] = df["percentile"].apply(lambda x: int(x * 100))
-    return df
+
+    percentiles = (
+        measure_table.groupby(groupby_col)[values_col]
+        .quantile(pd.Series(quantiles, name="percentile"))
+        .reset_index()
+    )
+    percentiles["percentile"] = percentiles["percentile"] * 100
+    return percentiles
 
 
 def deciles_chart(
@@ -303,12 +297,7 @@ def deciles_chart(
 ):
     """period_column must be dates / datetimes"""
 
-    df = add_percentiles(
-        df,
-        period_column=period_column,
-        column=column,
-        show_outer_percentiles=False,
-    )
+    df = compute_deciles(df, period_column, column, False)
 
     if interactive:
 
