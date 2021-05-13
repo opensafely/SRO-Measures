@@ -186,18 +186,18 @@ def test_get_number_patients(tmp_path):
 
 
 @pytest.mark.parametrize(
-    "show_outer_percentiles,num_rows",
+    "has_outer_percentiles,num_rows",
     [
         (True, 54),  # Fifteen percentiles for two dates
         (False, 18),  # Nine deciles for two dates
     ],
 )
-def test_add_percentiles(measure_table, show_outer_percentiles, num_rows):
-    obs = utilities.add_percentiles(
+def test_compute_deciles(measure_table, has_outer_percentiles, num_rows):
+    obs = utilities.compute_deciles(
         measure_table,
         "date",
         "value",
-        show_outer_percentiles=show_outer_percentiles,
+        has_outer_percentiles=has_outer_percentiles,
     )
     # We expect Pandas to check that it computes deciles correctly,
     # leaving us to check the shape and the type of the data.
