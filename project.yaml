@@ -75,6 +75,7 @@ actions:
     outputs:
       moderately_sensitive:
         notebook: output/sentinel_measures_demographics.html
+        figures: output/test_*.png
      
   # generate_notebook_practice:
   #   run: jupyter:latest jupyter nbconvert /workspace/notebooks/sentinel_measures_by_practice.ipynb --execute --to html --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
