@@ -75,6 +75,7 @@ study = StudyDefinition(
             "rate": "universal",
             "category": {
                 "ratios": {
+                    "missing": 0.005,
                     "0-19": 0.125,
                     "20-29": 0.125,
                     "30-39": 0.125,
@@ -82,7 +83,7 @@ study = StudyDefinition(
                     "50-59": 0.125,
                     "60-69": 0.125,
                     "70-79": 0.125,
-                    "80+": 0.125,
+                    "80+": 0.12,
                 }
             },
         },
