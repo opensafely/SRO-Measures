@@ -1,6 +1,7 @@
 from cohortextractor import (
     codelist,
     codelist_from_csv,
+    combine_codelists
 )
 
 
@@ -43,3 +44,16 @@ sodium_codelist = codelist_from_csv("codelists/opensafely-sodium-tests-numerical
 systolic_bp_codelist = codelist_from_csv("codelists/opensafely-systolic-blood-pressure-qof.csv",
                                  system="snomed",
                                  column="code",)
+
+medication_review_1 = codelist_from_csv("codelists/opensafely-care-planning-medication-review-simple-reference-set-nhs-digital.csv",
+    system="snomed",
+    column="code",)
+
+medication_review_2 = codelist_from_csv("codelists/nhsd-primary-care-domain-refsets-medrvw_cod.csv",
+    system="snomed",
+    column="code",)
+
+medication_review_codelist = combine_codelists(
+    medication_review_1, 
+    medication_review_2
+)

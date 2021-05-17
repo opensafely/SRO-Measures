@@ -59,6 +59,18 @@
       "url": "https://codelists.opensafely.org/codelist/opensafely/thyroid-stimulating-hormone-tsh-testing/11a1abeb/",
       "downloaded_at": "2021-05-07 13:08:36.210855Z",
       "sha": "e7f3090ffa269fb1e3efdd5859c43a70e76efeec"
+    },
+    "opensafely-care-planning-medication-review-simple-reference-set-nhs-digital.csv": {
+      "id": "opensafely/care-planning-medication-review-simple-reference-set-nhs-digital/61b13c39",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/care-planning-medication-review-simple-reference-set-nhs-digital/61b13c39/",
+      "downloaded_at": "2021-05-17 14:08:40.720578Z",
+      "sha": "40e14bd0b0bea5057db28eb44e3c22624b17046a"
+    },
+    "nhsd-primary-care-domain-refsets-medrvw_cod.csv": {
+      "id": "nhsd-primary-care-domain-refsets/medrvw_cod/20200812",
+      "url": "https://codelists.opensafely.org/codelist/nhsd-primary-care-domain-refsets/medrvw_cod/20200812/",
+      "downloaded_at": "2021-05-17 14:08:41.054122Z",
+      "sha": "a07dfedffda67d1a84ef3e7e8f90214c93e89a51"
     }
   }
 }
