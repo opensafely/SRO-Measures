@@ -363,4 +363,18 @@ measures = [
         denominator="population",
         group_by=["practice"]
     ),
+    
+    Measure(
+        id="medication_review",
+        numerator="medication_review",
+        denominator="population",
+        group_by=["practice", "medication_review_event_code"]
+    ),
+
+    Measure(
+        id="medication_review_practice_only",
+        numerator="medication_review",
+        denominator="population",
+        group_by=["practice"]
+    ),
 ]
