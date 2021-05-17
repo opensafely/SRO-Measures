@@ -204,6 +204,21 @@ study = StudyDefinition(
         return_expectations={"category": {
             "ratios": {str(394703002): 0.6, str(760601000000107): 0.2, str(760621000000103): 0.2}}, }
     ),
+    
+    medication_review=patients.with_these_clinical_events(
+        codelist=medication_review_codelist,
+        between=["index_date", "last_day_of_month(index_date)"],
+        returning="binary_flag",
+        return_expectations={"incidence": 0.5}
+    ),
+
+    medication_review_event_code=patients.with_these_clinical_events(
+        codelist=medication_review_codelist,
+        between=["index_date", "last_day_of_month(index_date)"],
+        returning="code",
+        return_expectations={"category": {
+            "ratios": {str(1079381000000109): 0.6, str(1127441000000107): 0.2, str(1239511000000100): 0.2}}, }
+    ),
 )
 
 
@@ -345,6 +360,20 @@ measures = [
     Measure(
         id="copd_practice_only",
         numerator="copd",
+        denominator="population",
+        group_by=["practice"]
+    ),
+    
+    Measure(
+        id="medication_review",
+        numerator="medication_review",
+        denominator="population",
+        group_by=["practice", "medication_review_event_code"]
+    ),
+
+    Measure(
+        id="medication_review_practice_only",
+        numerator="medication_review",
         denominator="population",
         group_by=["practice"]
     ),
