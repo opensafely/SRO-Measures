@@ -38,20 +38,27 @@ actions:
     outputs:
       highly_sensitive:
         cohort: output/input_practice_count.csv
-
+    
   generate_measures:
-      run: cohortextractor:latest generate_measures --study-definition study_definition --output-dir=output
-      needs: [join_ethnicity]
-      outputs:
-        moderately_sensitive:
-          measure_csv: output/measure_*.csv
-
-  generate_measure_ethnicity:
-    run: python:latest python analysis/generate_measure_ethnicity.py
+    run: python:latest python analysis/calculate_measures.py
     needs: [join_ethnicity]
     outputs:
       moderately_sensitive:
-        measure: output/measure_*_ethnicity.csv
+        measure: output/measure_*.csv
+    
+#   generate_measures:
+#       run: cohortextractor:latest generate_measures --study-definition study_definition --output-dir=output
+#       needs: [join_ethnicity]
+#       outputs:
+#         moderately_sensitive:
+#           measure_csv: output/measure_*.csv
+
+#   generate_measure_ethnicity:
+#     run: python:latest python analysis/generate_measure_ethnicity.py
+#     needs: [join_ethnicity]
+#     outputs:
+#       moderately_sensitive:
+#         measure: output/measure_*_ethnicity.csv
   
   get_practice_count:
     run: python:latest python analysis/get_practice_count.py
