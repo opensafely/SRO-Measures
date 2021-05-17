@@ -145,8 +145,8 @@ measures = [
     ),
 ]
 
-demographics = ['region', 'age_band', 'imd', 'sex', 'learning_disability']
-sentinel_measures = ["qrisk2", "asthma", "copd", "sodium", "cholesterol", "alt", "tsh", "alt", "rbc", 'hba1c', 'systolic_bp']
+demographics = ['region', 'age_band', 'imd', 'sex', 'learning_disability', 'ethnicity']
+sentinel_measures = ["qrisk2", "asthma", "copd", "sodium", "cholesterol", "alt", "tsh", "alt", "rbc", 'hba1c', 'systolic_bp', 'medication_review']
 
 for sentinel_measure in sentinel_measures:
     for d in demographics:

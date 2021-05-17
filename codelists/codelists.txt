@@ -10,3 +10,5 @@ opensafely/systolic-blood-pressure-qof/3572b5fb
 opensafely/thyroid-stimulating-hormone-tsh-testing/11a1abeb
 opensafely/ethnicity/2020-04-27
 opensafely/learning-disabilities/2020-07-06
+opensafely/care-planning-medication-review-simple-reference-set-nhs-digital/61b13c39
+nhsd-primary-care-domain-refsets/medrvw_cod/20200812

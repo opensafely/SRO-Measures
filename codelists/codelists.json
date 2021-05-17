@@ -71,6 +71,18 @@
       "url": "https://codelists.opensafely.org/codelist/opensafely/learning-disabilities/2020-07-06/",
       "downloaded_at": "2021-05-11 16:59:35.478827Z",
       "sha": "ab5b5f60e8525af5898ec1066fc820501b8e5e29"
+    },
+    "opensafely-care-planning-medication-review-simple-reference-set-nhs-digital.csv": {
+      "id": "opensafely/care-planning-medication-review-simple-reference-set-nhs-digital/61b13c39",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/care-planning-medication-review-simple-reference-set-nhs-digital/61b13c39/",
+      "downloaded_at": "2021-05-17 11:34:08.310753Z",
+      "sha": "40e14bd0b0bea5057db28eb44e3c22624b17046a"
+    },
+    "nhsd-primary-care-domain-refsets-medrvw_cod.csv": {
+      "id": "nhsd-primary-care-domain-refsets/medrvw_cod/20200812",
+      "url": "https://codelists.opensafely.org/codelist/nhsd-primary-care-domain-refsets/medrvw_cod/20200812/",
+      "downloaded_at": "2021-05-17 11:34:08.850825Z",
+      "sha": "a07dfedffda67d1a84ef3e7e8f90214c93e89a51"
     }
   }
 }
