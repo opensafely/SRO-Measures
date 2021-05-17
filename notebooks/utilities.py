@@ -41,11 +41,11 @@ def load_and_drop(measure, practice=False):
         The table for the given measure ID and practice.
     """
     if practice:
-        f_in = OUTPUT_DIR / f"measure_{measure}_practice_only.csv"
+        f_in = OUTPUT_DIR / f"measure_{measure}_practice_only.feather"
     else:
-        f_in = OUTPUT_DIR / f"measure_{measure}.csv"
+        f_in = OUTPUT_DIR / f"measure_{measure}.feather"
 
-    df = pd.read_csv(f_in, parse_dates=["date"])
+    df = pd.read_feather(f_in, parse_dates=["date"])
     df = drop_irrelevant_practices(df)
     return df
 

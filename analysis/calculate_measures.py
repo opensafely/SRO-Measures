@@ -182,7 +182,7 @@ for d in demographics:
 
                 file_path = os.path.join('output', file)
                 date = file.split('_')[1][:-4]
-                df = pd.read_csv(file_path)
+                df = pd.read_feather(file_path)
                 df['date'] = date
 
                 data.append(df)
@@ -211,4 +211,4 @@ for d in demographics:
 
             measures_df = population.merge(event, on=['age_band', d, 'date', 'practice'])
             
-        measures_df.to_csv(f'output/measure_{measure}_{d}.csv')
+        measures_df.to_feather(f'output/measure_{measure}_{d}.feather')

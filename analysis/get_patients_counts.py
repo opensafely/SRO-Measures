@@ -3,7 +3,7 @@ import os
 import json
 import numpy as np
 
-sentinel_measures = ["qrisk2", "asthma", "copd", "sodium", "cholesterol", "alt", "tsh", "alt", "rbc", 'hba1c', 'systolic_bp', 'medication_review'
+sentinel_measures = ["qrisk2", "asthma", "copd", "sodium", "cholesterol", "alt", "tsh", "alt", "rbc", 'hba1c', 'systolic_bp', 'medication_review']
 
 patient_counts_dict = {}
 patient_dict = {}
@@ -11,7 +11,7 @@ patient_dict = {}
 
 for file in os.listdir('output'):
     if file.startswith('input'):
-        df = pd.read_csv(os.path.join('output', file))
+        df = pd.read_feather(os.path.join('output', file))
 
         for measure in sentinel_measures:
             df_subset = df[df[measure]==1]
