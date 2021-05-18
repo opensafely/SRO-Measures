@@ -92,15 +92,15 @@ actions:
   #       notebook: output/sentinel_measures_by_practice.html
   #       csvs: output/*_check.csv
 
-  get_event_summary:
-    run: python:latest python analysis/get_event_summary.py
-    needs: [join_ethnicity]
-    outputs:
-      moderately_sensitive:
-        text: output/*_event_summary.csv
+#   get_event_summary:
+#     run: python:latest python analysis/get_event_summary.py
+#     needs: [join_ethnicity]
+#     outputs:
+#       moderately_sensitive:
+#         text: output/*_event_summary.csv
 
-  run_tests:
-    run: python:latest python -m pytest --junit-xml=output/pytest.xml --verbose
-    outputs:
-      moderately_sensitive:
-        log: output/pytest.xml
+#   run_tests:
+#     run: python:latest python -m pytest --junit-xml=output/pytest.xml --verbose
+#     outputs:
+#       moderately_sensitive:
+#         log: output/pytest.xml

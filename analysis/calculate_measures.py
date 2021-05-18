@@ -2,6 +2,12 @@ import os
 import pandas as pd
 from cohortextractor import Measure
 
+def calculate_imd_group(df):
+    imd_column = pd.to_numeric(df["imd"])
+    df["imd"] = pd.qcut(imd_column, q=5,duplicates="drop", labels=['Most deprived', '2', '3', '4', 'Least deprived'])      
+    
+    return df
+
 measures = [
     
     Measure(
@@ -172,25 +178,27 @@ for sentinel_measure in sentinel_measures:
         
         measures.append(m)
 
-for d in demographics:     
-    data = []
-    for file in os.listdir('output'):
+ 
+data = []
+for file in os.listdir('output'):
 
-        if file.startswith('input'):
-            #exclude ethnicity and practice
-            if file.split('_')[1] not in ['ethnicity.csv', 'practice']:
+    if file.startswith('input'):
+        #exclude ethnicity and practice
+        if file.split('_')[1] not in ['ethnicity.csv', 'practice']:
 
-                file_path = os.path.join('output', file)
-                date = file.split('_')[1][:-4]
-                df = pd.read_feather(file_path)
-                df['date'] = date
+            file_path = os.path.join('output', file)
+            date = file.split('_')[1][:-4]
+            df = pd.read_feather(file_path)
+            df['date'] = date
 
-                data.append(df)
+            data.append(df)
 
 
-    df = pd.concat(data)
+df = pd.concat(data)
+
+df = calculate_imd_group(df)
     
-    
+for d in demographics:  
     if d=='age_band':
          population = df.groupby(by=[d, 'date', 'practice']).size().reset_index(name='population')
 
