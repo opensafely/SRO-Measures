@@ -44,7 +44,7 @@ actions:
     needs: [join_ethnicity]
     outputs:
       moderately_sensitive:
-        measure: output/measure_*.feather
+        measure: output/combined_measure_*.csv
     
 #   generate_measures:
 #       run: cohortextractor:latest generate_measures --study-definition study_definition --output-dir=output

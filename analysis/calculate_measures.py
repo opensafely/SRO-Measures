@@ -4,7 +4,7 @@ from cohortextractor import Measure
 
 def calculate_imd_group(df):
     imd_column = pd.to_numeric(df["imd"])
-    df["imd"] = pd.qcut(imd_column, q=5,duplicates="drop", labels=['Most deprived', '2', '3', '4', 'Least deprived'])      
+    df["imd"] = pd.qcut(imd_column, q=5,duplicates="drop")      
     
     return df
 
@@ -152,7 +152,7 @@ measures = [
 ]
 
 demographics = ['region', 'age_band', 'imd', 'sex', 'learning_disability', 'ethnicity']
-sentinel_measures = ["qrisk2", "asthma", "copd", "sodium", "cholesterol", "alt", "tsh", "alt", "rbc", 'hba1c', 'systolic_bp', 'medication_review']
+sentinel_measures = ['systolic_bp']
 
 for sentinel_measure in sentinel_measures:
     for d in demographics:
@@ -178,45 +178,54 @@ for sentinel_measure in sentinel_measures:
         
         measures.append(m)
 
- 
-data = []
+
 for file in os.listdir('output'):
 
     if file.startswith('input'):
         #exclude ethnicity and practice
-        if file.split('_')[1] not in ['ethnicity.csv', 'practice']:
+        if file.split('_')[1] not in ['ethnicity.feather', 'practice']:
 
             file_path = os.path.join('output', file)
             date = file.split('_')[1][:-4]
             df = pd.read_feather(file_path)
             df['date'] = date
 
-            data.append(df)
+           
+            df = calculate_imd_group(df)
+
+            for d in demographics:  
+                if d=='age_band':
+                     population = df.groupby(by=[d, 'date', 'practice']).size().reset_index(name='population')
 
 
-df = pd.concat(data)
+                else:
 
-df = calculate_imd_group(df)
-    
-for d in demographics:  
-    if d=='age_band':
-         population = df.groupby(by=[d, 'date', 'practice']).size().reset_index(name='population')
+                    population = df.groupby(by=['age_band', d, 'date', 'practice']).size().reset_index(name='population')
 
 
-    else:
+                for measure in sentinel_measures:
+
+                    if d =='age_band':
+                        event = df.groupby(by=[d, 'date', 'practice'])[[measure, 'date']].sum().reset_index()
+
+                        measures_df = population.merge(event, on=[d, 'date', 'practice'])
+                    else:
+                        event = df.groupby(by=['age_band', d, 'date', 'practice'])[[measure, 'date']].sum().reset_index()
+
+                        measures_df = population.merge(event, on=['age_band', d, 'date', 'practice'])
+
+                    measures_df.to_csv(f'output/measure_{measure}_{d}_{date}.csv')
+                    
+
+for sentinel_measure in sentinel_measures:
+    for d in demographics:
         
-        population = df.groupby(by=['age_band', d, 'date', 'practice']).size().reset_index(name='population')
-
-
-    for measure in sentinel_measures:
-
-        if d =='age_band':
-            event = df.groupby(by=[d, 'date', 'practice'])[[measure, 'date']].sum().reset_index()
-
-            measures_df = population.merge(event, on=[d, 'date', 'practice'])
-        else:
-            event = df.groupby(by=['age_band', d, 'date', 'practice'])[[measure, 'date']].sum().reset_index()
-
-            measures_df = population.merge(event, on=['age_band', d, 'date', 'practice'])
-            
-        measures_df.to_feather(f'output/measure_{measure}_{d}.feather')
+        #load all measures for that sentinel measure and demographic
+        data = []
+        for file in os.listdir('output'):
+            if f'measure_{sentinel_measure}_{d}' in file:
+                df = pd.read_csv(os.path.join('output', file))
+                data.append(df)
+                
+        df = pd.concat(data)
+        df.to_csv(f'output/combined_measure_{measure}_{d}.csv')
