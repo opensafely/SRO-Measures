@@ -184,19 +184,16 @@ def deciles_chart_ebm(
     df = compute_deciles(df, period_column, column, show_outer_percentiles)
     linestyles = {
         "decile": {
-            "color": "b",
             "line": "b--",
             "linewidth": 1,
             "label": "decile",
         },
         "median": {
-            "color": "b",
             "line": "b-",
             "linewidth": 1.5,
             "label": "median",
         },
         "percentile": {
-            "color": "b",
             "line": "b:",
             "linewidth": 0.8,
             "label": "1st-9th, 91st-99th percentile",
@@ -230,7 +227,6 @@ def deciles_chart_ebm(
             data[column],
             style["line"],
             linewidth=style["linewidth"],
-            color=style["color"],
             label=label,
         )
     ax.set_ylabel(ylabel, size=15, alpha=0.6)
