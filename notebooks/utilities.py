@@ -472,16 +472,18 @@ def redact_small_numbers(df, n, counts_columns):
     counts_columns: list of columns in df that contain counts to be suppressed.
     """
     
+    def suppress_column(column):    
+        suppressed_count = column[column<=n].sum()
+        column = column.where(column<=n, np.nan)
+        
+        while suppressed_count <=n:
+            suppressed_count += column.min()
+            column.iloc[column.idxmin()] = np.nan   
+        return column
+        
     for column in counts_columns:
+        df[column] = suppress_column(df[column])
     
-        count = min(df[column])
-        
-        while count <n:
-            min_index = np.argmin(df[column])
-
-            count+= df.loc[min_index, column]
-            df.loc[min_index,column] = np.nan
-        
     return df   
 
 
