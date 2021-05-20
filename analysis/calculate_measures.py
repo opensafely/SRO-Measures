@@ -201,4 +201,4 @@ for sentinel_measure in sentinel_measures:
                 data.append(df)
                 
         df = pd.concat(data)
-        df.to_csv(f'output/combined_measure_{measure}_{d}.csv')
+        df.to_csv(f'output/combined_measure_{sentinel_measure}_{d}.csv')
