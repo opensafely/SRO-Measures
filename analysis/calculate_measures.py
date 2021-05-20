@@ -24,24 +24,27 @@ def redact_small_numbers(df, n, numerator, denominator, rate_column):
     
     def suppress_column(column):    
         suppressed_count = column[column<=n].sum()
-       
-        column[column<=n] = np.nan
-       
         
-        while suppressed_count <=n:
-            suppressed_count += column.min()
-            column.iloc[column.idxmin()] = np.nan   
+        #if 0 dont need to suppress anything
+        if suppressed_count == 0:
+            pass
+        
+        else:
+            df[column.name][df[column.name]<=n] = np.nan
+            
+
+            while suppressed_count <=n:
+                suppressed_count += column.min()
+                column.iloc[column.idxmin()] = np.nan   
         return column
     
     
     for column in [numerator, denominator]:
-        
         df[column] = suppress_column(df[column])
     
-    
     df[rate_column][(df[numerator].isna())| (df[denominator].isna())] = np.nan
-    return df      
-
+    
+    return df  
 def calculate_rate_standardise(df, numerator, denominator, rate_per=1000, standardise=False, age_group_column=False):
     """
     df: measures df
