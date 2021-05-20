@@ -118,7 +118,8 @@ study = StudyDefinition(
         round_to_nearest=100,
         return_expectations={
             "rate": "universal",
-            "category": {"ratios": {"100": 0.2, "200": 0.2, "300": 0.2, "400": 0.2, "500": 0.2}},
+            "incidence": 0.9,
+            "category": {"ratios": {"100": 0.1, "200": 0.1, "300": 0.1, "400": 0.1, "500": 0.1, "600": 0.1, "700": 0.1, "800": 0.1, "900": 0.1, "1000": 0.1}},
         },
     ),
 
