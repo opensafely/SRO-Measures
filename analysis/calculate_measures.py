@@ -10,29 +10,37 @@ def calculate_imd_group(df):
     
     return df
 
-def redact_small_numbers(df, n, counts_columns):
+def redact_small_numbers(df, n, numerator, denominator, rate_column):
     """
     Takes counts df as input and suppresses low numbers.  Sequentially redacts
-    low numbers from each column until count of redcted values >=n.
+    low numbers from numerator and denominator until count of redcted values >=n.
+    Rates corresponding to redacted values are also redacted.
     
     df: input df
     n: threshold for low number suppression
-    counts_columns: list of columns in df that contain counts to be suppressed.
+    numerator: numerator column to be redacted
+    denominator: denominator column to be redacted
     """
     
     def suppress_column(column):    
         suppressed_count = column[column<=n].sum()
-        column = column.where(column<=n, np.nan)
+       
+        column[column<=n] = np.nan
+       
         
         while suppressed_count <=n:
             suppressed_count += column.min()
             column.iloc[column.idxmin()] = np.nan   
         return column
+    
+    
+    for column in [numerator, denominator]:
         
-    for column in counts_columns:
         df[column] = suppress_column(df[column])
     
-    return df   
+    
+    df[rate_column][(df[numerator].isna())| (df[denominator].isna())] = np.nan
+    return df      
 
 def calculate_rate_standardise(df, numerator, denominator, rate_per=1000, standardise=False, age_group_column=False):
     """
@@ -148,9 +156,10 @@ for file in os.listdir('output'):
                         measures_df = population.merge(event, on=['age_band', d, 'date', 'practice'])
 
                     measures_df = measures_df[measures_df["age_band"] != "missing"]
-
-                    measures_df = redact_small_numbers(measures_df, 5, [measure, "population"])
-
+                     
+                    
+                    counts = measures_df.groupby(by=[d, "date"])[[measure, "population"]].sum().reset_index()
+                    
                     if d == "age_band":
                         measures_df = calculate_rate_standardise(measures_df, measure, "population", standardise=False)
                     else:
@@ -165,7 +174,16 @@ for file in os.listdir('output'):
                     else:
                         measures_df = measures_df.groupby(by=[d, "date", "practice"])["rate_standardised"].mean().reset_index()
                         measures_df = measures_df.groupby(by=[d, "date"])["rate_standardised"].median().reset_index()
-
+                    
+                    
+                    measures_df = measures_df.merge(counts, on=[d, "date"], how="inner")
+                    
+                    if d == 'age_band':
+                        measures_df = redact_small_numbers(measures_df, 5, measure, "population", 'rate')
+                    
+                    else:
+                        measures_df = redact_small_numbers(measures_df, 5, measure, "population", 'rate_standardised')
+                    
                     measures_df.to_csv(f'output/measure_{measure}_{d}_{date}.csv')
                     
 
