@@ -58,7 +58,7 @@ def calculate_rate_standardise(df, numerator, denominator, rate_per=1000, standa
     
    
     if standardise:
-        path = "notebooks/european_standard_population.csv"
+        path = "european_standard_population.csv"
         standard_pop = pd.read_csv(path)
         
         age_band_grouping_dict = {
@@ -91,12 +91,14 @@ def calculate_rate_standardise(df, numerator, denominator, rate_per=1000, standa
         standard_pop["AgeGroup"] = standard_pop["AgeGroup"].str.replace(" years", "")
         standard_pop = standard_pop.set_index("AgeGroup")["EuropeanStandardPopulation"]
         standard_pop = standard_pop / standard_pop.sum()
-        
-        #apply standardisation
-        df['rate_standardised'] = df.apply(standardise_row, axis=1)
-        
-    return df
 
+        merged_df = df.merge(standard_pop, left_on='age_band', right_on='AgeGroup', how='left')
+        merged_df['rate_standardised'] = merged_df['rate'] * merged_df['EuropeanStandardPopulation']
+      
+        return merged_df['rate_standardised']
+    
+    else:
+        return df
 def convert_ethnicity(df):
     ethnicity_codes = {1.0: "White", 2.0: "Mixed", 3.0: "Asian", 4.0: "Black", 5.0:"Other", np.nan: "unknown", 0: "unknown"}
 
@@ -152,7 +154,7 @@ for file in os.listdir('output'):
                     if d == "age_band":
                         measures_df = calculate_rate_standardise(measures_df, measure, "population", standardise=False)
                     else:
-                        measures_df = calculate_rate_standardise(measures_df, measure, "population", standardise=True, age_group_column="age_band")
+                        measures_df['rate_standardised'] = calculate_rate_standardise(measures_df, measure, "population", standardise=True, age_group_column="age_band")
 
                     if d == "ethnicity":
                         measures_df = convert_ethnicity(measures_df)
