@@ -45,6 +45,20 @@ systolic_bp_codelist = codelist_from_csv("codelists/opensafely-systolic-blood-pr
                                  system="snomed",
                                  column="code",)
 
+
+ethnicity_codes = codelist_from_csv(
+        "codelists/opensafely-ethnicity.csv",
+        system="ctv3",
+        column="Code",
+        category_column="Grouping_6",
+    )
+
+ld_codes = codelist_from_csv(
+    "codelists/opensafely-learning-disabilities.csv",
+    system="ctv3",
+    column="CTV3Code",
+)
+
 medication_review_1 = codelist_from_csv("codelists/opensafely-care-planning-medication-review-simple-reference-set-nhs-digital.csv",
     system="snomed",
     column="code",)

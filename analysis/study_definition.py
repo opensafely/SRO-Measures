@@ -34,18 +34,100 @@ study = StudyDefinition(
         """
         registered AND
         (NOT died)
-        """
-    ),
+        """,
 
-    registered = patients.registered_as_of(
+        registered = patients.registered_as_of(
         "index_date",
         return_expectations={"incidence": 0.9},
         ),
 
-    died = patients.died_from_any_cause(
+        died = patients.died_from_any_cause(
         on_or_before="index_date",
         returning="binary_flag",
         return_expectations={"incidence": 0.1}
+        ),
+    ),
+
+    
+
+
+    age=patients.age_as_of(
+        "index_date",
+        return_expectations={
+            "rate": "universal",
+            "int": {"distribution": "population_ages"},
+        },
+    ),
+
+    age_band=patients.categorised_as(
+        {
+            "missing": "DEFAULT",
+            "0-19": """ age >= 0 AND age < 20""",
+            "20-29": """ age >=  20 AND age < 30""",
+            "30-39": """ age >=  30 AND age < 40""",
+            "40-49": """ age >=  40 AND age < 50""",
+            "50-59": """ age >=  50 AND age < 60""",
+            "60-69": """ age >=  60 AND age < 70""",
+            "70-79": """ age >=  70 AND age < 80""",
+            "80+": """ age >=  80 AND age < 120""",
+        },
+        return_expectations={
+            "rate": "universal",
+            "category": {
+                "ratios": {
+                    "missing": 0.005,
+                    "0-19": 0.125,
+                    "20-29": 0.125,
+                    "30-39": 0.125,
+                    "40-49": 0.125,
+                    "50-59": 0.125,
+                    "60-69": 0.125,
+                    "70-79": 0.125,
+                    "80+": 0.12,
+                }
+            },
+        },
+
+    ),
+
+
+    sex=patients.sex(
+        return_expectations={
+            "rate": "universal",
+            "category": {"ratios": {"M": 0.49, "F": 0.5, "U": 0.01}},
+        }
+    ),
+
+    region=patients.registered_practice_as_of(
+        "index_date",
+        returning="nuts1_region_name",
+        return_expectations={"category": {"ratios": {
+            "North East": 0.1,
+            "North West": 0.1,
+            "Yorkshire and the Humber": 0.1,
+            "East Midlands": 0.1,
+            "West Midlands": 0.1,
+            "East of England": 0.1,
+            "London": 0.2,
+            "South East": 0.2, }}}
+    ),
+    
+    imd=patients.address_as_of(
+        "index_date",
+        returning="index_of_multiple_deprivation",
+        round_to_nearest=100,
+        return_expectations={
+            "rate": "universal",
+            "incidence": 0.9,
+            "category": {"ratios": {"100": 0.1, "200": 0.1, "300": 0.1, "400": 0.1, "500": 0.1, "600": 0.1, "700": 0.1, "800": 0.1, "900": 0.1, "1000": 0.1}},
+        },
+    ),
+
+    learning_disability=patients.with_these_clinical_events(
+        ld_codes,
+        on_or_before="index_date",
+        returning="binary_flag",
+        return_expectations={"incidence": 0.01, },
     ),
 
     practice=patients.registered_practice_as_of(
@@ -53,7 +135,23 @@ study = StudyDefinition(
         returning="pseudo_id",
         return_expectations={"int" : {"distribution": "normal", "mean": 25, "stddev": 5}, "incidence" : 0.5}
     ),
-  
+      
+    medication_review=patients.with_these_clinical_events(
+        codelist=medication_review_codelist,
+        between=["index_date", "last_day_of_month(index_date)"],
+        returning="binary_flag",
+        return_expectations={"incidence": 0.5}
+    ),
+
+    medication_review_event_code=patients.with_these_clinical_events(
+        codelist=medication_review_codelist,
+        between=["index_date", "last_day_of_month(index_date)"],
+        returning="code",
+        return_expectations={"category": {
+            "ratios": {str(1079381000000109): 0.6, str(1127441000000107): 0.2, str(1239511000000100): 0.2}}, }
+    ),
+    
+    
     systolic_bp=patients.with_these_clinical_events(
         codelist=systolic_bp_codelist,
         between=["index_date", "last_day_of_month(index_date)"],
@@ -378,3 +476,4 @@ measures = [
         group_by=["practice"]
     ),
 ]
+

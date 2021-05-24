@@ -11,7 +11,7 @@ patient_dict = {}
 
 for file in os.listdir('output'):
     if file.startswith('input'):
-        df = pd.read_csv(os.path.join('output', file))
+        df = pd.read_feather(os.path.join('output', file))
 
         for measure in sentinel_measures:
             df_subset = df[df[measure]==1]

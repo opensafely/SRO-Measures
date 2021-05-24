@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import json
 
-practice_df = pd.read_csv('output/input_practice_count.csv')
+practice_df = pd.read_feather('output/input_practice_count.feather')
 
 
 def get_number_practices(df):

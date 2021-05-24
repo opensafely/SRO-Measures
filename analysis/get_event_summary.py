@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pandas
 
-INPUT_FILE_REGEX = re.compile(r"input_(?P<date>\d{4}-\d{2}-\d{2})\.csv")
+INPUT_FILE_REGEX = re.compile(r"input_(?P<date>\d{4}-\d{2}-\d{2})\.feather")
 DATE_FORMAT = "%Y-%m-%d"
 OUTPUT_DIR = Path("output")
 

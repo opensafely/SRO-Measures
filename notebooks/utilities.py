@@ -41,12 +41,18 @@ def load_and_drop(measure, practice=False):
         The table for the given measure ID and practice.
     """
     if practice:
-        f_in = OUTPUT_DIR / f"measure_{measure}_practice_only.csv"
+        f_in = OUTPUT_DIR / f"measure_{measure}_practice_only.feather"
     else:
-        f_in = OUTPUT_DIR / f"measure_{measure}.csv"
+        f_in = OUTPUT_DIR / f"measure_{measure}.feather"
 
-    df = pd.read_csv(f_in, parse_dates=["date"])
+    df = pd.read_feather(f_in, parse_dates=["date"])
     df = drop_irrelevant_practices(df)
+    return df
+
+def convert_ethnicity(df):
+    ethnicity_codes = {1.0: "White", 2.0: "Mixed", 3.0: "Asian", 4.0: "Black", 5.0:"Other", np.nan: "unknown", 0: "unknown"}
+
+    df = df.replace({"ethnicity": ethnicity_codes})
     return df
 
 
@@ -432,3 +438,118 @@ def generate_sentinel_measure(
         ylabel="rate per 1000",
         interactive=interactive,
     )
+    
+
+
+
+
+def calculate_imd_group(df, disease_column, rate_column):
+    imd_column = pd.to_numeric(df["imd"])
+    df["imd"] = pd.qcut(imd_column, q=5,duplicates="drop", labels=['Most deprived', '2', '3', '4', 'Least deprived'])      
+    
+    df_rate = df.groupby(by=["date", "imd", 'practice'])[[rate_column]].mean().reset_index()
+
+    df_population = df.groupby(by=["date", "imd", 'practice'])[[disease_column, "population"]].sum().reset_index()
+    
+    df_merged = df_rate.merge(df_population, on=["date", "imd", 'practice'], how="inner")
+    
+    return df_merged
+
+def redact_small_numbers(df, n, counts_columns):
+    """
+    Takes counts df as input and suppresses low numbers.  Sequentially redacts
+    low numbers from each column until count of redcted values >=n.
+    
+    df: input df
+    n: threshold for low number suppression
+    counts_columns: list of columns in df that contain counts to be suppressed.
+    """
+    
+    def suppress_column(column):    
+        suppressed_count = column[column<=n].sum()
+        column = column.where(column<=n, np.nan)
+        
+        while suppressed_count <=n:
+            suppressed_count += column.min()
+            column.iloc[column.idxmin()] = np.nan   
+        return column
+        
+    for column in counts_columns:
+        df[column] = suppress_column(df[column])
+    
+    return df   
+
+
+
+def calculate_rate_standardise(df, numerator, denominator, rate_per=1000, standardise=False, age_group_column=False):
+    """
+    df: measures df
+    numerator: numerator column in df
+    denominator: denominator column in df
+    groupby: list containing columns to group by when calculating rate
+    rate_per: defines level of rate measure
+    standardise: Boolean, whether to apply age standardisation
+    age_group_column: if applying age standardisation, defines column that is age
+    """
+    rate = df[numerator]/(df[denominator]/rate_per)
+    df['rate'] = rate
+    
+    def standardise_row(row):
+    
+        age_group = row[age_group_column]
+        rate = row['rate']
+        
+        
+        standardised_rate = rate * standard_pop.loc[str(age_group)]
+        return standardised_rate
+    
+   
+    if standardise:
+        path = "european_standard_population.csv"
+        standard_pop = pd.read_csv(path)
+        
+        age_band_grouping_dict = {
+            '0-4 years': '0-19',
+            '5-9 years': '0-19',
+            '10-14 years': '0-19',
+            '15-19 years': '0-19',
+            '20-24 years': '20-29',
+            '25-29 years': '20-29',
+            '30-34 years': '30-39',
+            '35-39 years': '30-39',
+            '40-44 years': '40-49',
+            '45-49 years': '40-49',
+            '50-54 years': '50-59',
+            '55-59 years': '50-59',
+            '60-64 years': '60-69',
+            '65-69 years': '60-69',
+            '70-74 years': '70-79',
+            '75-79 years': '70-79',
+            '80-84 years': '80+',
+            '85-89 years': '80+',
+            '90plus years': '80+',
+        }
+
+        standard_pop = standard_pop.set_index('AgeGroup')
+        standard_pop = standard_pop.groupby(age_band_grouping_dict, axis=0).sum()
+        standard_pop = standard_pop.reset_index().rename(columns={'index': 'AgeGroup'})
+
+
+        standard_pop["AgeGroup"] = standard_pop["AgeGroup"].str.replace(" years", "")
+        standard_pop = standard_pop.set_index("AgeGroup")["EuropeanStandardPopulation"]
+        standard_pop = standard_pop / standard_pop.sum()
+        
+        #apply standardisation
+        df['rate_standardised'] = df.apply(standardise_row, axis=1)
+        
+    return df
+        
+
+
+
+
+
+
+
+
+
