@@ -45,67 +45,37 @@ actions:
     outputs:
       moderately_sensitive:
         text: output/practice_count.json
-    
-#   generate_measures:
-#     run: python:latest python analysis/calculate_measures.py
-#     needs: [join_ethnicity]
-#     outputs:
-#       moderately_sensitive:
-#         measure: output/combined_measure_*.csv
-    
-#   generate_measures:
-#       run: cohortextractor:latest generate_measures --study-definition study_definition --output-dir=output
-#       needs: [join_ethnicity]
-#       outputs:
-#         moderately_sensitive:
-#           measure_csv: output/measure_*.csv
+        
+  generate_measures:
+    run: cohortextractor:latest generate_measures --study-definition study_definition --output-dir=output
+    needs: [join_ethnicity]
+    outputs:
+        moderately_sensitive:
+          measure_csv: output/measure_*.csv
 
-#   generate_measure_ethnicity:
-#     run: python:latest python analysis/generate_measure_ethnicity.py
-#     needs: [join_ethnicity]
-#     outputs:
-#       moderately_sensitive:
-#         measure: output/measure_*_ethnicity.csv
-  
-  
-  
-
-#   generate_notebook:
-#     run: jupyter:latest jupyter nbconvert /workspace/notebooks/sentinel_measures.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
-#     needs: [generate_measures, get_practice_count, get_patient_count]
-#     outputs:
-#       moderately_sensitive:
-#         notebook: output/sentinel_measures.html
-  
-#   generate_notebook:
-#     run: jupyter:latest jupyter nbconvert /workspace/notebooks/sentinel_measures.ipynb --execute --to html --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
-#     needs: [generate_measures, get_practice_count, get_patient_count]
-#     outputs:
-#       moderately_sensitive:
-#         notebook: output/sentinel_measures.html
+  generate_measures_demographics:
+    run: python:latest python analysis/calculate_measures.py
+    needs: [join_ethnicity]
+    outputs:
+      moderately_sensitive:
+        measure: output/combined_measure_*.csv
     
-#   generate_notebook_demographics:
-#     run: jupyter:latest jupyter nbconvert /workspace/notebooks/sentinel_measures_demographics.ipynb --execute --to html --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
-#     needs: [generate_measures, get_practice_count, get_patient_count]
-#     outputs:
-#       moderately_sensitive:
-#         notebook: output/sentinel_measures_demographics.html
-#         figures: output/*_*.png
-     
-  # generate_notebook_practice:
-  #   run: jupyter:latest jupyter nbconvert /workspace/notebooks/sentinel_measures_by_practice.ipynb --execute --to html --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
-  #   needs: [generate_measures, get_practice_count, get_patient_count]
-  #   outputs:
-  #     moderately_sensitive:
-  #       notebook: output/sentinel_measures_by_practice.html
-  #       csvs: output/*_check.csv
+  
+  generate_notebook:
+    run: jupyter:latest jupyter nbconvert /workspace/notebooks/sentinel_measures.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
+    needs: [generate_measures, get_practice_count, get_patient_count]
+    outputs:
+      moderately_sensitive:
+        notebook: output/sentinel_measures.html
+  
 
-#   get_event_summary:
-#     run: python:latest python analysis/get_event_summary.py
-#     needs: [join_ethnicity]
-#     outputs:
-#       moderately_sensitive:
-#         text: output/*_event_summary.csv
+  generate_notebook_demographics:
+    run: jupyter:latest jupyter nbconvert /workspace/notebooks/sentinel_measures_demographics.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
+    needs: [generate_measures_demographics]
+    outputs:
+      moderately_sensitive:
+        notebook: output/sentinel_measures_demographics.html
+
 
 #   run_tests:
 #     run: python:latest python -m pytest --junit-xml=output/pytest.xml --verbose
