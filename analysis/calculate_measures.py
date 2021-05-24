@@ -175,7 +175,7 @@ for file in os.listdir('output'):
                         measures_df = measures_df.groupby(by=[d, "date", "practice"])["rate"].mean().reset_index()
                         measures_df = measures_df.groupby(by=[d, "date"])["rate"].median().reset_index()
                     else:
-                        measures_df = measures_df.groupby(by=[d, "date", "practice"])["rate_standardised"].mean().reset_index()
+                        measures_df = measures_df.groupby(by=[d, "date", "practice"])["rate_standardised"].sum().reset_index()
                         measures_df = measures_df.groupby(by=[d, "date"])["rate_standardised"].median().reset_index()
                     
                     
