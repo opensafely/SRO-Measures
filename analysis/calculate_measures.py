@@ -180,6 +180,11 @@ for file in os.listdir('output'):
                     
                     measures_df = measures_df.merge(counts, on=[d, "date"], how="inner")
                     
+                    
+                    if d == 'sex':
+                        measures_df = measures_df[measures_df['sex'].isin(['M', 'F'])]
+                    
+                    
                     if d == 'age_band':
                         measures_df = redact_small_numbers(measures_df, 5, measure, "population", 'rate')
                     
