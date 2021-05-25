@@ -139,24 +139,24 @@ for file in os.listdir('output'):
 
             for d in demographics:  
                 if d=='age_band':
-                     population = df.groupby(by=[d, 'date', 'practice']).size().reset_index(name='population')
+                     population = df.groupby(by=[d, 'date']).size().reset_index(name='population')
 
 
                 else:
 
-                    population = df.groupby(by=['age_band', d, 'date', 'practice']).size().reset_index(name='population')
+                    population = df.groupby(by=['age_band', d, 'date']).size().reset_index(name='population')
 
 
                 for measure in sentinel_measures:
 
                     if d =='age_band':
-                        event = df.groupby(by=[d, 'date', 'practice'])[[measure, 'date']].sum().reset_index()
+                        event = df.groupby(by=[d, 'date'])[[measure, 'date']].sum().reset_index()
 
-                        measures_df = population.merge(event, on=[d, 'date', 'practice'])
+                        measures_df = population.merge(event, on=[d, 'date'])
                     else:
-                        event = df.groupby(by=['age_band', d, 'date', 'practice'])[[measure, 'date']].sum().reset_index()
+                        event = df.groupby(by=['age_band', d, 'date'])[[measure, 'date']].sum().reset_index()
 
-                        measures_df = population.merge(event, on=['age_band', d, 'date', 'practice'])
+                        measures_df = population.merge(event, on=['age_band', d, 'date'])
 
                     measures_df = measures_df[measures_df["age_band"] != "missing"]
                      
@@ -172,11 +172,10 @@ for file in os.listdir('output'):
                         measures_df = convert_ethnicity(measures_df)
 
                     if d == "age_band":
-                        measures_df = measures_df.groupby(by=[d, "date", "practice"])["rate"].mean().reset_index()
-                        measures_df = measures_df.groupby(by=[d, "date"])["rate"].median().reset_index()
+                        measures_df = measures_df.groupby(by=[d, "date"])["rate"].mean().reset_index()
+                        
                     else:
-                        measures_df = measures_df.groupby(by=[d, "date", "practice"])["rate_standardised"].sum().reset_index()
-                        measures_df = measures_df.groupby(by=[d, "date"])["rate_standardised"].median().reset_index()
+                        measures_df = measures_df.groupby(by=[d, "date"])["rate_standardised"].sum().reset_index()
                     
                     
                     measures_df = measures_df.merge(counts, on=[d, "date"], how="inner")
