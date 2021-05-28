@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 import seaborn as sns
-from IPython.display import HTML, display
+from IPython.display import HTML, display, Markdown
 
 # Legend locations for matplotlib
 # https://github.com/ebmdatalab/datalab-pandas/blob/master/ebmdatalab/charts.py
@@ -419,12 +419,12 @@ def generate_sentinel_measure(
     num_events_mil = get_number_events_mil(df, measure)
     num_patients = get_number_patients(measure)
 
-    print(
+    display(Markdown(
         f"Practices included: {practices_included} ({practices_included_percent}%)"
-    )
-    print(
+    ))
+    display(Markdown(
         f"Total patients: {num_patients:.2f}M ({num_events_mil:.2f}M events)"
-    )
+    ))
 
     df = data_dict_practice[measure]
     calculate_rate(df, measure, "population")
