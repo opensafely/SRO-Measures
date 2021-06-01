@@ -439,6 +439,8 @@ def generate_sentinel_measure(
         interactive=interactive,
     )
     
+    return df
+    
 
 
 
@@ -543,7 +545,64 @@ def calculate_rate_standardise(df, numerator, denominator, rate_per=1000, standa
         df['rate_standardised'] = df.apply(standardise_row, axis=1)
         
     return df
+
+
+def calculate_statistics(df, baseline_date, comparative_dates):
+    """Calculates % change between given dates
+
+    Args:
+        df: measures dataframe with num_per_thousand column
+        baseline_date: date to use as baseline. Format: YYYY-MM-DD.
+        comparative_dates: list of dates to comare to baseline.
         
+    returns:
+        list of % differences
+    """
+    median_baseline = df[df['date'] == baseline_date]['num_per_thousand'].median()
+    differences = []
+    for date in comparative_dates:
+        value = df[df['date'] == date]['num_per_thousand'].median()
+        difference = round((value - median_baseline) / median_baseline, 2)
+        differences.append(difference)
+    
+    return differences
+
+def classify_changes(changes):
+    """Classifies list of % changes
+
+    Args:
+        changes: list of percentage changes
+    """
+    
+    if (-15 <= changes[0] < 15) and (-15 <= changes[1] < 15):
+        classification = 'no change'
+        
+    elif (changes[0] > 15) or (changes[1] > 15):
+        classification = 'increase'
+    
+    elif  (changes[0] <= -15) and not (-15 <= changes[1] < 15) :
+        classification = 'sustained drop'
+    
+    elif  (changes[0] <= -15) and (-15 <= changes[1] < 15) :
+        classification = 'recovery'
+    
+        
+    display(Markdown(
+            f"Overall classification: {classification}"
+        ))
+
+def display_changes(changes, dates):
+    """Display % changes at given dates
+
+    Args:
+        changes: list of % changes
+        dates: list of readable dates changes refer to
+    """
+    
+    for change, date in zip(changes, dates):
+        display(Markdown(
+            f"Change in median from April 2019 - {date}: ({change}%)"
+        ))
 
 
 
