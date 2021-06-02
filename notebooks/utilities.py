@@ -148,7 +148,7 @@ def get_percentage_practices(measure_table):
 
     num_practices_in_study = get_number_practices(measure_table)
 
-    return (num_practices_in_study / num_practices) * 100
+    return np.round((num_practices_in_study / num_practices) * 100, 2)
 
 
 def get_number_events_mil(measure_table, measure_id):
