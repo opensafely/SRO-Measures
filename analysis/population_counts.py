@@ -56,6 +56,6 @@ total_count_df.to_csv('output/total_count.csv')
 
 
 for column in ['sex', 'age_band', 'ethnicity', 'imd', 'region', 'learning_disability']:
-    count = Counter(full_df[column])
+    count = Counter(df[column])
     count_df = pd.DataFrame.from_dict(count, orient='index')
     count_df.to_csv(f'output/{column}_count.csv')
