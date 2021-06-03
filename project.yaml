@@ -76,6 +76,13 @@ actions:
       moderately_sensitive:
         notebook: output/sentinel_measures_demographics.html
 
+  get_population_count:
+    run: python:latest python analysis/population_counts.py
+    needs: [join_ethnicity]
+    outputs:
+      moderately_sensitive:
+        text: output/*_count.csv
+
 
 #   run_tests:
 #     run: python:latest python -m pytest --junit-xml=output/pytest.xml --verbose
