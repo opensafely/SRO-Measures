@@ -580,12 +580,15 @@ def classify_changes(changes):
     elif (changes[0] > 15) or (changes[1] > 15):
         classification = 'increase'
     
-    elif  (changes[0] <= -15) and not (-15 <= changes[1] < 15) :
+    elif (changes[0] <= -15) and not (-15 <= changes[1] < 15) :
         classification = 'sustained drop'
     
-    elif  (changes[0] <= -15) and (-15 <= changes[1] < 15) :
+    elif (changes[0] <= -15) and (-15 <= changes[1] < 15) :
         classification = 'recovery'
     
+    else:
+        classification = 'none'
+        
         
     display(Markdown(
             f"Overall classification: {classification}"
