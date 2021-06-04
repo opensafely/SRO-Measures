@@ -560,12 +560,14 @@ def calculate_statistics(df, baseline_date, comparative_dates):
     """
     median_baseline = df[df['date'] == baseline_date]['num_per_thousand'].median()
     differences = []
+    values = []
     for date in comparative_dates:
         value = df[df['date'] == date]['num_per_thousand'].median()
         difference = round(((value - median_baseline) / median_baseline)*100, 2)
         differences.append(difference)
+        values.append(value)
     
-    return differences
+    return median_baseline, values, differences
 
 def classify_changes(changes):
     """Classifies list of % changes
@@ -594,7 +596,7 @@ def classify_changes(changes):
             f"Overall classification: {classification}"
         ))
 
-def display_changes(changes, dates):
+def display_changes(baseline, values, changes, dates):
     """Display % changes at given dates
 
     Args:
@@ -602,9 +604,9 @@ def display_changes(changes, dates):
         dates: list of readable dates changes refer to
     """
     
-    for change, date in zip(changes, dates):
+    for change, value, date in zip(values, changes, dates):
         display(Markdown(
-            f"Change in median from April 2019 - {date}: {change}%"
+            f"Change in median from April 2019 ({baseline}) - {date} ({value}): ({change}%)"
         ))
 
 
