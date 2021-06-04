@@ -604,7 +604,7 @@ def display_changes(baseline, values, changes, dates):
         dates: list of readable dates changes refer to
     """
     
-    for change, value, date in zip(values, changes, dates):
+    for value, change, date in zip(values, changes, dates):
         display(Markdown(
             f"Change in median from April 2019 ({baseline}) - {date} ({value}): ({change}%)"
         ))
