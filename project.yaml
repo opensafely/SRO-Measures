@@ -71,7 +71,7 @@ actions:
 
   generate_notebook_demographics:
     run: jupyter:latest jupyter nbconvert /workspace/notebooks/sentinel_measures_demographics.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
-    needs: [generate_measures_demographics]
+    needs: [generate_measures, generate_measures_demographics]
     outputs:
       moderately_sensitive:
         notebook: output/sentinel_measures_demographics.html
