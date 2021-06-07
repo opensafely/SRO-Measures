@@ -135,7 +135,7 @@ for measure in sentinel_measures:
             
    
     
-differences_df =pd.DataFrame(differences_list, columns=['measure', 'demographic', 'demographic_subset', '2019_rate_per_1000', '2019_population_rate', '2019_percentage_difference_from_population_rate', '2020_rate_per_1000', '2020_population_rate', '2020_percentage_difference_from_population_rate', '2021_rate_per_1000', '2021_population_rate', '2021_percentage_difference_from_population_rate', 'absolute_rate_difference_classification', 'difference_of_percentage_distance_from_population_rate'])
+differences_df =pd.DataFrame(differences_list, columns=['measure', 'demographic', 'demographic_subset', '2019_rate_per_1000', '2019_population_rate', '2019_percentage_difference_from_population_rate', '2020_rate_per_1000', '2020_population_rate', '2020_percentage_difference_from_population_rate', '2021_rate_per_1000', '2021_population_rate', '2021_percentage_difference_from_population_rate', 'absolute_rate_difference_classification', 'difference_in_percentage_distance_from_population_rate_2019_to_2021'])
 differences_df.to_csv('output/demographics_differences.csv')
 
 differences_df_sorted = differences_df.reindex(differences_df['difference_of_percentage_distance_from_population_rate'].sort_values(ascending=False).index)
