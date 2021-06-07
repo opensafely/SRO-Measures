@@ -89,6 +89,7 @@ actions:
     outputs:
       moderately_sensitive:
           csv: output/demographics_differences.csv
+          csv_sorted: output/demographics_differences_sorted.csv
 
 #   run_tests:
 #     run: python:latest python -m pytest --junit-xml=output/pytest.xml --verbose
