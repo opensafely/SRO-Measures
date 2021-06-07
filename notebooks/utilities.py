@@ -27,7 +27,7 @@ BASE_DIR = Path(__file__).parents[1]
 OUTPUT_DIR = BASE_DIR / "output"
 
 
-def load_and_drop(measure, practice=False):
+def load_and_drop(measure, practice=False, drop=True):
     """Loads the measure table for the measure with the given ID.
 
     Drops irrelevant practices and casts the `date` column from a `str`
@@ -46,7 +46,9 @@ def load_and_drop(measure, practice=False):
         f_in = OUTPUT_DIR / f"measure_{measure}.csv"
 
     df = pd.read_csv(f_in, parse_dates=["date"])
-    df = drop_irrelevant_practices(df)
+    
+    if drop:
+        df = drop_irrelevant_practices(df)
     return df
 
 def convert_ethnicity(df):
