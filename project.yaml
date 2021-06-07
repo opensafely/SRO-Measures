@@ -83,13 +83,14 @@ actions:
       moderately_sensitive:
         text: output/*_count.csv
 
-  demographic_changs:
-    run: jupyter:latest jupyter nbconvert /workspace/notebooks/demographic-change.ipynb --execute --to notebook --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400
-    needs: [generate_measures, generate_measures_demographics]
+  demographic_changes:
+    run: python:latest python notebooks/demographic_change.py
+    needs: [generate_measures_demographics]
     outputs:
       moderately_sensitive:
-          csv: output/demographics_differences.csv
-          csv_sorted: output/demographics_differences_sorted.csv
+        csv: output/demographics_differences.csv
+        csv_sorted: output/demographics_differences_sorted.csv
+        
 
 #   run_tests:
 #     run: python:latest python -m pytest --junit-xml=output/pytest.xml --verbose
