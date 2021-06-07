@@ -9,18 +9,19 @@ demographics = ['region', 'age_band', 'imd', 'sex', 'learning_disability', 'ethn
 values_dict = {}
 
 
-dates = ['2019-04-01', '2020-04-01', '2021-04-01']
+dates = [['2019-03-01', '2019-04-01', '2019-05-01'], ['2020-03-01', '2020-04-01', '2020-05-01'], ['2021-03-01','2021-04-01', '2021-05-01']]
 
 differences_list = []
 
 
-def classify_changes(changes):
+def classify_changes(changes, baseline_diff):
     """Classifies list of % changes
 
     Args:
         changes: list of percentage changes
     """
    
+    diffs = [x - baseline_diff for x in changes]
     
     #between baseline both time periods
     if (-15 <= changes[0] < 15) and (-15 <= changes[1] < 15):
@@ -62,7 +63,7 @@ def classify_changes(changes):
     else:
         classification = 'none'
     
-    return classification
+    return classification, diffs
 
 for measure in sentinel_measures:
     
@@ -79,8 +80,8 @@ for measure in sentinel_measures:
         
         totals_dict = {}
         for date in dates:
-            val = total_df[total_df['date'] == date]['rate']
-            totals_dict[date] = val
+            val = total_df[total_df['date'].isin(date)]['rate'].mean()
+            totals_dict[date[1]] = val
     
         
         
@@ -112,27 +113,30 @@ for measure in sentinel_measures:
             
             date_values = {}
             date_changes = {}
+            population_values = {}
             
             for date in dates:
-                val = df_subset[df_subset['date']==date]['rate'].values[0]
-                total_val = totals_dict[date].values[0]
-             
+                val = df_subset[df_subset['date'].isin(date)]['rate'].mean()
+                total_val = totals_dict[date[1]]
+
+              
 
                 difference = round(((val - total_val) / total_val)*100, 2)
-             
-                date_values[date]=val
-                date_changes[date] = difference
                 
-            classification = classify_changes([date_changes["2020-04-01"], date_changes["2021-04-01"]])
-            row = [measure, d, unique_category, date_values["2019-04-01"], date_changes["2019-04-01"], date_values["2020-04-01"], date_changes["2020-04-01"], date_values["2021-04-01"], date_changes["2021-04-01"], classification, diffs[1]]
+                population_values[date[1]] = total_val
+                date_values[date[1]]=val
+                date_changes[date[1]] = difference
+                
+            classification, diffs = classify_changes([date_changes["2020-04-01"], date_changes["2021-04-01"]], date_changes["2019-04-01"])
+            row = [measure, d, unique_category, date_values["2019-04-01"], population_values["2019-04-01"],date_changes["2019-04-01"], date_values["2020-04-01"], population_values["2020-04-01"], date_changes["2020-04-01"], date_values["2021-04-01"], population_values["2021-04-01"], date_changes["2021-04-01"], classification, diffs[1]]
             differences_list.append(row)
         
  
             
    
     
-differences_df =pd.DataFrame(differences_list, columns=['measure', 'demographic', 'demographic_subset', '2019_rate_per_1000', '2019_percentage_difference_from_population_rate', '2020_rate_per_1000', '2020_percentage_difference_from_population_rate', '2021_rate_per_1000', '2021_percentage_difference_from_population_rate', 'absolute_rate_difference_classification', 'difference_of_percentage_distance_from_population_rate'])
+differences_df =pd.DataFrame(differences_list, columns=['measure', 'demographic', 'demographic_subset', '2019_rate_per_1000', '2019_population_rate', '2019_percentage_difference_from_population_rate', '2020_rate_per_1000', '2020_population_rate', '2020_percentage_difference_from_population_rate', '2021_rate_per_1000', '2021_population_rate', '2021_percentage_difference_from_population_rate', 'absolute_rate_difference_classification', 'difference_of_percentage_distance_from_population_rate'])
 differences_df.to_csv('output/demographics_differences.csv')
 
-differences_df_sorted = differences_df.reindex(differences_df['diff'].sort_values(ascending=False).index)
+differences_df_sorted = differences_df.reindex(differences_df['difference_of_percentage_distance_from_population_rate'].sort_values(ascending=False).index)
 differences_df_sorted.to_csv('output/demographics_differences_sorted.csv')
