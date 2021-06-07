@@ -14,31 +14,31 @@ dates = ['2019-04-01', '2020-04-01', '2021-04-01']
 differences_list = []
 
 
-def classify_changes(changes, baseline_diff):
+def classify_changes(changes):
     """Classifies list of % changes
 
     Args:
         changes: list of percentage changes
     """
-    diffs = [x - baseline_diff for x in changes]
+   
     
     
-    if (-15 <= diffs[0] < 15) and (-15 <= diffs[1] < 15):
+    if (-15 <= changes[0] < 15) and (-15 <= changes[1] < 15):
         classification = 'no change'
         
-    elif (diffs[0] > 15) or (diffs[1] > 15):
+    elif (changes[0] > 15) or (changes[1] > 15):
         classification = 'increase'
     
-    elif (diffs[0] <= -15) and not (-15 <= diffs[1] < 15) :
+    elif (changes[0] <= -15) and not (-15 <= changes[1] < 15) :
         classification = 'sustained drop'
     
-    elif (diffs[0] <= -15) and (-15 <= diffs[1] < 15) :
+    elif (changes[0] <= -15) and (-15 <= changes[1] < 15) :
         classification = 'recovery'
     
     else:
         classification = 'none'
     
-    return classification, diffs
+    return classification
 
 for measure in sentinel_measures:
     
@@ -99,7 +99,7 @@ for measure in sentinel_measures:
                 date_values[date]=val
                 date_changes[date] = difference
                 
-            classification, diffs = classify_changes([date_changes["2020-04-01"], date_changes["2021-04-01"]], date_changes["2019-04-01"])
+            classification = classify_changes([date_changes["2020-04-01"], date_changes["2021-04-01"]])
             row = [measure, d, unique_category, date_values["2019-04-01"], date_changes["2019-04-01"], date_values["2020-04-01"], date_changes["2020-04-01"], date_values["2021-04-01"], date_changes["2021-04-01"], classification, diffs[1]]
             differences_list.append(row)
         
