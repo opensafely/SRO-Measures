@@ -22,19 +22,43 @@ def classify_changes(changes):
     """
    
     
-    
+    #between baseline both time periods
     if (-15 <= changes[0] < 15) and (-15 <= changes[1] < 15):
         classification = 'no change'
-        
-    elif (changes[0] > 15) or (changes[1] > 15):
+    
+    #increase at both time periods
+    elif (changes[0] >= 15) and (changes[1] >= 15):
         classification = 'increase'
     
-    elif (changes[0] <= -15) and not (-15 <= changes[1] < 15) :
+    #increase at first then return to normal
+    elif (changes[0] >= 15) and (-15 <= changes[1] < 15):
+        classification = 'increase then return'
+        
+    #no change then increase
+    elif (-15 <= changes[0] < 15) and (changes[1] >= 15):
+        classification = 'no change then increase'
+    
+    #no change then decrease
+    elif (-15 <= changes[0] < 15) and (changes[1] <= -15):
+        classification = 'no change then decrease'
+    
+    #drop that stays low
+    elif (changes[0] <= -15) and not (changes[1] <= -15):
         classification = 'sustained drop'
     
+    #drop that recovers
     elif (changes[0] <= -15) and (-15 <= changes[1] < 15) :
         classification = 'recovery'
     
+    #drop then increase
+    elif (changes[0] <= -15) and (changes[1] > 15) :
+        classification = 'decrease then increase'
+    
+    #increase then drop
+    elif (changes[0] > 15) and (changes[1] <= -15):
+        classification = 'increase then decrease'
+    
+    #anything else
     else:
         classification = 'none'
     
