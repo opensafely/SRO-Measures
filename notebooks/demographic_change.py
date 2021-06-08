@@ -2,7 +2,7 @@ import pandas as pd
 from utilities import *
 
 
-sentinel_measures = ["qrisk2", "asthma", "copd", "sodium", "cholesterol", "alt", "tsh", "alt", "rbc", 'hba1c', 'systolic_bp', 'medication_review']
+sentinel_measures = ["qrisk2", "asthma", "copd", "sodium", "cholesterol", "tsh", "alt", "rbc", 'hba1c', 'systolic_bp', 'medication_review']
 
 demographics = ['region', 'age_band', 'imd', 'sex', 'learning_disability', 'ethnicity']
 
