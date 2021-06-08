@@ -11,17 +11,18 @@ values_dict = {}
 
 dates = [['2019-01-01', '2019-02-01', '2019-03-01'], ['2020-01-01', '2020-02-01', '2020-03-01'], ['2021-01-01','2021-02-01', '2021-03-01']]
 
+dates_categorisation = ['2019-04-01', '2020-04-01', '2021-04-01']
+
 differences_list = []
 
 
-def classify_changes(changes, baseline_diff):
+def classify_changes(changes):
     """Classifies list of % changes
 
     Args:
         changes: list of percentage changes
     """
    
-    diffs = [x - baseline_diff for x in changes]
     
     #between baseline both time periods
     if (-15 <= changes[0] < 15) and (-15 <= changes[1] < 15):
@@ -63,7 +64,8 @@ def classify_changes(changes, baseline_diff):
     else:
         classification = 'none'
     
-    return classification, diffs
+    return classification
+
 
 for measure in sentinel_measures:
     
@@ -110,12 +112,16 @@ for measure in sentinel_measures:
         for unique_category in df[d].unique():
             df_subset = df[df[d] == unique_category]
             
-            
+            classification_date_values = {}
             date_values = {}
             date_changes = {}
             population_values = {}
             
-            for date in dates:
+            for i, date in enumerate(dates):
+                classification_val = df_subset.loc[df_subset['date'] == dates_categorisation[i], 'rate'].values[0]
+               
+                classification_date_values[dates_categorisation[i]] = classification_val
+                
                 val = df_subset[df_subset['date'].isin(date)]['rate'].mean()
                 total_val = totals_dict[date[1]]
 
@@ -126,9 +132,10 @@ for measure in sentinel_measures:
                 population_values[date[1]] = total_val
                 date_values[date[1]]=val
                 date_changes[date[1]] = difference
-                
-            classification, diffs = classify_changes([date_values["2020-04-01"], date_values["2021-04-01"]], date_values["2019-04-01"])
-            row = [measure, d, unique_category, date_values["2019-04-01"], population_values["2019-04-01"],date_changes["2019-04-01"], date_values["2020-04-01"], population_values["2020-04-01"], date_changes["2020-04-01"], date_values["2021-04-01"], population_values["2021-04-01"], date_changes["2021-04-01"], classification, diffs[1]]
+            
+            
+            classification = classify_changes([classification_date_values["2020-04-01"], classification_date_values["2021-04-01"]])
+            row = [measure, d, unique_category, date_values["2019-02-01"], population_values["2019-02-01"],date_changes["2019-02-01"], date_values["2020-02-01"], population_values["2020-02-01"], date_changes["2020-02-01"], date_values["2021-02-01"], population_values["2021-02-01"], date_changes["2021-02-01"], classification, date_changes["2021-02-01"] - date_changes["2019-02-01"]]
             differences_list.append(row)
         
  
