@@ -9,7 +9,7 @@ demographics = ['region', 'age_band', 'imd', 'sex', 'learning_disability', 'ethn
 values_dict = {}
 
 
-dates = [['2019-03-01', '2019-04-01', '2019-05-01'], ['2020-03-01', '2020-04-01', '2020-05-01'], ['2021-03-01','2021-04-01', '2021-05-01']]
+dates = [['2019-01-01', '2019-02-01', '2019-03-01'], ['2020-01-01', '2020-02-01', '2020-03-01'], ['2021-01-01','2021-02-01', '2021-03-01']]
 
 differences_list = []
 
@@ -127,7 +127,7 @@ for measure in sentinel_measures:
                 date_values[date[1]]=val
                 date_changes[date[1]] = difference
                 
-            classification, diffs = classify_changes([date_changes["2020-04-01"], date_changes["2021-04-01"]], date_changes["2019-04-01"])
+            classification, diffs = classify_changes([date_values["2020-04-01"], date_values["2021-04-01"]], date_values["2019-04-01"])
             row = [measure, d, unique_category, date_values["2019-04-01"], population_values["2019-04-01"],date_changes["2019-04-01"], date_values["2020-04-01"], population_values["2020-04-01"], date_changes["2020-04-01"], date_values["2021-04-01"], population_values["2021-04-01"], date_changes["2021-04-01"], classification, diffs[1]]
             differences_list.append(row)
         
