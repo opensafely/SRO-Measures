@@ -47,7 +47,7 @@ def classify_changes(values, baseline):
         classification = 'no change then decrease'
     
     #drop that stays low
-    elif (changes[0] <= -15) and not (changes[1] <= -15):
+    elif (changes[0] <= -15) and (changes[1] <= -15):
         classification = 'sustained drop'
     
     #drop that recovers
@@ -65,6 +65,7 @@ def classify_changes(values, baseline):
     #anything else
     else:
         classification = 'none'
+    
     
     return classification
 
