@@ -9,20 +9,22 @@ demographics = ['region', 'age_band', 'imd', 'sex', 'learning_disability', 'ethn
 values_dict = {}
 
 
-dates = [['2019-01-01', '2019-02-01', '2019-03-01'], ['2020-01-01', '2020-02-01', '2020-03-01'], ['2021-01-01','2021-02-01', '2021-03-01']]
+date_lists = [['2019-01-01', '2019-02-01', '2019-03-01'], ['2020-01-01', '2020-02-01', '2020-03-01'], ['2021-01-01','2021-02-01', '2021-03-01']]
 
-dates_categorisation = ['2019-04-01', '2020-04-01', '2021-04-01']
+dates_for_classification = ['2019-04-01', '2020-04-01', '2021-04-01']
 
 differences_list = []
 
 
-def classify_changes(changes):
-    """Classifies list of % changes
+def classify_changes(values, baseline):
+    """Classifies list of values by % changes
 
     Args:
-        changes: list of percentage changes
+        changes: list of values
+        baseline: baseline value
     """
-   
+    
+    changes = [((x-baseline) / baseline)*100 for x in values]
     
     #between baseline both time periods
     if (-15 <= changes[0] < 15) and (-15 <= changes[1] < 15):
@@ -68,25 +70,10 @@ def classify_changes(changes):
 
 
 for measure in sentinel_measures:
-    
-    
     for d in demographics:
         df = pd.read_csv(f'output/combined_measure_{measure}_{d}.csv', parse_dates=['date']).sort_values(['date'])
         
-        total_population = df.groupby(by=['date'])[['population']].sum().reset_index()
-        total_events = df.groupby(by=['date'])[[measure]].sum().reset_index()
-        
-        total_df = total_events.merge(total_population, on='date')
-        
-        total_df['rate'] = total_df[measure]/(total_df['population']/1000)
-        
-        totals_dict = {}
-        for date in dates:
-            val = total_df[total_df['date'].isin(date)]['rate'].mean()
-            totals_dict[date[1]] = val
-    
-        
-        
+     
         if d == 'ethnicity':
             
             #drop missing ethnicity :('0')
@@ -103,46 +90,66 @@ for measure in sentinel_measures:
             ld_dict = {0: 'No record of a learning disability', 1: 'Record of a learning disability'}
             df = df.replace({"learning_disability": ld_dict})
         
-        
         if d != 'age_band':
             df['rate'] = df[measure]/(df['population']/1000)
         
         
+         # get population rate
+        total_population = df.groupby(by=['date'])[['population']].sum().reset_index()
+        total_events = df.groupby(by=['date'])[[measure]].sum().reset_index()
+        total_df = total_events.merge(total_population, on='date')
+        total_df['rate'] = total_df[measure]/(total_df['population']/1000)
+        
+        #dict containing mean rate for each first quarter each year
+        totals_dict = {}
+        for dates in date_lists:
+            val = total_df[total_df['date'].isin(dates)]['rate'].mean()
+            totals_dict[dates[1]] = val
+    
+    
       
         for unique_category in df[d].unique():
             df_subset = df[df[d] == unique_category]
             
             classification_date_values = {}
+            
+            #get rate in April each year
+            for date in dates_for_classification:
+                classification_val = df_subset.loc[df_subset['date'] == date, 'rate'].values[0]
+                classification_date_values[date] = classification_val
+            
+            #make classification
+            classification = classify_changes([classification_date_values["2020-04-01"], classification_date_values["2021-04-01"]], classification_date_values["2019-04-01"])
+            
+            
+            # get mean deviation from population rate in first quarter each year
             date_values = {}
             date_changes = {}
-            population_values = {}
             
-            for i, date in enumerate(dates):
-                classification_val = df_subset.loc[df_subset['date'] == dates_categorisation[i], 'rate'].values[0]
-               
-                classification_date_values[dates_categorisation[i]] = classification_val
+            
+            for dates in date_lists:
                 
-                val = df_subset[df_subset['date'].isin(date)]['rate'].mean()
-                total_val = totals_dict[date[1]]
-
+                #subgroup value and population value
+                val = df_subset[df_subset['date'].isin(dates)]['rate'].mean()
+                total_val = totals_dict[dates[1]]
               
-
+                #mean deviation from population
                 difference = round(((val - total_val) / total_val)*100, 2)
                 
-                population_values[date[1]] = total_val
-                date_values[date[1]]=val
-                date_changes[date[1]] = difference
+                date_values[dates[1]]=val
+                date_changes[dates[1]] = difference
             
             
-            classification = classify_changes([classification_date_values["2020-04-01"], classification_date_values["2021-04-01"]])
-            row = [measure, d, unique_category, date_values["2019-02-01"], population_values["2019-02-01"],date_changes["2019-02-01"], date_values["2020-02-01"], population_values["2020-02-01"], date_changes["2020-02-01"], date_values["2021-02-01"], population_values["2021-02-01"], date_changes["2021-02-01"], classification, date_changes["2021-02-01"] - date_changes["2019-02-01"]]
+            row = [measure, d, unique_category, classification_date_values["2019-04-01"], classification_date_values["2020-04-01"], classification_date_values["2021-04-01"], classification, date_values["2019-02-01"], totals_dict["2019-02-01"],date_changes["2019-02-01"], date_values["2020-02-01"], totals_dict["2020-02-01"], date_changes["2020-02-01"], date_values["2021-02-01"], totals_dict["2021-02-01"], date_changes["2021-02-01"], date_changes["2021-02-01"] - date_changes["2019-02-01"]]
+            
+
             differences_list.append(row)
         
  
             
    
     
-differences_df =pd.DataFrame(differences_list, columns=['measure', 'demographic', 'demographic_subset', '2019_rate_per_1000', '2019_population_rate', '2019_percentage_difference_from_population_rate', '2020_rate_per_1000', '2020_population_rate', '2020_percentage_difference_from_population_rate', '2021_rate_per_1000', '2021_population_rate', '2021_percentage_difference_from_population_rate', 'absolute_rate_difference_classification', 'difference_in_percentage_distance_from_population_rate_2019_to_2021'])
+differences_df =pd.DataFrame(differences_list, columns=['measure', 'demographic', 'demographic_subset', 'april_2019_rate', 'april_2020_rate', 'april_2021_rate', 'activity_classification','2019_q1_rate_per_1000', '2019_q1_population_rate', '2019_q1_percentage_difference_from_population_rate', '2020_q1_rate_per_1000', '2020_q1_population_rate', '2020_q1_percentage_difference_from_population_rate', '2021_q1_rate_per_1000', '2021_q1_population_rate', '2021_q1_percentage_difference_from_population_rate', 'difference_in_percentage_distance_from_population_rate_2019_to_2021'])
 differences_df.to_csv('output/demographics_differences.csv')
 
 differences_df_sorted = differences_df.reindex(differences_df['difference_in_percentage_distance_from_population_rate_2019_to_2021'].sort_values(ascending=False).index)
