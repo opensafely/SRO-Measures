@@ -76,11 +76,8 @@ for measure in sentinel_measures:
      
         if d == 'ethnicity':
             
-            #drop missing ethnicity :('0')
-            df = df[df['ethnicity'] != 0]
-            
             # replace with strings
-            ethnicity_codes = {1.0: "White", 2.0: "Mixed", 3.0: "Asian", 4.0: "Black", 5.0:"Other"}
+            ethnicity_codes = {1.0: "White", 2.0: "Mixed", 3.0: "Asian", 4.0: "Black", 5.0:"Other", 0.0: "Missing"}
             df = df.replace({"ethnicity": ethnicity_codes})
             
         elif d == 'age_band':
