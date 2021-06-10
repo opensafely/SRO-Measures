@@ -4,7 +4,9 @@ from datetime import datetime
 import os
 from collections import Counter
 
-
+practice_df = pd.read_csv('analysis/gp-reg-pat-prac-map.csv')
+num_practices_region = practice_df.groupby(by='COMM_REGION_NAME')['PRACTICE_CODE'].nunique().reset_index()
+num_practices_region.to_csv('output/practice_region_total_count.csv')
 
 dates_list = []
 path_list = []
@@ -53,6 +55,9 @@ unique_practices = full_df['practice'].unique()
 total_count_df = pd.DataFrame([['total', len(full_df)], ['practice', len(unique_practices)]], columns=['pop', 'count'])
 total_count_df.to_csv('output/total_count.csv')
 
+
+practices_by_region = full_df.groupby(by='region')['practice'].nunique().reset_index()
+practices_by_region.to_csv('output/practice_region_count.csv')
 
 
 for column in ['sex', 'age_band', 'ethnicity', 'imd', 'region', 'learning_disability']:
