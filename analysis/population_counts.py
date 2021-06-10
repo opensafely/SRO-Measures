@@ -4,7 +4,7 @@ from datetime import datetime
 import os
 from collections import Counter
 
-practice_df = pd.read_csv('gp-reg-pat-prac-map.csv')
+practice_df = pd.read_csv('analysis/gp-reg-pat-prac-map.csv')
 num_practices_region = practice_df.groupby(by='COMM_REGION_NAME')['PRACTICE_CODE'].nunique().reset_index()
 num_practices_region.to_csv('output/practice_region_total_count.csv')
 
