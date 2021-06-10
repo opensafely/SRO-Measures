@@ -9,7 +9,7 @@ from cohortextractor import (
 from datetime import date
 
 start_date = "2019-01-01"
-end_date = date.today().isoformat()
+end_date = "2021-04-01"
 
 from codelists import ethnicity_codes
 
@@ -19,9 +19,7 @@ study = StudyDefinition(
         "rate": "uniform",
     },
     index_date=end_date,
-    population=patients.registered_with_one_practice_between(
-        "index_date", "index_date"
-    ),
+    population=patients.all(),
 
     # ETHNICITY IN 6 CATEGORIES
     eth=patients.with_these_clinical_events(
