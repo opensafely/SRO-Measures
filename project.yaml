@@ -52,6 +52,7 @@ actions:
     outputs:
         moderately_sensitive:
           measure_csv: output/measure_*.csv
+          subplots: output/sentinel_measures_subplots.png
 
   generate_measures_demographics:
     run: python:latest python analysis/calculate_measures.py
