@@ -567,7 +567,7 @@ def calculate_statistics(df, baseline_date, comparative_dates):
         value = df[df['date'] == date]['num_per_thousand'].median()
         difference = round(((value - median_baseline) / median_baseline)*100, 2)
         differences.append(difference)
-        values.append(value)
+        values.append(round(value, 2))
     
     return median_baseline, values, differences
 
