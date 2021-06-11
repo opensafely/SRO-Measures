@@ -7,3 +7,4 @@
   * [output/sentinel_measures.html](output/sentinel_measures.html)
   * [output/sentinel_measures_by_practice.html](output/sentinel_measures_by_practice.html)
   * [output/sentinel_measures_demographics.html](output/sentinel_measures_demographics.html)
+  * [output/sentinel_measures_subplots.png](output/sentinel_measures_subplots.png)
