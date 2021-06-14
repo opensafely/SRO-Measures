@@ -46,18 +46,49 @@ systolic_bp_codelist = codelist_from_csv("codelists/opensafely-systolic-blood-pr
                                  column="code",)
 
 
-ethnicity_codes = codelist_from_csv(
-        "codelists/opensafely-ethnicity.csv",
-        system="ctv3",
-        column="Code",
-        category_column="Grouping_6",
-    )
+# Ethnicity codes
+eth2001 = codelist_from_csv(
+    "codelists/primis-covid19-vacc-uptake-eth2001.csv",
+    system="snomed",
+    column="code",
+    category_column="grouping_16_id",
+)
+
+# Any other ethnicity code
+non_eth2001 = codelist_from_csv(
+    "codelists/primis-covid19-vacc-uptake-non_eth2001.csv",
+    system="snomed",
+    column="code",
+)
+
+# Ethnicity not given - patient refused
+eth_notgiptref = codelist_from_csv(
+    "codelists/primis-covid19-vacc-uptake-eth_notgiptref.csv",
+    system="snomed",
+    column="code",
+)
+
+# Ethnicity not stated
+eth_notstated = codelist_from_csv(
+    "codelists/primis-covid19-vacc-uptake-eth_notstated.csv",
+    system="snomed",
+    column="code",
+)
+
+# Ethnicity no record
+eth_norecord = codelist_from_csv(
+    "codelists/primis-covid19-vacc-uptake-eth_norecord.csv",
+    system="snomed",
+    column="code",
+)
 
 ld_codes = codelist_from_csv(
     "codelists/opensafely-learning-disabilities.csv",
     system="ctv3",
     column="CTV3Code",
 )
+
+
 
 medication_review_1 = codelist_from_csv("codelists/opensafely-care-planning-medication-review-simple-reference-set-nhs-digital.csv",
     system="snomed",
