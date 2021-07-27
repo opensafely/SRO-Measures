@@ -43,7 +43,7 @@ actions:
     needs: [generate_study_population_1, generate_study_population_2, generate_study_population_3, generate_study_population_ethnicity]
     outputs:
       highly_sensitive:
-        cohort: output/input*.feather
+        cohort: output/inp*.feather
 
   generate_study_population_practice_count:
     run: cohortextractor:latest generate_cohort --study-definition study_definition_practice_count --output-dir=output --output-format=feather
