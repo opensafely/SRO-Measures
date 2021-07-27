@@ -31,9 +31,8 @@ study = StudyDefinition(
         return_expectations={
             "category": {
                 "ratios": {
-                    "0": 0.2,
                     "1": 0.5,
-                    "2": 0.2,
+                    "2": 0.4,
                     "3": 0.05,
                     "4": 0.025,
                     "5": 0.025,
