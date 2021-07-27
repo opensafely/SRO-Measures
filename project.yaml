@@ -16,13 +16,13 @@ actions:
     run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2020-01-01 to 2020-12-01 by month" --output-dir=output --output-format=feather
     outputs:
       highly_sensitive:
-        cohort: output/input_*.feather
+        cohort: output/input*.feather
 
   generate_study_population_3:
     run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2021-01-01 to 2021-06-01 by month" --output-dir=output --output-format=feather
     outputs:
       highly_sensitive:
-        cohort: output/input_*.feather
+        cohort: output/inpu*.feather
 
   get_patient_count:
     run: python:latest python analysis/get_patients_counts.py
