@@ -123,12 +123,6 @@ study = StudyDefinition(
         },
     ),
 
-#     learning_disability=patients.with_these_clinical_events(
-#         ld_codes,
-#         on_or_before="index_date",
-#         returning="binary_flag",
-#         return_expectations={"incidence": 0.01, },
-#     ),
 
     practice=patients.registered_practice_as_of(
         "index_date",
