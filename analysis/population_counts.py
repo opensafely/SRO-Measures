@@ -60,7 +60,7 @@ practices_by_region = full_df.groupby(by='region')['practice'].nunique().reset_i
 practices_by_region.to_csv('output/practice_region_count.csv')
 
 
-for column in ['sex', 'age_band', 'ethnicity', 'imd', 'region', 'learning_disability']:
+for column in ['sex', 'age_band', 'ethnicity', 'imd', 'region']:
     count = Counter(full_df[column])
     count_df = pd.DataFrame.from_dict(count, orient='index')
     count_df.to_csv(f'output/{column}_count.csv')
