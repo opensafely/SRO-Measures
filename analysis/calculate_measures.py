@@ -130,14 +130,14 @@ for file in os.listdir('output'):
     if file.startswith('input'):
         #exclude ethnicity and practice
         if file.split('_')[1] not in ['ethnicity.feather', 'practice']:
-
+            
             file_path = os.path.join('output', file)
-            date = re.match(r"input_(?P<date>\d{4}-\d{2}-\d{2})\.feather", file)
+            date = re.match(r"input_(?P<date>\d{4}-\d{2}-\d{2})\.feather", file).group("date")
             df = pd.read_feather(file_path)
-            df['date'] = pd.to_datetime(date.group("date"))
+            df['date'] = pd.to_datetime(date)
 
            
-            df = calculate_imd_group(df)
+            # df = calculate_imd_group(df)
 
             for d in demographics:  
                 if d=='age_band':
@@ -172,6 +172,7 @@ for file in os.listdir('output'):
 
                     if d == "ethnicity":
                         measures_df = convert_ethnicity(measures_df)
+                        
 
                     if d == "age_band":
                         measures_df = measures_df.groupby(by=[d, "date"])["rate"].mean().reset_index()
@@ -180,7 +181,7 @@ for file in os.listdir('output'):
                         measures_df = measures_df.groupby(by=[d, "date"])["rate_standardised"].sum().reset_index()
                     
                     
-                    measures_df = measures_df.merge(counts, on=[d, "date"], how="inner")
+                    measures_df = measures_df.merge(counts, on=[d, "date"], how="outer")
                     
                     
                     if d == 'sex':
@@ -191,7 +192,9 @@ for file in os.listdir('output'):
                         measures_df = redact_small_numbers(measures_df, 5, measure, "population", 'rate')
                     
                     else:
+        
                         measures_df = redact_small_numbers(measures_df, 5, measure, "population", 'rate_standardised')
+                    
                     
                     measures_df.to_csv(f'output/measure_{measure}_{d}_{date}.csv')
                     
