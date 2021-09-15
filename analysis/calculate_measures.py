@@ -55,7 +55,9 @@ def calculate_rate_standardise(df, numerator, denominator, rate_per=1000, standa
     standardise: Boolean, whether to apply age standardisation
     age_group_column: if applying age standardisation, defines column that is age
     """
-    rate = df[numerator]/(df[denominator]/rate_per)
+
+    rate = df[numerator].div(df[denominator].where(df[denominator] != 0, np.nan))*1000
+    
     df['rate'] = rate
     
     def standardise_row(row):
@@ -128,14 +130,14 @@ for file in os.listdir('output'):
     if file.startswith('input'):
         #exclude ethnicity and practice
         if file.split('_')[1] not in ['ethnicity.feather', 'practice']:
-
+            
             file_path = os.path.join('output', file)
-            date = re.match(r"input_(?P<date>\d{4}-\d{2}-\d{2})\.feather", file)
+            date = re.match(r"input_(?P<date>\d{4}-\d{2}-\d{2})\.feather", file).group("date")
             df = pd.read_feather(file_path)
-            df['date'] = pd.to_datetime(date.group("date"))
+            df['date'] = pd.to_datetime(date)
 
            
-            df = calculate_imd_group(df)
+            # df = calculate_imd_group(df)
 
             for d in demographics:  
                 if d=='age_band':
@@ -160,7 +162,7 @@ for file in os.listdir('output'):
 
                     measures_df = measures_df[measures_df["age_band"] != "missing"]
                      
-                    
+                    measures_df = measures_df.replace({True: 1, False: 0})
                     counts = measures_df.groupby(by=[d, "date"])[[measure, "population"]].sum().reset_index()
                     
                     if d == "age_band":
@@ -170,6 +172,7 @@ for file in os.listdir('output'):
 
                     if d == "ethnicity":
                         measures_df = convert_ethnicity(measures_df)
+                        
 
                     if d == "age_band":
                         measures_df = measures_df.groupby(by=[d, "date"])["rate"].mean().reset_index()
@@ -178,7 +181,7 @@ for file in os.listdir('output'):
                         measures_df = measures_df.groupby(by=[d, "date"])["rate_standardised"].sum().reset_index()
                     
                     
-                    measures_df = measures_df.merge(counts, on=[d, "date"], how="inner")
+                    measures_df = measures_df.merge(counts, on=[d, "date"], how="outer")
                     
                     
                     if d == 'sex':
@@ -189,7 +192,10 @@ for file in os.listdir('output'):
                         measures_df = redact_small_numbers(measures_df, 5, measure, "population", 'rate')
                     
                     else:
+
+                        
                         measures_df = redact_small_numbers(measures_df, 5, measure, "population", 'rate_standardised')
+                    
                     
                     measures_df.to_csv(f'output/measure_{measure}_{d}_{date}.csv')
                     

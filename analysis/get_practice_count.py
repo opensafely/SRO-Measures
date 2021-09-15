@@ -1,18 +1,24 @@
 import pandas as pd
 import numpy as np
 import json
+import re
+from pathlib import Path
 
-practice_df = pd.read_feather('output/input_practice_count.feather')
+BASE_DIR = Path(__file__).parents[1]
+OUTPUT_DIR = BASE_DIR / "output"
 
+pattern = r'^input_20\d\d-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])\.feather' 
 
-def get_number_practices(df):
-    practices = df['practice']
-    total_num = len(np.unique(practices))
-    return total_num
+practice_list = []
 
+for file in OUTPUT_DIR.iterdir():
+    
+    if re.match(pattern, file.name):
+        df = pd.read_feather(OUTPUT_DIR / file.name)
+        
+        practice_list.extend(np.unique(df['practice']))
 
-num_practices = get_number_practices(practice_df)
-
+num_practices = len(np.unique(practice_list))
 
 with open('output/practice_count.json', 'w') as f:
     json.dump({"num_practices": num_practices}, f)

@@ -33,15 +33,11 @@ actions:
       highly_sensitive:
         cohort: output/input*.feather
 
-  generate_study_population_practice_count:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_practice_count --output-dir=output --output-format=feather
-    outputs:
-      highly_sensitive:
-        cohort: output/input_practice_count.feather
+ 
         
   get_practice_count:
     run: python:latest python analysis/get_practice_count.py
-    needs: [generate_study_population_practice_count]
+    needs: [join_ethnicity]
     outputs:
       moderately_sensitive:
         text: output/practice_count.json
@@ -52,6 +48,13 @@ actions:
     outputs:
         moderately_sensitive:
           measure_csv: output/measure_*.csv
+
+  generate_measures_cleaned:
+    run: python:latest python analysis/clean_measures.py
+    needs: [generate_measures]
+    outputs:
+        moderately_sensitive:
+          measure_csv: output/measure_cleaned_*.csv
           
 
   generate_measures_demographics:
