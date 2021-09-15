@@ -52,6 +52,13 @@ actions:
     outputs:
         moderately_sensitive:
           measure_csv: output/measure_*.csv
+
+  generate_measures_cleaned:
+    run: python:latest python analysis/clean_measures.py
+    needs: [generate_measures]
+    outputs:
+        moderately_sensitive:
+          measure_csv: output/measure_cleaned_*.csv
           
 
   generate_measures_demographics:

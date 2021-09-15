@@ -55,7 +55,9 @@ def calculate_rate_standardise(df, numerator, denominator, rate_per=1000, standa
     standardise: Boolean, whether to apply age standardisation
     age_group_column: if applying age standardisation, defines column that is age
     """
-    rate = df[numerator]/(df[denominator]/rate_per)
+
+    rate = df[numerator].div(df[denominator].where(df[denominator] != 0, np.nan))*1000
+    
     df['rate'] = rate
     
     def standardise_row(row):
