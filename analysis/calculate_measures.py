@@ -162,7 +162,7 @@ for file in os.listdir('output'):
 
                     measures_df = measures_df[measures_df["age_band"] != "missing"]
                      
-                    
+                    measures_df = measures_df.replace({True: 1, False: 0})
                     counts = measures_df.groupby(by=[d, "date"])[[measure, "population"]].sum().reset_index()
                     
                     if d == "age_band":
@@ -192,7 +192,8 @@ for file in os.listdir('output'):
                         measures_df = redact_small_numbers(measures_df, 5, measure, "population", 'rate')
                     
                     else:
-        
+
+                        
                         measures_df = redact_small_numbers(measures_df, 5, measure, "population", 'rate_standardised')
                     
                     
