@@ -292,7 +292,7 @@ def compute_deciles(
         .quantile(pd.Series(quantiles, name="percentile"))
         .reset_index()
     )
-    percentiles["percentile"] = percentiles["percentile"] * 100
+    percentiles["percentile"] = percentiles["percentile"].apply(lambda x: int(x * 100))
     return percentiles
 
 
