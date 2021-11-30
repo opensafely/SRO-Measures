@@ -38,9 +38,7 @@ for file in sorted(os.listdir('output')):
         
         full_df = pd.concat([full_df, df])
 
-    
 
-full_df = calculate_imd_group(full_df)
 
 unique_practices = full_df['practice'].unique()
 

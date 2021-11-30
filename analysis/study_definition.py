@@ -112,14 +112,32 @@ study = StudyDefinition(
             "South East": 0.2, }}}
     ),
     
-    imd=patients.address_as_of(
-        "index_date",
-        returning="index_of_multiple_deprivation",
-        round_to_nearest=100,
+    imd=patients.categorised_as(
+        {
+            "0": "DEFAULT",
+            "1": """index_of_multiple_deprivation >=1 AND index_of_multiple_deprivation < 32844*1/5""",
+            "2": """index_of_multiple_deprivation >= 32844*1/5 AND index_of_multiple_deprivation < 32844*2/5""",
+            "3": """index_of_multiple_deprivation >= 32844*2/5 AND index_of_multiple_deprivation < 32844*3/5""",
+            "4": """index_of_multiple_deprivation >= 32844*3/5 AND index_of_multiple_deprivation < 32844*4/5""",
+            "5": """index_of_multiple_deprivation >= 32844*4/5 AND index_of_multiple_deprivation < 32844""",
+        },
+        index_of_multiple_deprivation=patients.address_as_of(
+            "index_date",
+            returning="index_of_multiple_deprivation",
+            round_to_nearest=100,
+        ),
         return_expectations={
             "rate": "universal",
-            "incidence": 0.9,
-            "category": {"ratios": {"100": 0.1, "200": 0.1, "300": 0.1, "400": 0.1, "500": 0.1, "600": 0.1, "700": 0.1, "800": 0.1, "900": 0.1, "1000": 0.1}},
+            "category": {
+                "ratios": {
+                    "0": 0.05,
+                    "1": 0.19,
+                    "2": 0.19,
+                    "3": 0.19,
+                    "4": 0.19,
+                    "5": 0.19,
+                }
+            },
         },
     ),
 

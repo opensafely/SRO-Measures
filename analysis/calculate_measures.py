@@ -4,11 +4,6 @@ import numpy as np
 import pandas as pd
 from cohortextractor import Measure
 
-def calculate_imd_group(df):
-    imd_column = pd.to_numeric(df["imd"])
-    df["imd"] = pd.qcut(imd_column, q=5,duplicates="drop", labels=['Most deprived', '2', '3', '4', 'Least deprived'])      
-    
-    return df
 
 def redact_small_numbers(df, n, numerator, denominator, rate_column):
     """
@@ -137,7 +132,6 @@ for file in os.listdir('output'):
             df['date'] = pd.to_datetime(date)
 
            
-            # df = calculate_imd_group(df)
 
             for d in demographics:  
                 if d=='age_band':

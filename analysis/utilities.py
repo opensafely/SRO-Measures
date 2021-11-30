@@ -629,10 +629,7 @@ def get_date_input_file(file: str) -> str:
         date = result = re.search(r"input_(.*)\.feather", file)
         return date.group(1)
 
-def calculate_imd_group(df):
-    imd_column = pd.to_numeric(df["imd"])
-    df["imd"] = pd.qcut(imd_column, q=5,duplicates="drop", labels=['Most deprived', '2', '3', '4', 'Least deprived'])      
-    return df
+
 
 
 
