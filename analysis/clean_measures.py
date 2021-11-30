@@ -9,7 +9,7 @@ measure_pattern = r'^measure_\w*_practice_only_rate.csv'
 for file in OUTPUT_DIR.iterdir():
     if re.match(measure_pattern, file.name):
         
-        sentinel_measure = re.search(r'measure_(.*)\_practice_only.csv', file.name).group(1)
+        sentinel_measure = re.search(r'measure_(.*)\_practice_only_rate.csv', file.name).group(1)
         df = load_and_drop(sentinel_measure, practice=True)
         
         calculate_rate(df, sentinel_measure, "population")
