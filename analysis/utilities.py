@@ -12,6 +12,7 @@ from IPython.display import HTML, display, Markdown
 BASE_DIR = Path(__file__).parents[1]
 OUTPUT_DIR = BASE_DIR / "output"
 
+
 # Legend locations for matplotlib
 # https://github.com/ebmdatalab/datalab-pandas/blob/master/ebmdatalab/charts.py
 BEST = 0
@@ -44,9 +45,9 @@ def load_and_drop(measure, practice=False, drop=True):
         The table for the given measure ID and practice.
     """
     if practice:
-        f_in = OUTPUT_DIR / f"measure_{measure}_practice_only.csv"
+        f_in = OUTPUT_DIR / f"measure_{measure}_practice_only_rate.csv"
     else:
-        f_in = OUTPUT_DIR / f"measure_{measure}.csv"
+        f_in = OUTPUT_DIR / f"measure_{measure}_rate.csv"
 
     df = pd.read_csv(f_in, parse_dates=["date"])
     
