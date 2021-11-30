@@ -47,7 +47,7 @@ actions:
     needs: [join_ethnicity]
     outputs:
         moderately_sensitive:
-          measure_csv: output/measure_*.csv
+          measure_csv: output/measure_*_rate.csv
 
   generate_measures_cleaned:
     run: python:latest python analysis/clean_measures.py
