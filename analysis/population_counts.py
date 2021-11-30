@@ -4,6 +4,8 @@ from datetime import datetime
 import os
 from collections import Counter
 
+# get total number of practices by region to look at backend coverage
+# source: https://digital.nhs.uk/data-and-information/publications/statistical/patients-registered-at-a-gp-practice/metadata#gp-reg-pat-prac-map
 practice_df = pd.read_csv('analysis/gp-reg-pat-prac-map.csv')
 num_practices_region = practice_df.groupby(by='COMM_REGION_NAME')['PRACTICE_CODE'].nunique().reset_index()
 num_practices_region.to_csv('output/practice_region_total_count.csv')
