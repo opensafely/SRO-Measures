@@ -10,7 +10,7 @@ from datetime import date
 import codelists
 
 start_date = "2019-01-01"
-end_date = "2021-04-01"
+end_date = "2021-10-01"
 
 
 study = StudyDefinition(
