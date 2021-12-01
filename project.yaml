@@ -47,7 +47,7 @@ actions:
     needs: [join_ethnicity]
     outputs:
         moderately_sensitive:
-          measure_csv: output/measure_*.csv
+          measure_csv: output/measure_*_rate.csv
 
   generate_measures_cleaned:
     run: python:latest python analysis/clean_measures.py
@@ -66,7 +66,7 @@ actions:
     
   
   generate_notebook:
-    run: jupyter:latest jupyter nbconvert /workspace/notebooks/sentinel_measures.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
+    run: jupyter:latest jupyter nbconvert /workspace/analysis/sentinel_measures.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
     needs: [generate_measures, get_practice_count, get_patient_count]
     outputs:
       moderately_sensitive:
@@ -75,7 +75,7 @@ actions:
   
 
   generate_notebook_demographics:
-    run: jupyter:latest jupyter nbconvert /workspace/notebooks/sentinel_measures_demographics.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
+    run: jupyter:latest jupyter nbconvert /workspace/analysis/sentinel_measures_demographics.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
     needs: [generate_measures, generate_measures_demographics]
     outputs:
       moderately_sensitive:
@@ -89,7 +89,7 @@ actions:
         text: output/*_count.csv
 
   demographic_changes:
-    run: python:latest python notebooks/demographic_change.py
+    run: python:latest python analysis/demographic_change.py
     needs: [generate_measures_demographics]
     outputs:
       moderately_sensitive:

@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-
+import re
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
@@ -8,6 +8,10 @@ import pandas as pd
 import plotly.graph_objects as go
 import seaborn as sns
 from IPython.display import HTML, display, Markdown
+
+BASE_DIR = Path(__file__).parents[1]
+OUTPUT_DIR = BASE_DIR / "output"
+
 
 # Legend locations for matplotlib
 # https://github.com/ebmdatalab/datalab-pandas/blob/master/ebmdatalab/charts.py
@@ -41,9 +45,9 @@ def load_and_drop(measure, practice=False, drop=True):
         The table for the given measure ID and practice.
     """
     if practice:
-        f_in = OUTPUT_DIR / f"measure_{measure}_practice_only.csv"
+        f_in = OUTPUT_DIR / f"measure_{measure}_practice_only_rate.csv"
     else:
-        f_in = OUTPUT_DIR / f"measure_{measure}.csv"
+        f_in = OUTPUT_DIR / f"measure_{measure}_rate.csv"
 
     df = pd.read_csv(f_in, parse_dates=["date"])
     
@@ -70,7 +74,7 @@ def calculate_rate(df, value_col, population_col):
         population_col: The name of the denominator column in the measure table.
     """
     num_per_thousand = df[value_col] / (df[population_col] / 1000)
-    df["num_per_thousand"] = num_per_thousand
+    df["rate"] = num_per_thousand
 
 
 def drop_irrelevant_practices(df):
@@ -383,7 +387,7 @@ def deciles_chart(
         deciles_chart_ebm(
             df,
             period_column="date",
-            column="num_per_thousand",
+            column="rate",
             ylabel="rate per 1000",
             show_outer_percentiles=False,
         )
@@ -430,13 +434,13 @@ def generate_sentinel_measure(
 
     df = data_dict_practice[measure]
     calculate_rate(df, measure, "population")
-
+    
     display(HTML(childs_df.to_html()))
 
     deciles_chart(
         df,
         period_column="date",
-        column="num_per_thousand",
+        column="rate",
         ylabel="rate per 1000",
         interactive=interactive,
     )
@@ -459,112 +463,68 @@ def calculate_imd_group(df, disease_column, rate_column):
     
     return df_merged
 
-def redact_small_numbers(df, n, counts_columns):
+def redact_small_numbers(df, n, numerator, denominator, rate_column, date_column):
     """
     Takes counts df as input and suppresses low numbers.  Sequentially redacts
-    low numbers from each column until count of redcted values >=n.
-    
+    low numbers from numerator and denominator until count of redcted values >=n.
+    Rates corresponding to redacted values are also redacted.
+
     df: input df
     n: threshold for low number suppression
-    counts_columns: list of columns in df that contain counts to be suppressed.
+    numerator: numerator column to be redacted
+    denominator: denominator column to be redacted
     """
-    
-    def suppress_column(column):    
-        suppressed_count = column[column<=n].sum()
-        column = column.where(column<=n, np.nan)
-        
-        while suppressed_count <=n:
-            suppressed_count += column.min()
-            column.iloc[column.idxmin()] = np.nan   
+
+    def suppress_column(column):
+        suppressed_count = column[column <= n].sum()
+
+        # if 0 dont need to suppress anything
+        if suppressed_count == 0:
+            pass
+
+        else:
+            column[column <= n] = np.nan
+
+            while suppressed_count <= n:
+                suppressed_count += column.min()
+
+                column[column.idxmin()] = np.nan
         return column
-        
-    for column in counts_columns:
-        df[column] = suppress_column(df[column])
-    
-    return df   
 
+    df_list = []
 
+    dates = df[date_column].unique()
 
-def calculate_rate_standardise(df, numerator, denominator, rate_per=1000, standardise=False, age_group_column=False):
-    """
-    df: measures df
-    numerator: numerator column in df
-    denominator: denominator column in df
-    groupby: list containing columns to group by when calculating rate
-    rate_per: defines level of rate measure
-    standardise: Boolean, whether to apply age standardisation
-    age_group_column: if applying age standardisation, defines column that is age
-    """
-    rate = df[numerator]/(df[denominator]/rate_per)
-    df['rate'] = rate
-    
-    def standardise_row(row):
-    
-        age_group = row[age_group_column]
-        rate = row['rate']
-        
-        
-        standardised_rate = rate * standard_pop.loc[str(age_group)]
-        return standardised_rate
-    
-   
-    if standardise:
-        path = "european_standard_population.csv"
-        standard_pop = pd.read_csv(path)
-        
-        age_band_grouping_dict = {
-            '0-4 years': '0-19',
-            '5-9 years': '0-19',
-            '10-14 years': '0-19',
-            '15-19 years': '0-19',
-            '20-24 years': '20-29',
-            '25-29 years': '20-29',
-            '30-34 years': '30-39',
-            '35-39 years': '30-39',
-            '40-44 years': '40-49',
-            '45-49 years': '40-49',
-            '50-54 years': '50-59',
-            '55-59 years': '50-59',
-            '60-64 years': '60-69',
-            '65-69 years': '60-69',
-            '70-74 years': '70-79',
-            '75-79 years': '70-79',
-            '80-84 years': '80+',
-            '85-89 years': '80+',
-            '90plus years': '80+',
-        }
+    for d in dates:
+        df_subset = df.loc[df[date_column] == d, :]
 
-        standard_pop = standard_pop.set_index('AgeGroup')
-        standard_pop = standard_pop.groupby(age_band_grouping_dict, axis=0).sum()
-        standard_pop = standard_pop.reset_index().rename(columns={'index': 'AgeGroup'})
+        for column in [numerator, denominator]:
+            df_subset[column] = suppress_column(df_subset[column])
 
+        df_subset.loc[
+            (df_subset[numerator].isna()) | (df_subset[denominator].isna()), rate_column
+        ] = np.nan
+        df_list.append(df_subset)
 
-        standard_pop["AgeGroup"] = standard_pop["AgeGroup"].str.replace(" years", "")
-        standard_pop = standard_pop.set_index("AgeGroup")["EuropeanStandardPopulation"]
-        standard_pop = standard_pop / standard_pop.sum()
-        
-        #apply standardisation
-        df['rate_standardised'] = df.apply(standardise_row, axis=1)
-        
-    return df
+    return pd.concat(df_list, axis=0)  
 
 
 def calculate_statistics(df, baseline_date, comparative_dates):
     """Calculates % change between given dates
 
     Args:
-        df: measures dataframe with num_per_thousand column
+        df: measures dataframe with rate column
         baseline_date: date to use as baseline. Format: YYYY-MM-DD.
         comparative_dates: list of dates to comare to baseline.
         
     returns:
         list of % differences
     """
-    median_baseline = df[df['date'] == baseline_date]['num_per_thousand'].median()
+    median_baseline = df[df['date'] == baseline_date]['rate'].median()
     differences = []
     values = []
     for date in comparative_dates:
-        value = df[df['date'] == date]['num_per_thousand'].median()
+        value = df[df['date'] == date]['rate'].median()
         difference = round(((value - median_baseline) / median_baseline)*100, 2)
         differences.append(difference)
         values.append(round(value, 2))
@@ -611,7 +571,20 @@ def display_changes(baseline, values, changes, dates):
             f"Change in median from April 2019 ({baseline}) - {date} ({value}): ({change}%)"
         ))
 
+def match_input_files(file: str) -> bool:
+    """Checks if file name has format outputted by cohort extractor"""
+    pattern = r"^input_20\d\d-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])\.feather"
+    return True if re.match(pattern, file) else False
 
+def get_date_input_file(file: str) -> str:
+    """Gets the date in format YYYY-MM-DD from input file name string"""
+    # check format
+    if not match_input_files(file):
+        raise Exception("Not valid input file format")
+
+    else:
+        date = result = re.search(r"input_(.*)\.feather", file)
+        return date.group(1)
 
 
 
