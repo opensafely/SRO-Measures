@@ -3,7 +3,7 @@ import pandas as pd
 from utilities import *
 
 
-demographics = ['region', 'age_band', 'imd', 'sex', 'learning_disability', 'ethnicity']
+demographics = ['region', 'age_band', 'imd', 'sex', 'ethnicity']
 sentinel_measures = ["qrisk2", "asthma", "copd", "sodium", "cholesterol", "alt", "tsh", "alt", "rbc", 'hba1c', 'systolic_bp', 'medication_review']
 
 for file in OUTPUT_DIR.iterdir():
