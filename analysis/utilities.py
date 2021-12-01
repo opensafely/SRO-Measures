@@ -387,7 +387,7 @@ def deciles_chart(
         deciles_chart_ebm(
             df,
             period_column="date",
-            column="num_per_thousand",
+            column="rate",
             ylabel="rate per 1000",
             show_outer_percentiles=False,
         )
@@ -434,13 +434,13 @@ def generate_sentinel_measure(
 
     df = data_dict_practice[measure]
     calculate_rate(df, measure, "population")
-
+    
     display(HTML(childs_df.to_html()))
 
     deciles_chart(
         df,
         period_column="date",
-        column="num_per_thousand",
+        column="rate",
         ylabel="rate per 1000",
         interactive=interactive,
     )
@@ -513,18 +513,18 @@ def calculate_statistics(df, baseline_date, comparative_dates):
     """Calculates % change between given dates
 
     Args:
-        df: measures dataframe with num_per_thousand column
+        df: measures dataframe with rate column
         baseline_date: date to use as baseline. Format: YYYY-MM-DD.
         comparative_dates: list of dates to comare to baseline.
         
     returns:
         list of % differences
     """
-    median_baseline = df[df['date'] == baseline_date]['num_per_thousand'].median()
+    median_baseline = df[df['date'] == baseline_date]['rate'].median()
     differences = []
     values = []
     for date in comparative_dates:
-        value = df[df['date'] == date]['num_per_thousand'].median()
+        value = df[df['date'] == date]['rate'].median()
         difference = round(((value - median_baseline) / median_baseline)*100, 2)
         differences.append(difference)
         values.append(round(value, 2))
