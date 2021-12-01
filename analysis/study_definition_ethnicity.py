@@ -9,7 +9,7 @@ from cohortextractor import (
 from datetime import date
 
 start_date = "2019-01-01"
-end_date = "2021-04-01"
+end_date = "2021-10-01"
 
 from codelists import ethnicity_codes
 
