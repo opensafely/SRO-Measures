@@ -36,7 +36,9 @@ study = StudyDefinition(
     population=patients.satisfying(
         """
         registered AND
-        (NOT died)
+        (NOT died) AND
+        (age >=18 AND age <=120) AND 
+        (sex = 'M' OR sex = 'F') AND
         """,
 
         registered = patients.registered_as_of(
@@ -65,7 +67,7 @@ study = StudyDefinition(
     age_band=patients.categorised_as(
         {
             "missing": "DEFAULT",
-            "0-19": """ age >= 0 AND age < 20""",
+            "18-19": """ age >= 0 AND age < 20""",
             "20-29": """ age >=  20 AND age < 30""",
             "30-39": """ age >=  30 AND age < 40""",
             "40-49": """ age >=  40 AND age < 50""",
