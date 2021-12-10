@@ -62,7 +62,7 @@ def convert_ethnicity(df):
     return df
 
 
-def calculate_rate(df, value_col, population_col, round=False):
+def calculate_rate(df, value_col, population_col, round_rate=False):
     """Calculates the number of events per 1,000 of the population.
 
     This function operates on the given measure table in-place, adding
@@ -600,7 +600,7 @@ def produce_stripped_measures(df, sentinel_measure):
     """
 
     # calculate rounded rate
-    calculate_rate(df, sentinel_measure, "population", round=True)
+    calculate_rate(df, sentinel_measure, "population", round_rate=True)
 
     # keep only the rate and date columns
     df = df.loc[:, ['rate', 'date']]
