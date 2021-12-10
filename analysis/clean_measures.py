@@ -16,9 +16,9 @@ for file in OUTPUT_DIR.iterdir():
      
         #select only the rate and date columns
         df = df.loc[:, ['rate', 'date']]
-        
+     
         #randomly shuffle the df and reset the index
-        df.sample(frac=1).reset_index(drop=True).to_csv(OUTPUT_DIR / f"measure_cleaned_{sentinel_measure}.csv")
+        df.sample(frac=1).reset_index(drop=True).to_csv(OUTPUT_DIR / f"measure_cleaned_{sentinel_measure}.csv", index=False)
         
 
 
