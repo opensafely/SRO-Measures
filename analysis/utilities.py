@@ -592,6 +592,24 @@ def get_date_input_file(file: str) -> str:
         date = result = re.search(r"input_(.*)\.feather", file)
         return date.group(1)
 
+def produce_stripped_measures(df, sentinel_measure):
+    """Takes in a practice level measures file, calculates rate and strips 
+    persistent id,including only a rate and date column. Rates are rounded 
+    and the df is randomly shuffled to remove any potentially predictive ordering.
+    Saves to csv.    
+    """
+
+    # calculate rounded rate
+    calculate_rate(df, sentinel_measure, "population", round=True)
+
+    # keep only the rate and date columns
+    df = df.loc[:, ['rate', 'date']]
+
+    # randomly shuffle (resetting index)
+    df.sample(frac=1).reset_index(drop=True).to_csv(OUTPUT_DIR / f"measure_cleaned_{sentinel_measure}.csv", index=False)
+        
+
+
 
 
 
