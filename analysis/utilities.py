@@ -596,7 +596,7 @@ def produce_stripped_measures(df, sentinel_measure):
     """Takes in a practice level measures file, calculates rate and strips 
     persistent id,including only a rate and date column. Rates are rounded 
     and the df is randomly shuffled to remove any potentially predictive ordering.
-    Saves to csv.    
+    Returns stripped df  
     """
 
     # calculate rounded rate
@@ -606,7 +606,7 @@ def produce_stripped_measures(df, sentinel_measure):
     df = df.loc[:, ['rate', 'date']]
 
     # randomly shuffle (resetting index)
-    df.sample(frac=1).reset_index(drop=True).to_csv(OUTPUT_DIR / f"measure_cleaned_{sentinel_measure}.csv", index=False)
+    return df.sample(frac=1).reset_index(drop=True)
         
 
 
