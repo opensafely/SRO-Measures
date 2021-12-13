@@ -116,7 +116,7 @@ def create_child_table(
         .sort_values("Events", ascending=False)
     )
 
-    event_counts["Events (thousands)"] = event_counts["Events"] / 1000
+    
 
     # Gets the human-friendly description of the code for the given row
     # e.g. "Systolic blood pressure".
