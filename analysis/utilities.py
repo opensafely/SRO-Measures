@@ -71,7 +71,7 @@ def convert_ethnicity(df):
     return df
 
 
-def calculate_rate(df, value_col, population_col):
+def calculate_rate(df, value_col, population_col, round_rate=False):
     """Calculates the number of events per 1,000 of the population.
 
     This function operates on the given measure table in-place, adding
@@ -81,8 +81,14 @@ def calculate_rate(df, value_col, population_col):
         df: A measure table.
         value_col: The name of the numerator column in the measure table.
         population_col: The name of the denominator column in the measure table.
+        round: Bool indicating whether to round rate to 2dp.
     """
-    num_per_thousand = df[value_col] / (df[population_col] / 1000)
+    if round_rate:
+        num_per_thousand = round(df[value_col] / (df[population_col] / 1000), 2)
+    
+    else:
+        num_per_thousand = df[value_col] / (df[population_col] / 1000)
+    
     df["rate"] = num_per_thousand
 
 
@@ -644,3 +650,21 @@ def get_date_input_file(file: str) -> str:
     else:
         date = result = re.search(r"input_(.*)\.feather", file)
         return date.group(1)
+
+def produce_stripped_measures(df, sentinel_measure):
+    """Takes in a practice level measures file, calculates rate and strips 
+    persistent id,including only a rate and date column. Rates are rounded 
+    and the df is randomly shuffled to remove any potentially predictive ordering.
+    Returns stripped df  
+    """
+
+    # calculate rounded rate
+    calculate_rate(df, sentinel_measure, "population", round_rate=True)
+
+    # keep only the rate and date columns
+    df = df.loc[:, ['rate', 'date']]
+
+    # randomly shuffle (resetting index)
+    return df.sample(frac=1).reset_index(drop=True)
+        
+
