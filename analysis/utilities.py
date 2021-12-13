@@ -312,7 +312,14 @@ def compute_deciles(
 
 
 def deciles_chart(
-    df, period_column=None, column=None, title="", ylabel="", interactive=True
+    df,
+    period_column=None,
+    column=None,
+    title="",
+    ylabel="",
+    interactive=True,
+    width=800,
+    height=400,
 ):
     """period_column must be dates / datetimes"""
 
@@ -354,6 +361,8 @@ def deciles_chart(
             title_text=title,
             hovermode="x",
             title_x=0.5,
+            width=width,
+            height=height,
         )
 
         fig.update_yaxes(title=ylabel)
@@ -395,12 +404,16 @@ def deciles_chart(
         fig.show()
 
     else:
+        px = 1 / plt.rcParams["figure.dpi"]  # pixel in inches
+        fix, ax = plt.subplots(1, 1, figsize=(width * px, height * px))
+
         deciles_chart_ebm(
             df,
             period_column="date",
             column="rate",
             ylabel="rate per 1000",
             show_outer_percentiles=False,
+            ax=ax,
         )
 
 
@@ -450,7 +463,13 @@ def generate_sentinel_measure(
     df = data_dict_practice[measure]
     calculate_rate(df, measure, "population")
 
-    display(HTML(childs_df.to_html()))
+    display(
+        HTML(
+            childs_df.rename(
+                columns={code_column: code_column.title()}
+            ).to_html(index=False)
+        )
+    )
 
     deciles_chart(
         df,
