@@ -50,13 +50,22 @@ def load_and_drop(measure, practice=False, drop=True):
         f_in = OUTPUT_DIR / f"measure_{measure}_rate.csv"
 
     df = pd.read_csv(f_in, parse_dates=["date"])
-    
+
     if drop:
         df = drop_irrelevant_practices(df)
     return df
 
+
 def convert_ethnicity(df):
-    ethnicity_codes = {1.0: "White", 2.0: "Mixed", 3.0: "Asian", 4.0: "Black", 5.0:"Other", np.nan: "unknown", 0: "unknown"}
+    ethnicity_codes = {
+        1.0: "White",
+        2.0: "Mixed",
+        3.0: "Asian",
+        4.0: "Black",
+        5.0: "Other",
+        np.nan: "unknown",
+        0: "unknown",
+    }
 
     df = df.replace({"ethnicity": ethnicity_codes})
     return df
@@ -302,12 +311,21 @@ def compute_deciles(
         .quantile(pd.Series(quantiles, name="percentile"))
         .reset_index()
     )
-    percentiles["percentile"] = percentiles["percentile"].apply(lambda x: int(x * 100))
+    percentiles["percentile"] = percentiles["percentile"].apply(
+        lambda x: int(x * 100)
+    )
     return percentiles
 
 
 def deciles_chart(
-    df, period_column=None, column=None, title="", ylabel="", interactive=True
+    df,
+    period_column=None,
+    column=None,
+    title="",
+    ylabel="",
+    interactive=True,
+    width=800,
+    height=400,
 ):
     """period_column must be dates / datetimes"""
 
@@ -349,6 +367,8 @@ def deciles_chart(
             title_text=title,
             hovermode="x",
             title_x=0.5,
+            width=width,
+            height=height,
         )
 
         fig.update_yaxes(title=ylabel)
@@ -390,12 +410,16 @@ def deciles_chart(
         fig.show()
 
     else:
+        px = 1 / plt.rcParams["figure.dpi"]  # pixel in inches
+        fix, ax = plt.subplots(1, 1, figsize=(width * px, height * px))
+
         deciles_chart_ebm(
             df,
             period_column="date",
             column="rate",
             ylabel="rate per 1000",
             show_outer_percentiles=False,
+            ax=ax,
         )
 
 
@@ -431,17 +455,27 @@ def generate_sentinel_measure(
     num_events_mil = get_number_events_mil(df, measure)
     num_patients = get_number_patients(measure)
 
-    display(Markdown(
-        f"Practices included: {practices_included} ({practices_included_percent}%)"
-    ))
-    display(Markdown(
-        f"Total patients: {num_patients:.2f}M ({num_events_mil:.2f}M events)"
-    ))
+    display(
+        Markdown(
+            f"Practices included: {practices_included} ({practices_included_percent}%)"
+        )
+    )
+    display(
+        Markdown(
+            f"Total patients: {num_patients:.2f}M ({num_events_mil:.2f}M events)"
+        )
+    )
 
     df = data_dict_practice[measure]
     calculate_rate(df, measure, "population")
-    
-    display(HTML(childs_df.to_html()))
+
+    display(
+        HTML(
+            childs_df.rename(
+                columns={code_column: code_column.title()}
+            ).to_html(index=False)
+        )
+    )
 
     deciles_chart(
         df,
@@ -450,26 +484,43 @@ def generate_sentinel_measure(
         ylabel="rate per 1000",
         interactive=interactive,
     )
-    
+
     return df
-    
-
-
 
 
 def calculate_imd_group(df, disease_column, rate_column):
     imd_column = pd.to_numeric(df["imd"])
-    df["imd"] = pd.qcut(imd_column, q=5,duplicates="drop", labels=['Most deprived', '2', '3', '4', 'Least deprived'])      
-    
-    df_rate = df.groupby(by=["date", "imd", 'practice'])[[rate_column]].mean().reset_index()
+    df["imd"] = pd.qcut(
+        imd_column,
+        q=5,
+        duplicates="drop",
+        labels=["Most deprived", "2", "3", "4", "Least deprived"],
+    )
 
-    df_population = df.groupby(by=["date", "imd", 'practice'])[[disease_column, "population"]].sum().reset_index()
-    
-    df_merged = df_rate.merge(df_population, on=["date", "imd", 'practice'], how="inner")
-    
+    df_rate = (
+        df.groupby(by=["date", "imd", "practice"])[[rate_column]]
+        .mean()
+        .reset_index()
+    )
+
+    df_population = (
+        df.groupby(by=["date", "imd", "practice"])[
+            [disease_column, "population"]
+        ]
+        .sum()
+        .reset_index()
+    )
+
+    df_merged = df_rate.merge(
+        df_population, on=["date", "imd", "practice"], how="inner"
+    )
+
     return df_merged
 
-def redact_small_numbers(df, n, numerator, denominator, rate_column, date_column):
+
+def redact_small_numbers(
+    df, n, numerator, denominator, rate_column, date_column
+):
     """
     Takes counts df as input and suppresses low numbers.  Sequentially redacts
     low numbers from numerator and denominator until count of redcted values >=n.
@@ -508,11 +559,12 @@ def redact_small_numbers(df, n, numerator, denominator, rate_column, date_column
             df_subset[column] = suppress_column(df_subset[column])
 
         df_subset.loc[
-            (df_subset[numerator].isna()) | (df_subset[denominator].isna()), rate_column
+            (df_subset[numerator].isna()) | (df_subset[denominator].isna()),
+            rate_column,
         ] = np.nan
         df_list.append(df_subset)
 
-    return pd.concat(df_list, axis=0)  
+    return pd.concat(df_list, axis=0)
 
 
 def calculate_statistics(df, baseline_date, comparative_dates):
@@ -522,20 +574,23 @@ def calculate_statistics(df, baseline_date, comparative_dates):
         df: measures dataframe with rate column
         baseline_date: date to use as baseline. Format: YYYY-MM-DD.
         comparative_dates: list of dates to comare to baseline.
-        
+
     returns:
         list of % differences
     """
-    median_baseline = df[df['date'] == baseline_date]['rate'].median()
+    median_baseline = df[df["date"] == baseline_date]["rate"].median()
     differences = []
     values = []
     for date in comparative_dates:
-        value = df[df['date'] == date]['rate'].median()
-        difference = round(((value - median_baseline) / median_baseline)*100, 2)
+        value = df[df["date"] == date]["rate"].median()
+        difference = round(
+            ((value - median_baseline) / median_baseline) * 100, 2
+        )
         differences.append(difference)
         values.append(round(value, 2))
-    
+
     return median_baseline, values, differences
+
 
 def classify_changes(changes):
     """Classifies list of % changes
@@ -543,26 +598,24 @@ def classify_changes(changes):
     Args:
         changes: list of percentage changes
     """
-    
+
     if (-15 <= changes[0] < 15) and (-15 <= changes[1] < 15):
-        classification = 'no change'
-        
+        classification = "no change"
+
     elif (changes[0] > 15) or (changes[1] > 15):
-        classification = 'increase'
-    
-    elif (changes[0] <= -15) and not (-15 <= changes[1] < 15) :
-        classification = 'sustained drop'
-    
-    elif (changes[0] <= -15) and (-15 <= changes[1] < 15) :
-        classification = 'recovery'
-    
+        classification = "increase"
+
+    elif (changes[0] <= -15) and not (-15 <= changes[1] < 15):
+        classification = "sustained drop"
+
+    elif (changes[0] <= -15) and (-15 <= changes[1] < 15):
+        classification = "recovery"
+
     else:
-        classification = 'none'
-        
-        
-    display(Markdown(
-            f"Overall classification: {classification}"
-        ))
+        classification = "none"
+
+    display(Markdown(f"Overall classification: {classification}"))
+
 
 def display_changes(baseline, values, changes, dates):
     """Display % changes at given dates
@@ -571,16 +624,22 @@ def display_changes(baseline, values, changes, dates):
         changes: list of % changes
         dates: list of readable dates changes refer to
     """
-    
+
     for value, change, date in zip(values, changes, dates):
-        display(Markdown(
-            f"Change in median from April 2019 ({baseline}) - {date} ({value}): ({change}%)"
-        ))
+        display(
+            Markdown(
+                f"Change in median from April 2019 ({baseline}) - {date} ({value}): ({change}%)"
+            )
+        )
+
 
 def match_input_files(file: str) -> bool:
     """Checks if file name has format outputted by cohort extractor"""
-    pattern = r"^input_20\d\d-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])\.feather"
+    pattern = (
+        r"^input_20\d\d-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])\.feather"
+    )
     return True if re.match(pattern, file) else False
+
 
 def get_date_input_file(file: str) -> str:
     """Gets the date in format YYYY-MM-DD from input file name string"""
@@ -608,11 +667,4 @@ def produce_stripped_measures(df, sentinel_measure):
     # randomly shuffle (resetting index)
     return df.sample(frac=1).reset_index(drop=True)
         
-
-
-
-
-
-
-
 
