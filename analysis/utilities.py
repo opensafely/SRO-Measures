@@ -144,7 +144,6 @@ def create_child_table(
         # give more logical column ordering
         event_counts = event_counts.loc[:, ["code", "Description", "Proportion of codes (%)"]]
     
-    event_counts.rename(columns = {"code": "Code"}, inplace=True)
 
     # return top n rows
     return event_counts.head(5)
