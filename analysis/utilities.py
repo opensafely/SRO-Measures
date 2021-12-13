@@ -132,12 +132,22 @@ def create_child_table(
     # Cast the code to an integer.
     event_counts[code_column] = event_counts[code_column].astype(int)
 
-    # give more logical column ordering
-    event_counts = event_counts.loc[:, ["code", "Description", "Proportion of codes (%)"]]
+    # check that codes not in the top 5 rows have >5 events
+    outside_top_5_percent = 1 - ((event_counts.head(5)["Events"].sum())/total_events)
+    
+    if (outside_top_5_percent * total_events) <=5:
+        # drop percent column
+         event_counts = event_counts.loc[:, ["code", "Description"]]
+    
+
+    else:
+        # give more logical column ordering
+        event_counts = event_counts.loc[:, ["code", "Description", "Proportion of codes (%)"]]
+    
     event_counts.rename(columns = {"code": "Code"}, inplace=True)
 
     # return top n rows
-    return event_counts.iloc[:nrows, :]
+    return event_counts.head(5)
 
 
 def get_number_practices(df):
