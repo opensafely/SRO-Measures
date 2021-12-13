@@ -119,10 +119,7 @@ def create_child_table(
     #calculate % makeup of each code
     total_events = event_counts["Events"].sum()
     event_counts["Proportion of codes (%)"] = round((event_counts["Events"]/total_events)*100, 2)
-    
-    #drop events column
-    events_counts = event_counts.drop(columns=['Events'])
-    
+      
     # Gets the human-friendly description of the code for the given row
     # e.g. "Systolic blood pressure".
     code_df = code_df.set_index(code_column).rename(
