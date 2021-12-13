@@ -137,7 +137,7 @@ def create_child_table(
 
     # give more logical column ordering
     event_counts = event_counts.loc[:, ["code", "Description", "Proportion of codes (%)"]]
-    event_counts.rename({"code": "Code"}, inplace=True)
+    event_counts.rename(columns = {"code": "Code"}, inplace=True)
 
     # return top n rows
     return event_counts.iloc[:nrows, :]
