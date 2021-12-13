@@ -74,7 +74,7 @@ def calculate_rate(df, value_col, population_col, round_rate=False):
         population_col: The name of the denominator column in the measure table.
         round: Bool indicating whether to round rate to 2dp.
     """
-    if round:
+    if round_rate:
         num_per_thousand = round(df[value_col] / (df[population_col] / 1000), 2)
     
     else:
