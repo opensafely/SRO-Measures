@@ -116,8 +116,13 @@ def create_child_table(
         .sort_values("Events", ascending=False)
     )
 
+    #calculate % makeup of each code
+    total_events = event_counts["Events"].sum()
+    event_counts["Proportion of codes (%)"] = round((event_counts["Events"]/total_events)*100, 2)
     
-
+    #drop events column
+    events_counts = event_counts.drop(columns=['Events'])
+    
     # Gets the human-friendly description of the code for the given row
     # e.g. "Systolic blood pressure".
     code_df = code_df.set_index(code_column).rename(
@@ -129,6 +134,10 @@ def create_child_table(
 
     # Cast the code to an integer.
     event_counts[code_column] = event_counts[code_column].astype(int)
+
+    # give more logical column ordering
+    event_counts = event_counts.loc[:, ["code", "Description", "Proportion of codes (%)"]]
+    event_counts.rename({"code": "Code"}, inplace=True)
 
     # return top n rows
     return event_counts.iloc[:nrows, :]
