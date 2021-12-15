@@ -282,6 +282,7 @@ def deciles_chart_ebm(
     # rotates and right aligns the x labels, and moves the bottom of the
     # axes up to make room for them
     plt.gcf().autofmt_xdate()
+    plt.show()
     return plt
 
 
@@ -421,6 +422,7 @@ def deciles_chart(
             show_outer_percentiles=False,
             ax=ax,
         )
+        
 
 
 def generate_sentinel_measure(
@@ -455,19 +457,17 @@ def generate_sentinel_measure(
     num_events_mil = get_number_events_mil(df, measure)
     num_patients = get_number_patients(measure)
 
-    display(
-        Markdown(
-            f"Practices included: {practices_included} ({practices_included_percent}%)"
-        )
-    )
-    display(
-        Markdown(
-            f"Total patients: {num_patients:.2f}M ({num_events_mil:.2f}M events)"
-        )
-    )
 
     df = data_dict_practice[measure]
     calculate_rate(df, measure, "population")
+
+    deciles_chart(
+        df,
+        period_column="date",
+        column="rate",
+        ylabel="rate per 1000",
+        interactive=interactive,
+    )
 
     display(
         HTML(
@@ -477,12 +477,15 @@ def generate_sentinel_measure(
         )
     )
 
-    deciles_chart(
-        df,
-        period_column="date",
-        column="rate",
-        ylabel="rate per 1000",
-        interactive=interactive,
+    display(
+        Markdown(
+            f"Practices included: {practices_included} ({practices_included_percent}%)"
+        )
+    )
+    display(
+        Markdown(
+            f"Total patients: {num_patients:.2f}M ({num_events_mil:.2f}M events)"
+        )
     )
 
     return df
