@@ -578,11 +578,11 @@ def calculate_statistics(df, baseline_date, comparative_dates):
     returns:
         list of % differences
     """
-    median_baseline = df[df["date"] == baseline_date]["rate"].median()
+    median_baseline = round(df[df["date"] == baseline_date]["rate"].median(), 2)
     differences = []
     values = []
     for date in comparative_dates:
-        value = df[df["date"] == date]["rate"].median()
+        value = round(df[df["date"] == date]["rate"].median(), 2)
         difference = round(
             ((value - median_baseline) / median_baseline) * 100, 2
         )
