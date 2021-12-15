@@ -470,6 +470,7 @@ def generate_sentinel_measure(
     )
 
     display(
+        Markdown("Most Common Codes"),
         HTML(
             childs_df.rename(
                 columns={code_column: code_column.title()}
