@@ -655,6 +655,7 @@ def produce_stripped_measures(df, sentinel_measure):
     """Takes in a practice level measures file, calculates rate and strips 
     persistent id,including only a rate and date column. Rates are rounded 
     and the df is randomly shuffled to remove any potentially predictive ordering.
+    Removes outlying practices.
     Returns stripped df  
     """
 
@@ -663,6 +664,19 @@ def produce_stripped_measures(df, sentinel_measure):
 
     # keep only the rate and date columns
     df = df.loc[:, ['rate', 'date']]
+    
+    # remove outlying practices (>1.5x IQR)
+    
+    def identify_outliers(series):
+        q75, q25 = np.percentile(series, [75 ,25])
+        iqr = q75 - q25
+        outlier = (series > (q75 + (iqr * 1.5))) | (series < (iqr - (q25*1.5)))
+        return outlier
+        
+    df["outlier"] = df.groupby(by=["date"])[["rate"]].transform(identify_outliers)
+    print(df.shape)
+    df = df.loc[df["outlier"]==False,:]
+    print(df.shape)
 
     # randomly shuffle (resetting index)
     return df.sample(frac=1).reset_index(drop=True)
