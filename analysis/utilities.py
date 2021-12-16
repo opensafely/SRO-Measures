@@ -659,12 +659,12 @@ def produce_stripped_measures(df, sentinel_measure):
     Returns stripped df  
     """
 
+    #drop irrelevant practices
+    df = drop_irrelevant_practices(df)
+
     # calculate rounded rate
     calculate_rate(df, sentinel_measure, "population", round_rate=True)
-
-    # keep only the rate and date columns
-    df = df.loc[:, ['rate', 'date']]
-    
+        
     # remove outlying practices (>1.5x IQR)
     
     def identify_outliers(series):
@@ -675,7 +675,7 @@ def produce_stripped_measures(df, sentinel_measure):
         
     df["outlier"] = df.groupby(by=["date"])[["rate"]].transform(identify_outliers)
     print(df.shape)
-    df = df.loc[df["outlier"]==False,:]
+    df = df.loc[df["outlier"]==False,["rate", "date"]]
     print(df.shape)
 
     # randomly shuffle (resetting index)
