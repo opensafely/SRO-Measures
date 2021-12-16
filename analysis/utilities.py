@@ -659,11 +659,12 @@ def produce_stripped_measures(df, sentinel_measure):
     Returns stripped df  
     """
 
+    #drop irrelevant practices
+    df = drop_irrelevant_practices(df)
+
     # calculate rounded rate
     calculate_rate(df, sentinel_measure, "population", round_rate=True)
-
-    
-    
+        
     # remove outlying practices (>1.5x IQR)
     
     def identify_outliers(series):
