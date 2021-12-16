@@ -670,7 +670,7 @@ def produce_stripped_measures(df, sentinel_measure):
     def identify_outliers(series):
         q75, q25 = np.percentile(series, [75 ,25])
         iqr = q75 - q25
-        outlier = (series > (q75 + (iqr * 1.5))) | (series < (iqr - (q25*1.5)))
+        outlier = (series > (q75 + (iqr * 1.5))) | (series < (q25 - (iqr*1.5)))
         return outlier
         
     df["outlier"] = df.groupby(by=["date"])[["rate"]].transform(identify_outliers)
