@@ -31,11 +31,10 @@ BASE_DIR = Path(__file__).parents[1]
 OUTPUT_DIR = BASE_DIR / "output"
 
 
-def load_and_drop(measure, practice=False, drop=True):
+def load_and_drop(measure, practice=False):
     """Loads the measure table for the measure with the given ID.
 
-    Drops irrelevant practices and casts the `date` column from a `str`
-    to a `datetime64`.
+    Drops irrelevant practices and produces stripped measures
 
     Args:
         measure: The measure ID.
@@ -48,11 +47,19 @@ def load_and_drop(measure, practice=False, drop=True):
         f_in = OUTPUT_DIR / f"measure_{measure}_practice_only_rate.csv"
     else:
         f_in = OUTPUT_DIR / f"measure_{measure}_rate.csv"
-
+    
+    
     df = pd.read_csv(f_in, parse_dates=["date"])
-
-    if drop:
+  
+    if practice:
         df = drop_irrelevant_practices(df)
+        df = produce_stripped_measures(df, measure)
+
+    else:
+    
+        df = drop_irrelevant_practices(df)
+    
+
     return df
 
 
@@ -92,6 +99,7 @@ def calculate_rate(df, value_col, population_col, round_rate=False):
         num_per_thousand = df[value_col] / (df[population_col] / 1000)
 
     df["rate"] = num_per_thousand
+    
 
 
 def drop_irrelevant_practices(df):
@@ -105,6 +113,7 @@ def drop_irrelevant_practices(df):
     Returns:
         A copy of the given measure table with irrelevant practices dropped.
     """
+    
     is_relevant = df.groupby("practice").value.any()
     return df[df.practice.isin(is_relevant[is_relevant == True].index)]
 
@@ -282,6 +291,7 @@ def deciles_chart_ebm(
     # rotates and right aligns the x labels, and moves the bottom of the
     # axes up to make room for them
     plt.gcf().autofmt_xdate()
+    plt.show()
     return plt
 
 
@@ -423,6 +433,7 @@ def deciles_chart(
             show_outer_percentiles=False,
             ax=ax,
         )
+        
 
 
 def generate_sentinel_measure(
@@ -448,6 +459,7 @@ def generate_sentinel_measure(
         interactive: Flag indicating whether or not the chart should be interactive.
     """
     df = data_dict[measure]
+
     childs_df = create_child_table(
         df, codelist_dict[measure], code_column, term_column, measure
     )
@@ -456,6 +468,26 @@ def generate_sentinel_measure(
     practices_included_percent = get_percentage_practices(df)
     num_events_mil = get_number_events_mil(df, measure)
     num_patients = get_number_patients(measure)
+
+
+    df = data_dict_practice[measure]
+
+    deciles_chart(
+        df,
+        period_column="date",
+        column="rate",
+        ylabel="rate per 1000",
+        interactive=interactive,
+    )
+
+    display(
+        Markdown("Most Common Codes"),
+        HTML(
+            childs_df.rename(
+                columns={code_column: code_column.title()}
+            ).to_html(index=False)
+        )
+    )
 
     display(
         Markdown(
@@ -466,25 +498,6 @@ def generate_sentinel_measure(
         Markdown(
             f"Total patients: {num_patients:.2f}M ({num_events_mil:.2f}M events)"
         )
-    )
-
-    df = data_dict_practice[measure]
-    calculate_rate(df, measure, "population")
-
-    display(
-        HTML(
-            childs_df.rename(
-                columns={code_column: code_column.title()}
-            ).to_html(index=False)
-        )
-    )
-
-    deciles_chart(
-        df,
-        period_column="date",
-        column="rate",
-        ylabel="rate per 1000",
-        interactive=interactive,
     )
 
     return df
@@ -663,13 +676,10 @@ def produce_stripped_measures(df, sentinel_measure):
     Removes outlying practices.
     Returns stripped df
     """
-
-    # drop irrelevant practices
-    df = drop_irrelevant_practices(df)
-
+   
     # calculate rounded rate
     calculate_rate(df, sentinel_measure, "population", round_rate=True)
-
+    
     # remove outlying practices (>1.5x IQR)
 
     def identify_outliers(series):
@@ -677,13 +687,11 @@ def produce_stripped_measures(df, sentinel_measure):
         iqr = q75 - q25
         outlier = (series > (q75 + (iqr * 3))) | (series < (q25 - (iqr * 3)))
         return outlier
-
-    df["outlier"] = df.groupby(by=["date"])[["rate"]].transform(
-        identify_outliers
-    )
-    print(df.shape)
-    df = df.loc[df["outlier"] == False, ["rate", "date"]]
-    print(df.shape)
+    
+    df["outlier"] = df.groupby(by=["date"])[["rate"]].transform(identify_outliers)
+    
+    df = df.loc[df["outlier"]==False,["rate", "date"]]
+    
 
     # randomly shuffle (resetting index)
     return df.sample(frac=1).reset_index(drop=True)
