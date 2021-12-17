@@ -95,6 +95,7 @@ actions:
         notebook: output/sentinel_measures.html
         subplots: output/sentinel_measures_subplots.png
         code_tables: output/code_table_*.csv
+        events_count: output/event_count.json
 
   # generate_notebook_demographics:
   #   run: jupyter:latest jupyter nbconvert /workspace/analysis/sentinel_measures_demographics.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input

@@ -181,7 +181,8 @@ def get_number_events_mil(measure_table, measure_id):
         measure_table: A measure table.
         measure_id: The measure ID.
     """
-    return np.round(measure_table[measure_id].sum() / 1_000_000, 2)
+    num_events = measure_table[measure_id].sum()
+    return num_events, np.round(num_events / 1_000_000, 2)
 
 
 def get_number_patients(measure_id):
@@ -452,7 +453,7 @@ def generate_sentinel_measure(
 
     practices_included = get_number_practices(df)
     practices_included_percent = get_percentage_practices(df)
-    num_events_mil = get_number_events_mil(df, measure)
+    num_events, num_events_mil = get_number_events_mil(df, measure)
     num_patients = get_number_patients(measure)
 
     df = data_dict_practice[measure]
@@ -479,7 +480,7 @@ def generate_sentinel_measure(
         Markdown(f"Total patients: {num_patients:.2f}M ({num_events_mil:.2f}M events)")
     )
 
-    return df
+    return df, num_events
 
 
 def calculate_imd_group(df, disease_column, rate_column):
