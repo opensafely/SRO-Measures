@@ -91,11 +91,13 @@ def calculate_rate(df, value_col, population_col, round_rate=False):
         round: Bool indicating whether to round rate to 2dp.
     """
     if round_rate:
-        num_per_thousand = round(df[value_col] / (df[population_col] / 1000), 2)
-    
+        num_per_thousand = round(
+            df[value_col] / (df[population_col] / 1000), 2
+        )
+
     else:
         num_per_thousand = df[value_col] / (df[population_col] / 1000)
-    
+
     df["rate"] = num_per_thousand
     
 
@@ -279,15 +281,13 @@ def deciles_chart_ebm(
     ax.xaxis.set_major_formatter(matplotlib.dates.DateFormatter("%B %Y"))
     if show_legend:
         ax.legend(
-            bbox_to_anchor=(1.1, 0.8),  # arbitrary location in axes
-            #  specified as (x0, y0, w, h)
-            loc=CENTER_LEFT,  # which part of the bounding box should
-            #  be placed at bbox_to_anchor
-            ncol=1,  # number of columns in the legend
+            bbox_to_anchor=(0.6, -0.25),
+            ncol=2,
             fontsize=12,
             borderaxespad=0.0,
-        )  # padding between the axes and legend
-        #  specified in font-size units
+            frameon=False,
+        )
+
     # rotates and right aligns the x labels, and moves the bottom of the
     # axes up to make room for them
     plt.gcf().autofmt_xdate()
@@ -421,7 +421,9 @@ def deciles_chart(
 
     else:
         px = 1 / plt.rcParams["figure.dpi"]  # pixel in inches
-        fix, ax = plt.subplots(1, 1, figsize=(width * px, height * px))
+        fig, ax = plt.subplots(
+            1, 1, figsize=(width * px, height * px), tight_layout=True
+        )
 
         deciles_chart_ebm(
             df,
@@ -591,7 +593,9 @@ def calculate_statistics(df, baseline_date, comparative_dates):
     returns:
         list of % differences
     """
-    median_baseline = round(df[df["date"] == baseline_date]["rate"].median(), 2)
+    median_baseline = round(
+        df[df["date"] == baseline_date]["rate"].median(), 2
+    )
     differences = []
     values = []
     for date in comparative_dates:
@@ -664,26 +668,26 @@ def get_date_input_file(file: str) -> str:
         date = result = re.search(r"input_(.*)\.feather", file)
         return date.group(1)
 
+
 def produce_stripped_measures(df, sentinel_measure):
-    """Takes in a practice level measures file, calculates rate and strips 
-    persistent id,including only a rate and date column. Rates are rounded 
+    """Takes in a practice level measures file, calculates rate and strips
+    persistent id,including only a rate and date column. Rates are rounded
     and the df is randomly shuffled to remove any potentially predictive ordering.
     Removes outlying practices.
-    Returns stripped df  
+    Returns stripped df
     """
-    
-
+   
     # calculate rounded rate
     calculate_rate(df, sentinel_measure, "population", round_rate=True)
     
     # remove outlying practices (>1.5x IQR)
-    
+
     def identify_outliers(series):
-        q75, q25 = np.percentile(series, [75 ,25])
+        q75, q25 = np.percentile(series, [75, 25])
         iqr = q75 - q25
-        outlier = (series > (q75 + (iqr * 3))) | (series < (q25 - (iqr*3)))
+        outlier = (series > (q75 + (iqr * 3))) | (series < (q25 - (iqr * 3)))
         return outlier
-        
+    
     df["outlier"] = df.groupby(by=["date"])[["rate"]].transform(identify_outliers)
     
     df = df.loc[df["outlier"]==False,["rate", "date"]]
@@ -691,5 +695,3 @@ def produce_stripped_measures(df, sentinel_measure):
 
     # randomly shuffle (resetting index)
     return df.sample(frac=1).reset_index(drop=True)
-        
-
