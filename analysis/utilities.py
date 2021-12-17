@@ -272,15 +272,13 @@ def deciles_chart_ebm(
     ax.xaxis.set_major_formatter(matplotlib.dates.DateFormatter("%B %Y"))
     if show_legend:
         ax.legend(
-            bbox_to_anchor=(1.1, 0.8),  # arbitrary location in axes
-            #  specified as (x0, y0, w, h)
-            loc=CENTER_LEFT,  # which part of the bounding box should
-            #  be placed at bbox_to_anchor
-            ncol=1,  # number of columns in the legend
+            bbox_to_anchor=(0.6, -0.25),
+            ncol=2,
             fontsize=12,
             borderaxespad=0.0,
-        )  # padding between the axes and legend
-        #  specified in font-size units
+            frameon=False,
+        )
+
     # rotates and right aligns the x labels, and moves the bottom of the
     # axes up to make room for them
     plt.gcf().autofmt_xdate()
@@ -413,7 +411,9 @@ def deciles_chart(
 
     else:
         px = 1 / plt.rcParams["figure.dpi"]  # pixel in inches
-        fix, ax = plt.subplots(1, 1, figsize=(width * px, height * px))
+        fig, ax = plt.subplots(
+            1, 1, figsize=(width * px, height * px), tight_layout=True
+        )
 
         deciles_chart_ebm(
             df,
