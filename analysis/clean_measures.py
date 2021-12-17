@@ -12,7 +12,6 @@ for file in OUTPUT_DIR.iterdir():
         sentinel_measure = re.search(r'measure_(.*)\_practice_only_rate.csv', file.name).group(1)
         df = load_and_drop(sentinel_measure, practice=True)
         
-        df = produce_stripped_measures(df, sentinel_measure)
 
         df.to_csv(OUTPUT_DIR / f"measure_cleaned_{sentinel_measure}.csv", index=False)
         

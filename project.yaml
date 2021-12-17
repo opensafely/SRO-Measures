@@ -1,11 +1,9 @@
-version: '3.0'
+version: "3.0"
 
 expectations:
   population_size: 1000
-   
-    
-actions:
 
+actions:
   generate_study_population_1:
     run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2019-01-01 to 2019-12-01 by month" --output-dir=output --output-format=feather
     outputs:
@@ -26,11 +24,15 @@ actions:
 
   get_patient_count:
     run: python:latest python analysis/get_patients_counts.py
-    needs: [generate_study_population_1, generate_study_population_2, generate_study_population_3]
+    needs:
+      [
+        generate_study_population_1,
+        generate_study_population_2,
+        generate_study_population_3,
+      ]
     outputs:
       moderately_sensitive:
         text: output/patient_count.json
-        
 
   generate_study_population_ethnicity:
     run: cohortextractor:latest generate_cohort --study-definition study_definition_ethnicity --output-dir=output --output-format=feather
@@ -40,34 +42,37 @@ actions:
 
   join_ethnicity:
     run: python:latest python analysis/join_ethnicity.py
-    needs: [generate_study_population_1, generate_study_population_2, generate_study_population_3, generate_study_population_ethnicity]
+    needs:
+      [
+        generate_study_population_1,
+        generate_study_population_2,
+        generate_study_population_3,
+        generate_study_population_ethnicity,
+      ]
     outputs:
       highly_sensitive:
         cohort: output/inp*.feather
 
- 
-        
   get_practice_count:
     run: python:latest python analysis/get_practice_count.py
     needs: [join_ethnicity]
     outputs:
       moderately_sensitive:
         text: output/practice_count.json
-        
+
   generate_measures:
     run: cohortextractor:latest generate_measures --study-definition study_definition --output-dir=output
     needs: [join_ethnicity]
     outputs:
-        moderately_sensitive:
-          measure_csv: output/measure_*_rate.csv
+      moderately_sensitive:
+        measure_csv: output/measure_*_rate.csv
 
   generate_measures_cleaned:
     run: python:latest python analysis/clean_measures.py
     needs: [generate_measures]
     outputs:
-        moderately_sensitive:
-          measure_csv: output/measure_cleaned_*.csv
-          
+      moderately_sensitive:
+        measure_csv: output/measure_cleaned_*.csv
 
   generate_measures_demographics:
     run: python:latest python analysis/calculate_measures.py
@@ -75,23 +80,29 @@ actions:
     outputs:
       moderately_sensitive:
         measure: output/combined_measure_*.csv
-    
-  
+
   generate_notebook:
     run: jupyter:latest jupyter nbconvert /workspace/analysis/sentinel_measures.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
-    needs: [generate_measures, get_practice_count, get_patient_count]
+    needs:
+      [
+        generate_measures,
+        generate_measures_cleaned,
+        get_practice_count,
+        get_patient_count,
+      ]
     outputs:
       moderately_sensitive:
         notebook: output/sentinel_measures.html
         subplots: output/sentinel_measures_subplots.png
-  
+        code_tables: output/code_table_*.csv
+        events_count: output/event_count.json
 
-  generate_notebook_demographics:
-    run: jupyter:latest jupyter nbconvert /workspace/analysis/sentinel_measures_demographics.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
-    needs: [generate_measures, generate_measures_demographics]
-    outputs:
-      moderately_sensitive:
-        notebook: output/sentinel_measures_demographics.html
+  # generate_notebook_demographics:
+  #   run: jupyter:latest jupyter nbconvert /workspace/analysis/sentinel_measures_demographics.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
+  #   needs: [generate_measures, generate_measures_demographics]
+  #   outputs:
+  #     moderately_sensitive:
+  #       notebook: output/sentinel_measures_demographics.html
 
   get_population_count:
     run: python:latest python analysis/population_counts.py
@@ -107,8 +118,6 @@ actions:
       moderately_sensitive:
         csv: output/demographics_differences.csv
         csv_sorted: output/demographics_differences_sorted.csv
-        
-
 #   run_tests:
 #     run: python:latest python -m pytest --junit-xml=output/pytest.xml --verbose
 #     outputs:
