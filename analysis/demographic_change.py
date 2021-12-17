@@ -4,7 +4,7 @@ from utilities import *
 
 sentinel_measures = ["qrisk2", "asthma", "copd", "sodium", "cholesterol", "tsh", "alt", "rbc", 'hba1c', 'systolic_bp', 'medication_review']
 
-demographics = ['region', 'age_band', 'imd', 'sex', 'learning_disability', 'ethnicity']
+demographics = ['region', 'age_band', 'imd', 'sex', 'ethnicity']
 
 values_dict = {}
 
@@ -84,9 +84,7 @@ for measure in sentinel_measures:
         elif d == 'age_band':
             df = df[df['age_band'] != 'missing']
             
-        elif d == 'learning_disability':
-            ld_dict = {0: 'No record of a learning disability', 1: 'Record of a learning disability'}
-            df = df.replace({"learning_disability": ld_dict})
+        
         
         if d != 'age_band':
             df['rate'] = df[measure]/(df['population']/1000)

@@ -5,19 +5,19 @@ expectations:
 
 actions:
   generate_study_population_1:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2019-01-01 to 2019-11-01 by month" --output-dir=output --output-format=feather
+    run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2019-01-01 to 2019-12-01 by month" --output-dir=output --output-format=feather
     outputs:
       highly_sensitive:
         cohort: output/input_*.feather
-
+  
   generate_study_population_2:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2019-12-01 to 2020-10-01 by month" --output-dir=output --output-format=feather
+    run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2020-01-01 to 2020-12-01 by month" --output-dir=output --output-format=feather
     outputs:
       highly_sensitive:
         cohort: output/input*.feather
 
   generate_study_population_3:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2020-11-01 to 2021-10-01 by month" --output-dir=output --output-format=feather
+    run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2021-01-01 to 2021-06-01 by month" --output-dir=output --output-format=feather
     outputs:
       highly_sensitive:
         cohort: output/inpu*.feather
