@@ -48,12 +48,15 @@ def load_and_drop(measure, practice=False):
     else:
         f_in = OUTPUT_DIR / f"measure_{measure}_rate.csv"
     
-    df = pd.read_csv(f_in, parse_dates=["date"])
     
+    df = pd.read_csv(f_in, parse_dates=["date"])
+  
     if practice:
+        df = drop_irrelevant_practices(df)
         df = produce_stripped_measures(df, measure)
 
     else:
+    
         df = drop_irrelevant_practices(df)
     
 
@@ -94,6 +97,7 @@ def calculate_rate(df, value_col, population_col, round_rate=False):
         num_per_thousand = df[value_col] / (df[population_col] / 1000)
     
     df["rate"] = num_per_thousand
+    
 
 
 def drop_irrelevant_practices(df):
@@ -107,6 +111,7 @@ def drop_irrelevant_practices(df):
     Returns:
         A copy of the given measure table with irrelevant practices dropped.
     """
+    
     is_relevant = df.groupby("practice").value.any()
     return df[df.practice.isin(is_relevant[is_relevant == True].index)]
 
@@ -662,13 +667,11 @@ def produce_stripped_measures(df, sentinel_measure):
     Removes outlying practices.
     Returns stripped df  
     """
-
-    #drop irrelevant practices
-    df = drop_irrelevant_practices(df)
+    
 
     # calculate rounded rate
     calculate_rate(df, sentinel_measure, "population", round_rate=True)
-        
+    
     # remove outlying practices (>1.5x IQR)
     
     def identify_outliers(series):
