@@ -47,18 +47,16 @@ def load_and_drop(measure, practice=False):
         f_in = OUTPUT_DIR / f"measure_{measure}_practice_only_rate.csv"
     else:
         f_in = OUTPUT_DIR / f"measure_{measure}_rate.csv"
-    
-    
+
     df = pd.read_csv(f_in, parse_dates=["date"])
-  
+
     if practice:
         df = drop_irrelevant_practices(df)
         df = produce_stripped_measures(df, measure)
 
     else:
-    
+
         df = drop_irrelevant_practices(df)
-    
 
     return df
 
@@ -91,15 +89,12 @@ def calculate_rate(df, value_col, population_col, round_rate=False):
         round: Bool indicating whether to round rate to 2dp.
     """
     if round_rate:
-        num_per_thousand = round(
-            df[value_col] / (df[population_col] / 1000), 2
-        )
+        num_per_thousand = round(df[value_col] / (df[population_col] / 1000), 2)
 
     else:
         num_per_thousand = df[value_col] / (df[population_col] / 1000)
 
     df["rate"] = num_per_thousand
-    
 
 
 def drop_irrelevant_practices(df):
@@ -113,14 +108,12 @@ def drop_irrelevant_practices(df):
     Returns:
         A copy of the given measure table with irrelevant practices dropped.
     """
-    
+
     is_relevant = df.groupby("practice").value.any()
     return df[df.practice.isin(is_relevant[is_relevant == True].index)]
 
 
-def create_child_table(
-    df, code_df, code_column, term_column, measure, nrows=5
-):
+def create_child_table(df, code_df, code_column, term_column, measure, nrows=5):
     """
     Args:
         df: A measure table.
@@ -151,9 +144,7 @@ def create_child_table(
     code_df = code_df.set_index(code_column).rename(
         columns={term_column: "Description"}
     )
-    event_counts = (
-        event_counts.set_index(code_column).join(code_df).reset_index()
-    )
+    event_counts = event_counts.set_index(code_column).join(code_df).reset_index()
 
     # Cast the code to an integer.
     event_counts[code_column] = event_counts[code_column].astype(int)
@@ -205,7 +196,8 @@ def get_number_events_mil(measure_table, measure_id):
         measure_table: A measure table.
         measure_id: The measure ID.
     """
-    return np.round(measure_table[measure_id].sum() / 1_000_000, 2)
+    num_events = measure_table[measure_id].sum()
+    return num_events, np.round(num_events / 1_000_000, 2)
 
 
 def get_number_patients(measure_id):
@@ -310,9 +302,7 @@ def deciles_chart_ebm(
     return plt
 
 
-def compute_deciles(
-    measure_table, groupby_col, values_col, has_outer_percentiles=True
-):
+def compute_deciles(measure_table, groupby_col, values_col, has_outer_percentiles=True):
     """Computes deciles.
 
     Args:
@@ -336,9 +326,7 @@ def compute_deciles(
         .quantile(pd.Series(quantiles, name="percentile"))
         .reset_index()
     )
-    percentiles["percentile"] = percentiles["percentile"].apply(
-        lambda x: int(x * 100)
-    )
+    percentiles["percentile"] = percentiles["percentile"].apply(lambda x: int(x * 100))
     return percentiles
 
 
@@ -448,7 +436,6 @@ def deciles_chart(
             show_outer_percentiles=False,
             ax=ax,
         )
-        
 
 
 def generate_sentinel_measure(
@@ -481,9 +468,8 @@ def generate_sentinel_measure(
 
     practices_included = get_number_practices(df)
     practices_included_percent = get_percentage_practices(df)
-    num_events_mil = get_number_events_mil(df, measure)
+    num_events, num_events_mil = get_number_events_mil(df, measure)
     num_patients = get_number_patients(measure)
-
 
     df = data_dict_practice[measure]
 
@@ -495,14 +481,10 @@ def generate_sentinel_measure(
         interactive=interactive,
     )
 
-    display(
-        Markdown("Most Common Codes"),
-        HTML(
-            childs_df.rename(
-                columns={code_column: code_column.title()}
-            ).to_html(index=False)
-        )
-    )
+    childs_df = childs_df.rename(columns={code_column: code_column.title()})
+    childs_df.to_csv(f"../output/code_table_{measure}.csv")
+
+    display(Markdown("Most Common Codes"), HTML(childs_df.to_html(index=False)))
 
     display(
         Markdown(
@@ -510,12 +492,10 @@ def generate_sentinel_measure(
         )
     )
     display(
-        Markdown(
-            f"Total patients: {num_patients:.2f}M ({num_events_mil:.2f}M events)"
-        )
+        Markdown(f"Total patients: {num_patients:.2f}M ({num_events_mil:.2f}M events)")
     )
 
-    return df
+    return df, num_events
 
 
 def calculate_imd_group(df, disease_column, rate_column):
@@ -528,15 +508,11 @@ def calculate_imd_group(df, disease_column, rate_column):
     )
 
     df_rate = (
-        df.groupby(by=["date", "imd", "practice"])[[rate_column]]
-        .mean()
-        .reset_index()
+        df.groupby(by=["date", "imd", "practice"])[[rate_column]].mean().reset_index()
     )
 
     df_population = (
-        df.groupby(by=["date", "imd", "practice"])[
-            [disease_column, "population"]
-        ]
+        df.groupby(by=["date", "imd", "practice"])[[disease_column, "population"]]
         .sum()
         .reset_index()
     )
@@ -548,9 +524,7 @@ def calculate_imd_group(df, disease_column, rate_column):
     return df_merged
 
 
-def redact_small_numbers(
-    df, n, numerator, denominator, rate_column, date_column
-):
+def redact_small_numbers(df, n, numerator, denominator, rate_column, date_column):
     """
     Takes counts df as input and suppresses low numbers.  Sequentially redacts
     low numbers from numerator and denominator until count of redcted values >=n.
@@ -615,9 +589,7 @@ def calculate_statistics(df, baseline_date, comparative_dates):
     values = []
     for date in comparative_dates:
         value = round(df[df["date"] == date]["rate"].median(), 2)
-        difference = round(
-            ((value - median_baseline) / median_baseline) * 100, 2
-        )
+        difference = round(((value - median_baseline) / median_baseline) * 100, 2)
         differences.append(difference)
         values.append(round(value, 2))
 
@@ -667,9 +639,7 @@ def display_changes(baseline, values, changes, dates):
 
 def match_input_files(file: str) -> bool:
     """Checks if file name has format outputted by cohort extractor"""
-    pattern = (
-        r"^input_20\d\d-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])\.feather"
-    )
+    pattern = r"^input_20\d\d-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])\.feather"
     return True if re.match(pattern, file) else False
 
 
@@ -691,10 +661,10 @@ def produce_stripped_measures(df, sentinel_measure):
     Removes outlying practices.
     Returns stripped df
     """
-   
+
     # calculate rounded rate
     calculate_rate(df, sentinel_measure, "population", round_rate=True)
-    
+
     # remove outlying practices (>1.5x IQR)
 
     def identify_outliers(series):
@@ -702,11 +672,10 @@ def produce_stripped_measures(df, sentinel_measure):
         iqr = q75 - q25
         outlier = (series > (q75 + (iqr * 3))) | (series < (q25 - (iqr * 3)))
         return outlier
-    
+
     df["outlier"] = df.groupby(by=["date"])[["rate"]].transform(identify_outliers)
-    
-    df = df.loc[df["outlier"]==False,["rate", "date"]]
-    
+
+    df = df.loc[df["outlier"] == False, ["rate", "date"]]
 
     # randomly shuffle (resetting index)
     return df.sample(frac=1).reset_index(drop=True)
