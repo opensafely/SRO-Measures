@@ -31,11 +31,10 @@ BASE_DIR = Path(__file__).parents[1]
 OUTPUT_DIR = BASE_DIR / "output"
 
 
-def load_and_drop(measure, practice=False, drop=True):
+def load_and_drop(measure, practice=False):
     """Loads the measure table for the measure with the given ID.
 
-    Drops irrelevant practices and casts the `date` column from a `str`
-    to a `datetime64`.
+    Drops irrelevant practices and produces stripped measures
 
     Args:
         measure: The measure ID.
@@ -48,11 +47,16 @@ def load_and_drop(measure, practice=False, drop=True):
         f_in = OUTPUT_DIR / f"measure_{measure}_practice_only_rate.csv"
     else:
         f_in = OUTPUT_DIR / f"measure_{measure}_rate.csv"
-
+    
     df = pd.read_csv(f_in, parse_dates=["date"])
+    
+    if practice:
+        df = produce_stripped_measures(df, measure)
 
-    if drop:
+    else:
         df = drop_irrelevant_practices(df)
+    
+
     return df
 
 
@@ -446,6 +450,7 @@ def generate_sentinel_measure(
         interactive: Flag indicating whether or not the chart should be interactive.
     """
     df = data_dict[measure]
+
     childs_df = create_child_table(
         df, codelist_dict[measure], code_column, term_column, measure
     )
@@ -467,7 +472,6 @@ def generate_sentinel_measure(
     )
 
     df = data_dict_practice[measure]
-    calculate_rate(df, measure, "population")
 
     display(
         HTML(
@@ -674,9 +678,9 @@ def produce_stripped_measures(df, sentinel_measure):
         return outlier
         
     df["outlier"] = df.groupby(by=["date"])[["rate"]].transform(identify_outliers)
-    print(df.shape)
+    
     df = df.loc[df["outlier"]==False,["rate", "date"]]
-    print(df.shape)
+    
 
     # randomly shuffle (resetting index)
     return df.sample(frac=1).reset_index(drop=True)
