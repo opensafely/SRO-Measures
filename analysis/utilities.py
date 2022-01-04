@@ -135,10 +135,12 @@ def create_child_table(df, code_df, code_column, term_column, measure, nrows=5):
         .sort_values("Events", ascending=False)
     )
 
-    #calculate % makeup of each code
+    # calculate % makeup of each code
     total_events = event_counts["Events"].sum()
-    event_counts["Proportion of codes (%)"] = round((event_counts["Events"]/total_events)*100, 2)
-      
+    event_counts["Proportion of codes (%)"] = round(
+        (event_counts["Events"] / total_events) * 100, 2
+    )
+
     # Gets the human-friendly description of the code for the given row
     # e.g. "Systolic blood pressure".
     code_df = code_df.set_index(code_column).rename(
@@ -150,17 +152,17 @@ def create_child_table(df, code_df, code_column, term_column, measure, nrows=5):
     event_counts[code_column] = event_counts[code_column].astype(int)
 
     # check that codes not in the top 5 rows have >5 events
-    outside_top_5_percent = 1 - ((event_counts.head(5)["Events"].sum())/total_events)
-    
-    if (outside_top_5_percent * total_events) <=5:
+    outside_top_5_percent = 1 - ((event_counts.head(5)["Events"].sum()) / total_events)
+
+    if (outside_top_5_percent * total_events) <= 5:
         # drop percent column
-         event_counts = event_counts.loc[:, ["code", "Description"]]
-    
+        event_counts = event_counts.loc[:, ["code", "Description"]]
 
     else:
         # give more logical column ordering
-        event_counts = event_counts.loc[:, ["code", "Description", "Proportion of codes (%)"]]
-    
+        event_counts = event_counts.loc[
+            :, ["code", "Description", "Proportion of codes (%)"]
+        ]
 
     # return top n rows
     return event_counts.head(5)
@@ -582,9 +584,7 @@ def calculate_statistics(df, baseline_date, comparative_dates):
     returns:
         list of % differences
     """
-    median_baseline = round(
-        df[df["date"] == baseline_date]["rate"].median(), 2
-    )
+    median_baseline = round(df[df["date"] == baseline_date]["rate"].median(), 2)
     differences = []
     values = []
     for date in comparative_dates:
@@ -658,28 +658,14 @@ def produce_stripped_measures(df, sentinel_measure):
     """Takes in a practice level measures file, calculates rate and strips
     persistent id,including only a rate and date column. Rates are rounded
     and the df is randomly shuffled to remove any potentially predictive ordering.
-    Removes outlying practices.
     Returns stripped df
     """
 
-    #drop irrelevant practices
+    # drop irrelevant practices
     df = drop_irrelevant_practices(df)
 
     # calculate rounded rate
     calculate_rate(df, sentinel_measure, "population", round_rate=True)
-
-    # remove outlying practices (>1.5x IQR)
-
-    def identify_outliers(series):
-        q75, q25 = np.percentile(series, [75, 25])
-        iqr = q75 - q25
-        outlier = (series > (q75 + (iqr * 3))) | (series < (q25 - (iqr * 3)))
-        return outlier
-
-    df["outlier"] = df.groupby(by=["date"])[["rate"]].transform(identify_outliers)
-    print(df.shape)
-    df = df.loc[df["outlier"]==False,["rate", "date"]]
-    print(df.shape)
 
     # randomly shuffle (resetting index)
     return df.sample(frac=1).reset_index(drop=True)
