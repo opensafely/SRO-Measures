@@ -161,7 +161,7 @@ def create_child_table(df, code_df, code_column, term_column, measure, nrows=5):
     else:
         # give more logical column ordering
         event_counts = event_counts.loc[
-            :, ["code", "Description", "Proportion of codes (%)"]
+            :, ["code", "Description", "Events", "Proportion of codes (%)"]
         ]
 
     # return top n rows
