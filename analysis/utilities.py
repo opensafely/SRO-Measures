@@ -666,6 +666,6 @@ def produce_stripped_measures(df, sentinel_measure):
 
     # calculate rounded rate
     calculate_rate(df, sentinel_measure, "population", round_rate=True)
-    df = df.loc[df["outlier"] == False, ["rate", "date"]]
+    df = df.loc[:, ["rate", "date"]]
     # randomly shuffle (resetting index)
     return df.sample(frac=1).reset_index(drop=True)
