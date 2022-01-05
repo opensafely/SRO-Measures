@@ -154,7 +154,7 @@ def create_child_table(df, code_df, code_column, term_column, measure, nrows=5):
     # check that codes not in the top 5 rows have >5 events
     outside_top_5_percent = 1 - ((event_counts.head(5)["Events"].sum()) / total_events)
 
-    if (outside_top_5_percent * total_events) <= 5:
+    if 0 < (outside_top_5_percent * total_events) <= 5:
         # drop percent column
         event_counts = event_counts.loc[:, ["code", "Description"]]
 
