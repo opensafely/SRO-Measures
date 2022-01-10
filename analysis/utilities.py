@@ -486,7 +486,7 @@ def generate_sentinel_measure(
     childs_df = childs_df.rename(columns={code_column: code_column.title()})
     childs_df.to_csv(f"../output/code_table_{measure}.csv")
 
-    display(Markdown("Most Common Codes"), HTML(childs_df.to_html(index=False)))
+    display(Markdown("####Most Common Codes"), HTML(childs_df.to_html(index=False)))
 
     display(
         Markdown(
