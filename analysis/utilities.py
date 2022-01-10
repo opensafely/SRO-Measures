@@ -618,7 +618,7 @@ def classify_changes(changes):
     else:
         classification = "none"
 
-    display(Markdown(f"Overall classification: {classification}"))
+    display(Markdown(f"Overall classification: **{classification}**"))
 
 
 def display_changes(baseline, values, changes, dates):
