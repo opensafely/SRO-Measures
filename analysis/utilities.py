@@ -448,6 +448,7 @@ def generate_sentinel_measure(
     code_column,
     term_column,
     dates_list,
+    codelist_link,
     interactive=True,
 ):
     """Generates tables and charts for the measure with the given ID.
@@ -486,7 +487,10 @@ def generate_sentinel_measure(
     childs_df = childs_df.rename(columns={code_column: code_column.title()})
     childs_df.to_csv(f"../output/code_table_{measure}.csv")
 
-    display(Markdown("####Most Common Codes"), HTML(childs_df.to_html(index=False)))
+    display(
+        Markdown(f"####Most Common Codes <a href={codelist_link}>(Codelist)</a>"),
+        HTML(childs_df.to_html(index=False)),
+    )
 
     display(
         Markdown(
