@@ -82,12 +82,6 @@ actions:
       moderately_sensitive:
         measure_csv: output/measure_cleaned_*.csv
 
-  generate_measures_demographics:
-    run: python:latest python analysis/calculate_measures.py
-    needs: [join_ethnicity]
-    outputs:
-      moderately_sensitive:
-        measure: output/combined_measure_*.csv
 
   generate_notebook:
     run: jupyter:latest jupyter nbconvert /workspace/analysis/sentinel_measures.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
@@ -105,27 +99,7 @@ actions:
         code_tables: output/code_table_*.csv
         events_count: output/event_count.json
 
-  # generate_notebook_demographics:
-  #   run: jupyter:latest jupyter nbconvert /workspace/analysis/sentinel_measures_demographics.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
-  #   needs: [generate_measures, generate_measures_demographics]
-  #   outputs:
-  #     moderately_sensitive:
-  #       notebook: output/sentinel_measures_demographics.html
 
-  get_population_count:
-    run: python:latest python analysis/population_counts.py
-    needs: [join_ethnicity, generate_study_population_4]
-    outputs:
-      moderately_sensitive:
-        text: output/*_count.csv
-
-  demographic_changes:
-    run: python:latest python analysis/demographic_change.py
-    needs: [generate_measures_demographics]
-    outputs:
-      moderately_sensitive:
-        csv: output/demographics_differences.csv
-        csv_sorted: output/demographics_differences_sorted.csv
 #   run_tests:
 #     run: python:latest python -m pytest --junit-xml=output/pytest.xml --verbose
 #     outputs:
