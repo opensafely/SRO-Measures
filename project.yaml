@@ -112,13 +112,6 @@ actions:
       moderately_sensitive:
         text: output/*_count.csv
 
-  demographic_changes:
-    run: python:latest python analysis/demographic_change.py
-    needs: [generate_measures_demographics]
-    outputs:
-      moderately_sensitive:
-        csv: output/demographics_differences.csv
-        csv_sorted: output/demographics_differences_sorted.csv
 #   run_tests:
 #     run: python:latest python -m pytest --junit-xml=output/pytest.xml --verbose
 #     outputs:
