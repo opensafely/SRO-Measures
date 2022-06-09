@@ -105,13 +105,6 @@ actions:
         code_tables: output/code_table_*.csv
         events_count: output/event_count.json
 
-  # generate_notebook_demographics:
-  #   run: jupyter:latest jupyter nbconvert /workspace/analysis/sentinel_measures_demographics.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
-  #   needs: [generate_measures, generate_measures_demographics]
-  #   outputs:
-  #     moderately_sensitive:
-  #       notebook: output/sentinel_measures_demographics.html
-
   get_population_count:
     run: python:latest python analysis/population_counts.py
     needs: [join_ethnicity, generate_study_population_4]
