@@ -82,12 +82,6 @@ actions:
       moderately_sensitive:
         measure_csv: output/measure_cleaned_*.csv
 
-  generate_measures_demographics:
-    run: python:latest python analysis/calculate_measures.py
-    needs: [join_ethnicity]
-    outputs:
-      moderately_sensitive:
-        measure: output/combined_measure_*.csv
 
   generate_notebook:
     run: jupyter:latest jupyter nbconvert /workspace/analysis/sentinel_measures.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
