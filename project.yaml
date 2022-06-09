@@ -99,12 +99,6 @@ actions:
         code_tables: output/code_table_*.csv
         events_count: output/event_count.json
 
-  get_population_count:
-    run: python:latest python analysis/population_counts.py
-    needs: [join_ethnicity, generate_study_population_4]
-    outputs:
-      moderately_sensitive:
-        text: output/*_count.csv
 
 #   run_tests:
 #     run: python:latest python -m pytest --junit-xml=output/pytest.xml --verbose
