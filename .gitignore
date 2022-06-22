@@ -6,4 +6,5 @@ metadata/
 ./output/
 tags
 venv/
+backend_outputs/
 *.ipynb_checkpoints

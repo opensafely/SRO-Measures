@@ -20,6 +20,82 @@ sentinel_measures = [
     "medication_review",
 ]
 
+demographics = [
+    "age_band",
+    "ethnicity",
+    "imd",
+    "region",
+    "sex",
+    "total"
+]
+
+for d in demographics:
+    emis_count = pd.read_csv(f"backend_outputs/emis/{d}_count.csv", index_col=0)
+    tpp_count = pd.read_csv(f"backend_outputs/tpp/{d}_count.csv", index_col=0)
+
+    if d == "ethnicity":
+        # map emis ethnicity to 6 categories
+        mapping = {
+            1: 1,
+            2: 1,
+            3: 1,
+            4: 2,
+            5: 2,
+            6: 2,
+            7: 2,
+            8: 3,
+            9: 3,
+            10: 3,
+            11: 3,
+            12: 4,
+            13: 4,
+            14: 4,
+            15: 5,
+            16: 5
+        }
+        emis_count.index = emis_count.index.map(mapping)
+        emis_count = emis_count.groupby(level=0).sum()
+
+    if d == "region":
+        
+        mapping_tpp = {
+            "East Midlands": "Midlands",
+            "Yorkshire and The Humber": "North East",
+            "North West": "North West",
+            "North East": "North East",
+            "East": "East",
+            "London": "London",
+            "South East": "South East",
+            "South West": "South West",
+            "West Midlands": "Midlands"
+        }
+
+        mapping_emis = {
+            "NORTH EAST AND YORKSHIRE COMMISSIONING REGION": "North East",
+            "LONDON COMMISSIONING REGION": "London",
+            "NORTH WEST COMMISSIONING REGION": "North West",
+            "SOUTH EAST COMMISSIONING REGION": "South East",
+            "EAST OF ENGLAND COMMISSIONING REGION": "East",
+            "SOUTH WEST COMMISSIONING REGION": "South West",
+            "MIDLANDS COMMISSIONING REGION": "Midlands"
+        }
+
+        emis_count.index = emis_count.index.map(mapping_emis)
+        emis_count = emis_count.groupby(level=0).sum()
+        
+        tpp_count.index = tpp_count.index.map(mapping_tpp)
+        tpp_count = tpp_count.groupby(level=0).sum()
+
+    if d == "total":
+        emis_count.set_index("pop", drop=True, inplace=True)
+        tpp_count.set_index("pop", drop=True, inplace=True)
+        
+    
+    
+    combined_count = emis_count.sort_index().add(tpp_count.sort_index())
+    combined_count.to_csv(f"backend_outputs/{d}_count.csv")
+
+
 with open("backend_outputs/tpp/event_count.json") as f:
     num_events_tpp = json.load(f)["num_events"]
 with open("backend_outputs/emis/event_count.json") as f:
