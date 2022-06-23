@@ -100,7 +100,7 @@ actions:
         events_count: output/event_count.json
 
   generate_notebook_updating:
-    run: jupyter:latest jupyter nbconvert /workspace/analysis/sentinel_updating.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
+    run: jupyter:latest jupyter nbconvert /workspace/analysis/sentinel_measures_updating.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
     needs:
       [
         generate_measures,
