@@ -290,21 +290,22 @@ def deciles_chart_ebm(
     ax.set_xlim(
         [df[period_column].min(), df[period_column].max()]
     )  # set x axis range as full date range
-
-    plt.setp(ax.xaxis.get_majorticklabels(), rotation=90)
+    
     ax.xaxis.set_major_formatter(matplotlib.dates.DateFormatter("%B %Y"))
+    ax.xaxis.set_major_locator(matplotlib.dates.MonthLocator(interval=1))
     if show_legend:
         ax.legend(
-            bbox_to_anchor=(0.6, -0.25),
-            ncol=2,
+            bbox_to_anchor=(1.05, 0.6),
+            ncol=1,
             fontsize=12,
             borderaxespad=0.0,
-            frameon=False,
+            frameon=True,
         )
 
     # rotates and right aligns the x labels, and moves the bottom of the
     # axes up to make room for them
-    plt.gcf().autofmt_xdate()
+    plt.gcf().autofmt_xdate(rotation=90, ha="center", which="both")
+    
     plt.show()
     return plt
 
