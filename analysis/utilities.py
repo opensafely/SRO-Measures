@@ -160,6 +160,10 @@ def create_child_table(df, code_df, code_column, term_column, measure, nrows=5):
 
     else:
         # give more logical column ordering
+        event_counts_with_count = event_counts.loc[
+            :, ["code", "Description", "Events", "Proportion of codes (%)"]
+        ]
+
         event_counts = event_counts.loc[
             :, ["code", "Description", "Proportion of codes (%)"]
         ]
@@ -168,9 +172,12 @@ def create_child_table(df, code_df, code_column, term_column, measure, nrows=5):
         event_counts.loc[event_counts["Proportion of codes (%)"] == 0, "Proportion of codes (%)"] = "< 0.005"
         event_counts.loc[event_counts["Proportion of codes (%)"] == 100, "Proportion of codes (%)"] = "> 99.995"
 
+        event_counts_with_count.loc[event_counts_with_count["Proportion of codes (%)"] == 0, "Proportion of codes (%)"] = "< 0.005"
+        event_counts_with_count.loc[event_counts_with_count["Proportion of codes (%)"] == 100, "Proportion of codes (%)"] = "> 99.995"
+
 
     # return top n rows
-    return event_counts.head(5)
+    return event_counts.head(5), event_counts_with_count.head()
 
 
 def get_number_practices(df):
@@ -471,7 +478,7 @@ def generate_sentinel_measure(
     """
     df = data_dict[measure]
 
-    childs_df = create_child_table(
+    childs_df, childs_df_with_count = create_child_table(
         df, codelist_dict[measure], code_column, term_column, measure
     )
 
@@ -479,6 +486,13 @@ def generate_sentinel_measure(
     practices_included_percent = get_percentage_practices(df)
     num_events, num_events_mil = get_number_events_mil(df, measure)
     num_patients = get_number_patients(measure)
+
+    num_practices_df = pd.DataFrame(
+        {
+            "num_practices_included": pd.Series([practices_included])
+        }
+    )
+    num_practices_df.to_csv(f"../output/num_practices_included_{measure}.csv", index=False)
 
     df = data_dict_practice[measure]
 
@@ -492,6 +506,9 @@ def generate_sentinel_measure(
 
     childs_df = childs_df.rename(columns={code_column: code_column.title()})
     childs_df.to_csv(f"../output/code_table_{measure}.csv")
+
+    childs_df_with_count = childs_df_with_count.rename(columns={code_column: code_column.title()})
+    childs_df_with_count.to_csv(f"../output/code_table_{measure}_with_count.csv")
 
     display(
         Markdown(f"####Most Common Codes <a href={codelist_link}>(Codelist)</a>"),

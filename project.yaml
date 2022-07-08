@@ -111,6 +111,8 @@ actions:
     outputs:
       moderately_sensitive:
         notebook: output/sentinel_measures_updating.html
+        code_tables: output/code_table*.csv
+        practices: output/num_practices_included*.csv
 
 #   run_tests:
 #     run: python:latest python -m pytest --junit-xml=output/pytest.xml --verbose
