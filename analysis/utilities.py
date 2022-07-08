@@ -166,7 +166,7 @@ def create_child_table(df, code_df, code_column, term_column, measure, nrows=5):
 
     if len(event_counts["code"]) >1:
         event_counts.loc[event_counts["Proportion of codes (%)"] == 0, "Proportion of codes (%)"] = "< 0.005"
-        event_counts.loc[event_counts["Proportion of codes (%)", "Proportion of codes (%)"] == 100] = "> 99.995"
+        event_counts.loc[event_counts["Proportion of codes (%)"] == 100, "Proportion of codes (%)"] = "> 99.995"
 
 
     # return top n rows
