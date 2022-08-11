@@ -4,118 +4,395 @@ expectations:
   population_size: 1000
 
 actions:
-  generate_study_population_1:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2019-01-01 to 2019-12-01 by month" --output-dir=output --output-format=feather
-    outputs:
-      highly_sensitive:
-        cohort: output/input_*.feather
 
-  generate_study_population_2:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2020-01-01 to 2020-12-01 by month" --output-dir=output --output-format=feather
-    outputs:
-      highly_sensitive:
-        cohort: output/input*.feather
-
-  generate_study_population_3:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2021-01-01 to 2021-06-01 by month" --output-dir=output --output-format=feather
-    outputs:
-      highly_sensitive:
-        cohort: output/inpu*.feather
-
-  generate_study_population_4:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2021-07-01 to 2021-12-01 by month" --output-dir=output --output-format=feather
-    outputs:
-      highly_sensitive:
-        cohort: output/in*.feather
-
-  generate_study_population_5:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2022-01-01 to 2022-05-01 by month" --output-dir=output --output-format=feather
-    outputs:
-      highly_sensitive:
-        cohort: output/i*.feather
-
-
-  get_patient_count:
-    run: python:latest python analysis/get_patients_counts.py
-    needs: [generate_study_population_4, generate_study_population_5, join_ethnicity]
+  codelist_report_alt:
+    run: >
+      cohortextractor:latest generate_codelist_report
+        --codelist-path=codelists/opensafely-alanine-aminotransferase-alt-tests.csv
+        --start-date=2019-01-01
+        --end-date=2022-07-01
+        --output-dir output/alt
     outputs:
       moderately_sensitive:
-        text: output/patient_count.json
+        table: output/alt/counts_per_*.csv
+        list_sizes: output/alt/list_sizes.csv
+        patient_count_table: output/alt/patient_count.csv
 
-  generate_study_population_ethnicity:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_ethnicity --output-dir=output --output-format=feather
-    outputs:
-      highly_sensitive:
-        cohort: output/input_ethnicity.feather
-
-  join_ethnicity:
-    run: python:latest python analysis/join_ethnicity.py
-    needs:
-      [
-        generate_study_population_1,
-        generate_study_population_2,
-        generate_study_population_3,
-        generate_study_population_ethnicity,
-      ]
-    outputs:
-      highly_sensitive:
-        cohort: output/inp*.feather
-
-  get_practice_count:
-    run: python:latest python analysis/get_practice_count.py
-    needs: [join_ethnicity, generate_study_population_4, generate_study_population_5]
+  codelist_report_asthma:
+    run: >
+      cohortextractor:latest generate_codelist_report
+        --codelist-path=codelists/opensafely-asthma-annual-review-qof.csv
+        --start-date=2019-01-01
+        --end-date=2022-07-01
+        --output-dir output/asthma
     outputs:
       moderately_sensitive:
-        text: output/practice_count.json
-
-  generate_measures:
-    run: cohortextractor:latest generate_measures --study-definition study_definition --output-dir=output
-    needs: [join_ethnicity, generate_study_population_4, generate_study_population_5]
+        table: output/asthma/counts_per_*.csv
+        list_sizes: output/asthma/list_sizes.csv
+        patient_count_table: output/asthma/patient_count.csv
+  
+  codelist_report_cholesterol:
+    run: >
+      cohortextractor:latest generate_codelist_report
+        --codelist-path=codelists/opensafely-cholesterol-tests.csv
+        --start-date=2019-01-01
+        --end-date=2022-07-01
+        --output-dir output/cholesterol
     outputs:
       moderately_sensitive:
-        measure_csv: output/measure_*_rate.csv
+        table: output/cholesterol/counts_per_*.csv
+        list_sizes: output/cholesterol/list_sizes.csv
+        patient_count_table: output/cholesterol/patient_count.csv
 
-  generate_measures_cleaned:
-    run: python:latest python analysis/clean_measures.py
-    needs: [generate_measures]
+  codelist_report_copd:
+    run: >
+      cohortextractor:latest generate_codelist_report
+        --codelist-path=codelists/opensafely-chronic-obstructive-pulmonary-disease-copd-review-qof.csv
+        --start-date=2019-01-01
+        --end-date=2022-07-01
+        --output-dir output/copd
     outputs:
       moderately_sensitive:
-        measure_csv: output/measure_cleaned_*.csv
-
-
-  generate_notebook:
-    run: jupyter:latest jupyter nbconvert /workspace/analysis/sentinel_measures.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
-    needs:
-      [
-        generate_measures,
-        generate_measures_cleaned,
-        get_practice_count,
-        get_patient_count,
-      ]
+        table: output/copd/counts_per_*.csv
+        list_sizes: output/copd/list_sizes.csv
+        patient_count_table: output/copd/patient_count.csv
+  
+  codelist_report_hba1c:
+    run: >
+      cohortextractor:latest generate_codelist_report
+        --codelist-path=codelists/opensafely-glycated-haemoglobin-hba1c-tests.csv
+        --start-date=2019-01-01
+        --end-date=2022-07-01
+        --output-dir output/hba1c
     outputs:
       moderately_sensitive:
-        notebook: output/sentinel_measures.html
-        subplots: output/sentinel_measures_subplots.png
-        code_tables: output/code_table_*.csv
-        events_count: output/event_count.json
+        table: output/hba1c/counts_per_*.csv
+        list_sizes: output/hba1c/list_sizes.csv
+        patient_count_table: output/hba1c/patient_count.csv
+
+  codelist_report_medication_review:
+    run: >
+      cohortextractor:latest generate_codelist_report
+        --codelist-path=codelists/opensafely-care-planning-medication-review-simple-reference-set-nhs-digital.csv
+        --start-date=2019-01-01
+        --end-date=2022-07-01
+        --output-dir output/medication_review
+    outputs:
+      moderately_sensitive:
+        table: output/medication_review/counts_per_*.csv
+        list_sizes: output/medication_review/list_sizes.csv
+        patient_count_table: output/medication_review/patient_count.csv
+
+  codelist_report_qrisk2:
+    run: >
+      cohortextractor:latest generate_codelist_report
+        --codelist-path=codelists/opensafely-cvd-risk-assessment-score-qof.csv
+        --start-date=2019-01-01
+        --end-date=2022-07-01
+        --output-dir output/qrisk2/
+    outputs:
+      moderately_sensitive:
+        table: output/qrisk2/counts_per_*.csv
+        list_sizes: output/qrisk2/list_sizes.csv
+        patient_count_table: output/qrisk2/patient_count.csv
+
+
+  codelist_report_rbc:
+    run: >
+      cohortextractor:latest generate_codelist_report
+        --codelist-path=codelists/opensafely-red-blood-cell-rbc-tests.csv
+        --start-date=2019-01-01
+        --end-date=2022-07-01
+        --output-dir output/rbc
+    outputs:
+      moderately_sensitive:
+        table: output/rbc/counts_per_*.csv
+        list_sizes: output/rbc/list_sizes.csv
+        patient_count_table: output/rbc/patient_count.csv  
+
+  codelist_report_sodium:
+    run: >
+      cohortextractor:latest generate_codelist_report
+        --codelist-path=codelists/opensafely-sodium-tests-numerical-value.csv
+        --start-date=2019-01-01
+        --end-date=2022-07-01
+        --output-dir output/sodium
+    outputs:
+      moderately_sensitive:
+        table: output/sodium/counts_per_*.csv
+        list_sizes: output/sodium/list_sizes.csv
+        patient_count_table: output/sodium/patient_count.csv
+
+  codelist_report_systolic_bp:
+    run: >
+      cohortextractor:latest generate_codelist_report
+        --codelist-path=codelists/opensafely-systolic-blood-pressure-qof.csv
+        --start-date=2019-01-01
+        --end-date=2022-07-01
+        --output-dir output/systolic_bp
+    outputs:
+      moderately_sensitive:
+        table: output/systolic_bp/counts_per_*.csv
+        list_sizes: output/systolic_bp/list_sizes.csv
+        patient_count_table: output/systolic_bp/patient_count.csv
+
+  codelist_report_tsh:
+    run: >
+      cohortextractor:latest generate_codelist_report
+        --codelist-path=codelists/opensafely-thyroid-stimulating-hormone-tsh-testing.csv
+        --start-date=2019-01-01
+        --end-date=2022-07-01
+        --output-dir output/tsh
+    outputs:
+      moderately_sensitive:
+        table: output/tsh/counts_per_*.csv
+        list_sizes: output/tsh/list_sizes.csv
+        patient_count_table: output/tsh/patient_count.csv
+
+  measures:
+    run: >
+      python:latest python analysis/generate_measures.py
+        --input-dir output
+        --low-count-threshold 10
+        --rounding-base 5
+        --rounding-base-practice-count 10
+    
+    needs: [codelist_report_alt,
+            codelist_report_asthma,
+            codelist_report_cholesterol,
+            codelist_report_copd,
+            codelist_report_hba1c,
+            codelist_report_medication_review,
+            codelist_report_qrisk2,
+            codelist_report_rbc,
+            codelist_report_sodium,
+            codelist_report_systolic_bp,
+            codelist_report_tsh]
+    outputs:
+      moderately_sensitive:
+        measure: output/*/measure_counts_per_week_per_practice.csv
+        events_count_table: output/*/event_counts.csv
+        practice_count_table: output/*/practice_count.csv
+
+  top_5_tables:
+    run: >
+      python:latest python analysis/top_codes_table.py
+        --input-dir output
+        --low-count-threshold 10
+        --rounding-base 10
+    needs: [codelist_report_alt,
+            codelist_report_asthma,
+            codelist_report_cholesterol,
+            codelist_report_copd,
+            codelist_report_hba1c,
+            codelist_report_medication_review,
+            codelist_report_qrisk2,
+            codelist_report_rbc,
+            codelist_report_sodium,
+            codelist_report_systolic_bp,
+            codelist_report_tsh,
+            measures]
+    outputs:
+      moderately_sensitive:
+        table: output/*/top_5_code_table.csv
+  
+  
+  deciles_charts_alt:
+    run: >
+      deciles-charts:v0.0.33
+        --input-files output/alt/measure_counts_per_week_per_practice.csv
+        --output-dir output/alt
+    config:
+      show_outer_percentiles: true
+      tables:
+        output: false
+      charts:
+        output: true
+    needs: [measures]
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/alt/deciles_*.*
+  
+  deciles_charts_asthma:
+    run: >
+      deciles-charts:v0.0.24
+        --input-files output/asthma/measure_counts_per_week_per_practice.csv
+        --output-dir output/asthma
+    config:
+      show_outer_percentiles: true
+      tables:
+        output: false
+      charts:
+        output: true
+    needs: [measures]
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/asthma/deciles_*.*
+
+  deciles_charts_cholesterol:
+    run: >
+      deciles-charts:v0.0.24
+        --input-files output/cholesterol/measure_counts_per_week_per_practice.csv
+        --output-dir output/cholesterol
+    config:
+      show_outer_percentiles: true
+      tables:
+        output: false
+      charts:
+        output: true
+    needs: [measures]
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/cholesterol/deciles_*.*
+
+  deciles_charts_copd:
+    run: >
+      deciles-charts:v0.0.24
+        --input-files output/copd/measure_counts_per_week_per_practice.csv
+        --output-dir output/copd
+    config:
+      show_outer_percentiles: true
+      tables:
+        output: false
+      charts:
+        output: true
+    needs: [measures]
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/copd/deciles_*.*
+
+  deciles_charts_hba1c:
+    run: >
+      deciles-charts:v0.0.24
+        --input-files output/hba1c/measure_counts_per_week_per_practice.csv
+        --output-dir output/hba1c
+    config:
+      show_outer_percentiles: true
+      tables:
+        output: false
+      charts:
+        output: true
+    needs: [measures]
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/hba1c/deciles_*.*
+
+  deciles_charts_medication_review:
+    run: >
+      deciles-charts:v0.0.24
+        --input-files output/medication_review/measure_counts_per_week_per_practice.csv
+        --output-dir output/medication_review
+    config:
+      show_outer_percentiles: true
+      tables:
+        output: false
+      charts:
+        output: true
+    needs: [measures]
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/medication_review/deciles_*.*
+
+  deciles_charts_qrisk2:
+    run: >
+      deciles-charts:v0.0.24
+        --input-files output/qrisk2/measure_counts_per_week_per_practice.csv
+        --output-dir output/qrisk2
+    config:
+      show_outer_percentiles: true
+      tables:
+        output: false
+      charts:
+        output: true
+    needs: [measures]
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/qrisk2/deciles_*.*
+
+  deciles_charts_rbc:
+    run: >
+      deciles-charts:v0.0.24
+        --input-files output/rbc/measure_counts_per_week_per_practice.csv
+        --output-dir output/rbc
+    config:
+      show_outer_percentiles: true
+      tables:
+        output: false
+      charts:
+        output: true
+    needs: [measures]
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/rbc/deciles_*.*
+  
+  deciles_charts_sodium:
+    run: >
+      deciles-charts:v0.0.24
+        --input-files output/sodium/measure_counts_per_week_per_practice.csv
+        --output-dir output/sodium
+    config:
+      show_outer_percentiles: true
+      tables:
+        output: false
+      charts:
+        output: true
+    needs: [measures]
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/sodium/deciles_*.*
+
+  deciles_charts_systolic_bp:
+    run: >
+      deciles-charts:v0.0.24
+        --input-files output/systolic_bp/measure_counts_per_week_per_practice.csv
+        --output-dir output/systolic_bp
+    config:
+      show_outer_percentiles: true
+      tables:
+        output: false
+      charts:
+        output: true
+    needs: [measures]
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/systolic_bp/deciles_*.*
+
+  deciles_charts_tsh:
+    run: >
+      deciles-charts:v0.0.24
+        --input-files output/tsh/measure_counts_per_week_per_practice.csv
+        --output-dir output/tsh
+    config:
+      show_outer_percentiles: true
+      tables:
+        output: false
+      charts:
+        output: true
+    needs: [measures]
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/tsh/deciles_*.*
 
   generate_notebook_updating:
     run: jupyter:latest jupyter nbconvert /workspace/analysis/sentinel_measures_updating.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
     needs:
       [
-        generate_measures,
-        generate_measures_cleaned,
-        get_practice_count,
-        get_patient_count,
+        measures,
+        top_5_tables,
+        deciles_charts_alt,
+        deciles_charts_asthma,
+        deciles_charts_cholesterol,
+        deciles_charts_copd,
+        deciles_charts_hba1c,
+        deciles_charts_medication_review,
+        deciles_charts_qrisk2,
+        deciles_charts_rbc,
+        deciles_charts_sodium,
+        deciles_charts_systolic_bp,
+        deciles_charts_tsh
       ]
     outputs:
       moderately_sensitive:
         notebook: output/sentinel_measures_updating.html
-        code_tables: output/code_table*.csv
-        practices: output/num_practices_included*.csv
+     
 
-#   run_tests:
-#     run: python:latest python -m pytest --junit-xml=output/pytest.xml --verbose
-#     outputs:
-#       moderately_sensitive:
-#         log: output/pytest.xml
