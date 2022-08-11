@@ -448,7 +448,7 @@ def deciles_chart(
             period_column="date",
             column="rate",
             ylabel="rate per 1000",
-            show_outer_percentiles=False,
+            show_outer_percentiles=True,
             ax=ax,
         )
 
