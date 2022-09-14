@@ -118,6 +118,10 @@ def create_top_5_code_table(
         :, ["Code", "Description", "Proportion of codes (%)"]
     ]
 
+    if len(event_counts["Code"]) >1:
+    event_counts.loc[event_counts["Proportion of codes (%)"] == 0, "Proportion of codes (%)"] = "< 0.005"
+    event_counts.loc[event_counts["Proportion of codes (%)"] == 100, "Proportion of codes (%)"] = "> 99.995"
+
     # return top n rows
     return event_counts.head(5)
 
