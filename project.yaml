@@ -4,6 +4,19 @@ expectations:
   population_size: 1000
 
 actions:
+  generate_study_population_population:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_population --index-date-range "2019-01-01 to 2022-05-01 by month" --output-dir=output --output-format=feather
+    outputs:
+      highly_sensitive:
+        cohort: output/input_population*.feather
+
+  get_moved_count:
+    run: python:latest python analysis/population_count.py
+    needs: [generate_study_population_population]
+    outputs:
+      moderately_sensitive:
+        text: output/moved_count.json
+
   generate_study_population_1:
     run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2019-01-01 to 2019-12-01 by month" --output-dir=output --output-format=feather
     outputs:
