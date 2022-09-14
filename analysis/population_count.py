@@ -21,10 +21,9 @@ def get_date_input_file(file: str) -> str:
 
 moved = []
 
-first_month = pd.read_feather("output/input_population_2019-01-01.feather")
-# last_month = pd.read_feather("output/input_population_2022-05-01.feather")
+first_month = pd.read_feather("output/joined/input_population_2019-01-01.feather")
 
-for file in Path("output").iterdir():
+for file in Path("output/joined").iterdir():
 
     if match_input_files(file.name):
       

@@ -9,10 +9,21 @@ actions:
     outputs:
       highly_sensitive:
         cohort: output/input_population*.feather
+  
+  join_ethnicity_population:
+    run: >
+      cohort-joiner:v0.0.46
+        --lhs output/input_population_20*.feather
+        --rhs output/input_ethnicity.feather
+        --output-dir output/joined
+    needs: [generate_study_population_population, generate_study_population_ethnicity]
+    outputs:
+      highly_sensitive:
+        cohort: output/joined/input_population_20*.feather
 
   get_moved_count:
     run: python:latest python analysis/population_count.py
-    needs: [generate_study_population_population]
+    needs: [join_ethnicity_population]
     outputs:
       moderately_sensitive:
         text: output/moved_count.json
