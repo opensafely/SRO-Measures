@@ -76,6 +76,9 @@ for file in Path("output/joined").iterdir():
 
 
 moved_df = pd.concat(moved)
+# this will contain duplicates. Take the last entry (most recent demographics)
+moved_df = moved_df.drop_duplicates(subset="patient_id", keep="last")
+
 total_moved = len(moved_df["patient_id"].unique())
 
 dem_counts = {}
