@@ -48,6 +48,7 @@ for file in Path("output/joined").iterdir():
                     "ethnicity",
                     "imd",
                     "region",
+                    "patient_id"
                 ],
             ]
 
@@ -67,6 +68,7 @@ for file in Path("output/joined").iterdir():
                     "ethnicity",
                     "imd",
                     "region",
+                    "patient_id"
                 ],
             ]
             demographics_patients_joined["ehr_provider"] = "TPP"
@@ -74,13 +76,14 @@ for file in Path("output/joined").iterdir():
 
 
 moved_df = pd.concat(moved)
-total_moved = len(moved_df)
+total_moved = len(moved_df["patient_id"].unique())
 
 dem_counts = {}
 for name, values in moved_df.iteritems():
+    if name !="patient_id":
 
-    count = values.value_counts().to_dict()
-    dem_counts[name] = count
+        count = values.value_counts().to_dict()
+        dem_counts[name] = count
 
 
 with open("output/moved_count.json", "w") as f:
