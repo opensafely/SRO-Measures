@@ -26,7 +26,7 @@ actions:
     needs: [join_ethnicity_population]
     outputs:
       moderately_sensitive:
-        text: output/moved_count.json
+        text: output/move*.json
 
   generate_study_population_1:
     run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2019-01-01 to 2019-12-01 by month" --output-dir=output --output-format=feather
