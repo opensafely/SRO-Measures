@@ -31,12 +31,12 @@ for file in Path("output/joined").iterdir():
         date = get_date_input_file(str(file.name))
         if date != "2019-01-01":
             patients_not_died = df.loc[df["died"]==0, "patient_id"]
-            patients_left = ~first_month.loc[:, "patient_id"].isin(patients_not_died)
+            patients_left = first_month[~first_month.loc[:, "patient_id"].isin(patients_not_died)]
             moved.extend(patients_left)
 
         
             patients = df.loc[~((df["age"] == 18) & (df["age_prev_month"]==17)), "patient_id"]
-            patients_joined = ~patients.isin(first_month.loc[:, "patient_id"])
+            patients_joined = patients[~patients.isin(first_month.loc[:, "patient_id"])]
             moved.extend(patients_joined)
 
 total_moved = len(np.unique(moved))
