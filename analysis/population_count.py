@@ -24,6 +24,25 @@ def get_date_input_file(file: str) -> str:
         return date.group(1)
 
 
+def get_patients_left_tpp(df, df_first_month, died_column, demographics):
+
+    patients_still_alive = df.loc[df[died_column] == 0, "patient_id"]
+
+    # anyone in the first month but not in monthyl cohort of people still alive
+    patients_left = df_first_month.loc[
+        ~df_first_month["patient_id"].isin(patients_still_alive), "patient_id"
+    ]
+
+    # demographics of those people in a given month
+    demographics_patients_left = df.loc[
+        df["patient_id"].isin(patients_left),
+        demographics + ["patient_id"],
+    ]
+
+    # lets assume the people who leave go to EMIS
+    demographics_patients_left["ehr_provider"] = "EMIS"
+    return demographics_patients_left
+
 moved = []
 
 first_month = pd.read_feather("output/joined/input_population_2019-01-01.feather")
@@ -36,29 +55,12 @@ for file in Path("output/joined").iterdir():
         date = get_date_input_file(str(file.name))
         if date != "2019-01-01":
 
-            # all patients still alive each month
-            patients_not_died = df.loc[df["died"] == 0, "patient_id"]
-
-            # anyone in the first month but not in monthyl cohort of people still alive
-            patients_left = first_month.loc[
-                ~first_month["patient_id"].isin(patients_not_died), "patient_id"
-            ]
-
-            # demographics of those people in a given month
-            demographics_patients_left = df.loc[
-                df["patient_id"].isin(patients_left),
-                [
-                    "sex",
+            demographics_patients_left = get_patients_left_tpp(df, first_month, "died", ["sex",
                     "age_band",
                     "ethnicity",
                     "imd",
-                    "region",
-                    "patient_id"
-                ],
-            ]
-
-            # lets assume the people who leave go to EMIS
-            demographics_patients_left["ehr_provider"] = "EMIS"
+                    "region"])
+                    
             moved.append(demographics_patients_left)
 
             # any patients in monthly cohort who didn't become eligible by turning 18 in prev month
