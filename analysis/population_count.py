@@ -61,6 +61,22 @@ def get_patients_joined_tpp(df, df_first_month, age_column, age_prev_month_colum
 
     return demographics_patients_joined
 
+def concatenate_patients_moved(moved):
+    moved_df = pd.concat(moved)
+    # this will contain duplicates. Take the last entry (most recent demographics)
+    moved_df = moved_df.drop_duplicates(subset="patient_id", keep="last")
+
+    total_moved = len(moved_df["patient_id"].unique())
+
+    dem_counts = {}
+    for name, values in moved_df.iteritems():
+        if name !="patient_id":
+
+            count = values.value_counts().to_dict()
+            dem_counts[name] = count
+    
+    return total_moved, dem_counts
+
 moved = []
 
 first_month = pd.read_feather("output/joined/input_population_2019-01-01.feather")
@@ -88,18 +104,7 @@ for file in Path("output/joined").iterdir():
             moved.extend([demographics_patients_left, demographics_patients_joined])
 
 
-moved_df = pd.concat(moved)
-# this will contain duplicates. Take the last entry (most recent demographics)
-moved_df = moved_df.drop_duplicates(subset="patient_id", keep="last")
-
-total_moved = len(moved_df["patient_id"].unique())
-
-dem_counts = {}
-for name, values in moved_df.iteritems():
-    if name !="patient_id":
-
-        count = values.value_counts().to_dict()
-        dem_counts[name] = count
+total_moved, dem_counts = concatenate_patients_moved(moved)
 
 
 with open("output/moved_count.json", "w") as f:
