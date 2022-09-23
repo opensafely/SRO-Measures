@@ -1,5 +1,4 @@
 import pandas as pd
-import json
 from pathlib import Path
 from utilities import (
     get_patients_left_tpp,
@@ -10,7 +9,7 @@ from utilities import (
     save_dict_as_json,
 )
 
-
+# this will contain dataframes of patients who have joined or left during the study period. There will be duplicates
 moved = []
 
 first_month = pd.read_feather("output/joined/input_population_2019-01-01.feather")
@@ -21,6 +20,8 @@ for file in Path("output/joined").iterdir():
 
         df = pd.read_feather(file)
         date = get_date_input_file(str(file.name))
+
+        # 2019-01-01 is the month being compared, so we ignore it here
         if date != "2019-01-01":
 
             demographics_patients_left = get_patients_left_tpp(
