@@ -1,7 +1,4 @@
-from cohortextractor import (
-    StudyDefinition,
-    patients
-)
+from cohortextractor import StudyDefinition, patients
 
 study = StudyDefinition(
     index_date="2019-01-01",
@@ -10,30 +7,17 @@ study = StudyDefinition(
         "rate": "exponential_increase",
         "incidence": 0.1,
     },
-    
     population=patients.satisfying(
         """
         registered AND
-        (NOT died) AND
         (age >=18 AND age <=120) AND 
         (sex = 'M' OR sex = 'F')
         """,
-
-        registered = patients.registered_as_of(
-        "index_date",
-        return_expectations={"incidence": 0.9},
+        registered=patients.registered_as_of(
+            "index_date",
+            return_expectations={"incidence": 0.9},
         ),
-
     ),
-
-    
-    died = patients.died_from_any_cause(
-        on_or_before="index_date",
-        returning="binary_flag",
-        return_expectations={"incidence": 0.1}
-        ),
-
-
     age=patients.age_as_of(
         "index_date",
         return_expectations={
@@ -48,7 +32,6 @@ study = StudyDefinition(
             "int": {"distribution": "population_ages"},
         },
     ),
-
     age_band=patients.categorised_as(
         {
             "missing": "DEFAULT",
@@ -77,31 +60,31 @@ study = StudyDefinition(
                 }
             },
         },
-
     ),
-
-
     sex=patients.sex(
         return_expectations={
             "rate": "universal",
             "category": {"ratios": {"M": 0.49, "F": 0.5, "U": 0.01}},
         }
     ),
-
     region=patients.registered_practice_as_of(
         "index_date",
         returning="nuts1_region_name",
-        return_expectations={"category": {"ratios": {
-            "North East": 0.1,
-            "North West": 0.1,
-            "Yorkshire and the Humber": 0.1,
-            "East Midlands": 0.1,
-            "West Midlands": 0.1,
-            "East of England": 0.1,
-            "London": 0.2,
-            "South East": 0.2, }}}
+        return_expectations={
+            "category": {
+                "ratios": {
+                    "North East": 0.1,
+                    "North West": 0.1,
+                    "Yorkshire and the Humber": 0.1,
+                    "East Midlands": 0.1,
+                    "West Midlands": 0.1,
+                    "East of England": 0.1,
+                    "London": 0.2,
+                    "South East": 0.2,
+                }
+            }
+        },
     ),
-    
     imd=patients.categorised_as(
         {
             "0": "DEFAULT",
@@ -129,5 +112,5 @@ study = StudyDefinition(
                 }
             },
         },
-    )
+    ),
 )
