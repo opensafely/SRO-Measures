@@ -792,3 +792,7 @@ def concatenate_patients_moved(moved):
     
     return total_moved, dem_counts
 
+def save_dict_as_json(dict, output_path):
+    """Saves dictionary as json"""
+    with open(output_path, "w") as f:
+        json.dump(dict, f)

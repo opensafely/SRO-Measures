@@ -1,8 +1,14 @@
 import pandas as pd
 import json
 from pathlib import Path
-from utilities import get_patients_left_tpp, get_patients_joined_tpp, concatenate_patients_moved, match_input_files, get_date_input_file
-
+from utilities import (
+    get_patients_left_tpp,
+    get_patients_joined_tpp,
+    concatenate_patients_moved,
+    match_input_files,
+    get_date_input_file,
+    save_dict_as_json,
+)
 
 
 moved = []
@@ -17,26 +23,25 @@ for file in Path("output/joined").iterdir():
         date = get_date_input_file(str(file.name))
         if date != "2019-01-01":
 
-            demographics_patients_left = get_patients_left_tpp(df, first_month, "died", ["sex",
-                    "age_band",
-                    "ethnicity",
-                    "imd",
-                    "region"])
-            
-            demographics_patients_joined = get_patients_joined_tpp(df, first_month, "age", "age_prev_month",["sex",
-                    "age_band",
-                    "ethnicity",
-                    "imd",
-                    "region"])
+            demographics_patients_left = get_patients_left_tpp(
+                df,
+                first_month,
+                "died",
+                ["sex", "age_band", "ethnicity", "imd", "region"],
+            )
+
+            demographics_patients_joined = get_patients_joined_tpp(
+                df,
+                first_month,
+                "age",
+                "age_prev_month",
+                ["sex", "age_band", "ethnicity", "imd", "region"],
+            )
 
             moved.extend([demographics_patients_left, demographics_patients_joined])
 
 
 total_moved, dem_counts = concatenate_patients_moved(moved)
 
-
-with open("output/moved_count.json", "w") as f:
-    json.dump({"num_patients": total_moved}, f)
-
-with open("output/moved_demographic_count.json", "w") as f:
-    json.dump(dem_counts, f)
+save_dict_as_json(total_moved, "output/moved_count.json")
+save_dict_as_json(dem_counts, "output/moved_demographic_count.json")
