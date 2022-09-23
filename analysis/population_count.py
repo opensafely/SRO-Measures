@@ -43,6 +43,24 @@ def get_patients_left_tpp(df, df_first_month, died_column, demographics):
     demographics_patients_left["ehr_provider"] = "EMIS"
     return demographics_patients_left
 
+def get_patients_joined_tpp(df, df_first_month, age_column, age_prev_month_column, demographics):
+    # any patients in monthly cohort who didn't become eligible by turning 18 in prev month
+    patients_adults = df.loc[
+        ~((df[age_column] == 18) & (df[age_prev_month_column] == 17)), "patient_id"
+    ]
+
+    # anyone of these patients who were not in the first month
+    patients_joined = patients_adults[~patients_adults.isin(df_first_month["patient_id"])]
+
+    demographics_patients_joined = df.loc[
+        df["patient_id"].isin(patients_joined),
+        demographics + ["patient_id"],
+    ]
+    # Anyone who has joined should now be counted as TPP
+    demographics_patients_joined["ehr_provider"] = "TPP"
+
+    return demographics_patients_joined
+
 moved = []
 
 first_month = pd.read_feather("output/joined/input_population_2019-01-01.feather")
@@ -60,31 +78,14 @@ for file in Path("output/joined").iterdir():
                     "ethnicity",
                     "imd",
                     "region"])
-                    
-            moved.append(demographics_patients_left)
-
-            # any patients in monthly cohort who didn't become eligible by turning 18 in prev month
-            patients = df.loc[
-                ~((df["age"] == 18) & (df["age_prev_month"] == 17)), "patient_id"
-            ]
-
-            # anyone of these patients who were not in the first month
-            patients_joined = patients[~patients.isin(first_month["patient_id"])]
-
-            demographics_patients_joined = df.loc[
-                df["patient_id"].isin(patients_joined),
-                [
-                    "sex",
+            
+            demographics_patients_joined = get_patients_joined_tpp(df, first_month, "age", "age_prev_month",["sex",
                     "age_band",
                     "ethnicity",
                     "imd",
-                    "region",
-                    "patient_id"
-                ],
-            ]
-            # Anyone who has joined should now be counted as TPP
-            demographics_patients_joined["ehr_provider"] = "TPP"
-            moved.append(demographics_patients_joined)
+                    "region"])
+
+            moved.extend([demographics_patients_left, demographics_patients_joined])
 
 
 moved_df = pd.concat(moved)
