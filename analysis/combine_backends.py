@@ -20,14 +20,7 @@ sentinel_measures = [
     "medication_review",
 ]
 
-demographics = [
-    "age_band",
-    "ethnicity",
-    "imd",
-    "region",
-    "sex",
-    "total"
-]
+demographics = ["age_band", "ethnicity", "imd", "region", "sex", "total"]
 
 for d in demographics:
     emis_count = pd.read_csv(f"backend_outputs/emis/{d}_count.csv", index_col=0)
@@ -51,13 +44,13 @@ for d in demographics:
             13: 4,
             14: 4,
             15: 5,
-            16: 5
+            16: 5,
         }
         emis_count.index = emis_count.index.map(mapping)
         emis_count = emis_count.groupby(level=0).sum()
 
     if d == "region":
-        
+
         mapping_tpp = {
             "East Midlands": "Midlands",
             "Yorkshire and The Humber": "North East",
@@ -67,7 +60,7 @@ for d in demographics:
             "London": "London",
             "South East": "South East",
             "South West": "South West",
-            "West Midlands": "Midlands"
+            "West Midlands": "Midlands",
         }
 
         mapping_emis = {
@@ -77,21 +70,19 @@ for d in demographics:
             "SOUTH EAST COMMISSIONING REGION": "South East",
             "EAST OF ENGLAND COMMISSIONING REGION": "East",
             "SOUTH WEST COMMISSIONING REGION": "South West",
-            "MIDLANDS COMMISSIONING REGION": "Midlands"
+            "MIDLANDS COMMISSIONING REGION": "Midlands",
         }
 
         emis_count.index = emis_count.index.map(mapping_emis)
         emis_count = emis_count.groupby(level=0).sum()
-        
+
         tpp_count.index = tpp_count.index.map(mapping_tpp)
         tpp_count = tpp_count.groupby(level=0).sum()
 
     if d == "total":
         emis_count.set_index("pop", drop=True, inplace=True)
         tpp_count.set_index("pop", drop=True, inplace=True)
-        
-    
-    
+
     combined_count = emis_count.sort_index().add(tpp_count.sort_index())
     combined_count.to_csv(f"backend_outputs/{d}_count.csv")
 
@@ -147,6 +138,47 @@ for measure in sentinel_measures:
     code_table_combined["Description_tpp"] = code_table_combined[
         "Description_tpp"
     ].astype(str)
+
+    ######
+
+    ###########
+    # # Cast the code to an integer.
+    # event_counts[code_column] = event_counts[code_column].astype(int)
+
+    # check that codes not in the top 5 rows have >5 events
+    outside_top_5_percent = 1 - (
+        (code_table_combined.head(5)["combined_events"].sum()) / total_events
+    )
+
+    if (0 < (outside_top_5_percent * total_events) <= 5) & (outside_top_5_percent != 0):
+
+        # drop percent column
+        code_table_combined = code_table_combined.loc[
+            :, ["Code", "Description_emis", "Description_tpp"]
+        ]
+
+    else:
+        # give more logical column ordering
+
+        code_table_combined = code_table_combined.loc[
+            :,
+            ["Code", "Description_emis", "Description_tpp", "Proportion of Codes (%)"],
+        ]
+
+    code_table_combined["Proportion of Codes (%)"] = code_table_combined[
+        "Proportion of Codes (%)"
+    ].round(decimals=2)
+
+    if len(code_table_combined["Code"]) > 1:
+
+        code_table_combined.loc[
+            code_table_combined["Proportion of Codes (%)"] == 0,
+            "Proportion of Codes (%)",
+        ] = "< 0.005"
+        code_table_combined.loc[
+            code_table_combined["Proportion of Codes (%)"] == 100,
+            "Proportion of Codes (%)",
+        ] = "> 99.995"
 
     code_table_combined = code_table_combined.loc[
         :, ["Code", "Description_tpp", "Description_emis", "Proportion of Codes (%)"]
