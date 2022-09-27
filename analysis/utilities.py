@@ -330,18 +330,19 @@ def compute_deciles(measure_table, groupby_col, values_col, has_outer_percentile
     Returns:
         A data frame with `groupby_col`, `values_col`, and `percentile` columns.
     """
-    quantiles = np.arange(0.1, 1, 0.1)
+    quantiles = np.round(np.arange(0.1, 1, 0.1), 2)
     if has_outer_percentiles:
         quantiles = np.concatenate(
-            [quantiles, np.arange(0.01, 0.1, 0.01), np.arange(0.91, 1, 0.01)]
+            [quantiles, np.round(np.arange(0.01, 0.1, 0.01), 2), np.round(np.arange(0.91, 1, 0.01), 2)]
         )
 
     percentiles = (
         measure_table.groupby(groupby_col)[values_col]
-        .quantile(pd.Series(quantiles, name="percentile"))
+        .quantile(pd.Series(quantiles))
         .reset_index()
     )
-    percentiles["percentile"] = percentiles["percentile"].apply(lambda x: int(x * 100))
+   
+    percentiles["percentile"] = percentiles["level_1"].apply(lambda x: int(x * 100))
     return percentiles
 
 
@@ -357,7 +358,7 @@ def deciles_chart(
 ):
     """period_column must be dates / datetimes"""
 
-    df = compute_deciles(df, period_column, column, False)
+    df = compute_deciles(df, period_column, column, True)
 
     if interactive:
 
