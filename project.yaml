@@ -9,7 +9,7 @@ actions:
     outputs:
       highly_sensitive:
         cohort: output/input_population*.feather
-  
+
   join_ethnicity_population:
     run: >
       cohort-joiner:v0.0.46
@@ -27,6 +27,7 @@ actions:
     outputs:
       moderately_sensitive:
         text: output/move*.json
+
 
   generate_study_population_1:
     run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2019-01-01 to 2019-12-01 by month" --output-dir=output --output-format=feather
