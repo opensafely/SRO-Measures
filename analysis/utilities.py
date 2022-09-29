@@ -748,8 +748,8 @@ def get_patients_left_tpp(df, df_comparison, died_column, demographics):
     demographics_patients_left = (
         df_comparison.loc[
             df_comparison["patient_id"].isin(patients_left),
-            ["patient_id"] + demographics
-        ]
+            :
+        ].reindex(columns = ["patient_id"] + demographics)
         .reset_index()
         .drop(["index"], axis=1)
     )
@@ -788,10 +788,11 @@ def get_patients_joined_tpp(
     ]
 
     demographics_patients_joined = (
+        
         df.loc[
             df["patient_id"].isin(patients_joined),
-            ["patient_id"] + demographics
-        ]
+            :
+        ].reindex(columns = ["patient_id"] + demographics)
         .reset_index()
         .drop(["index"], axis=1)
     )
