@@ -724,7 +724,7 @@ def get_date_input_file(file: str) -> str:
         return date.group(1)
 
 
-def get_patients_left_tpp(df, df_comparison, died_column, demographics):
+def get_patients_left_tpp(df, df_comparison, demographics):
     """Identifies patients not in a given monthly extract who were in another (previous extract).
     Excludes patients who are not present because they have since died. Extracts demographics
     for these patients.
@@ -732,7 +732,6 @@ def get_patients_left_tpp(df, df_comparison, died_column, demographics):
     Args:
         df: input dataframe to identify patients in
         df_comparison: input dataframe to compare to. This should be earlier than df.
-        died_column: colum in df that identifies whether a patient has died on or before that month.
         demographics: list of demographics to extract for patients who have left.
 
     returns:
@@ -760,7 +759,7 @@ def get_patients_left_tpp(df, df_comparison, died_column, demographics):
 
 
 def get_patients_joined_tpp(
-    df, df_first_month, age_column, age_prev_month_column, demographics
+    df, df_first_month, age_column, age_start_column, demographics
 ):
     """Identifies patients in a given monthly extract who are not in another (previous extract).
     Excludes patients if they are present because they now satisfy the age criteria. Extracts demographics
@@ -770,16 +769,16 @@ def get_patients_joined_tpp(
         df: input dataframe to identify patients in
         df_comparison: input dataframe to compare to. This should be earlier than df.
         age_column: colum in df that identifies the age of a patient in that month.
-        age_prev_month_column: column in df that identifies the age of a patient in the prev month.
+        age_start_column: column in df that identifies the age of a patient at the start.
         demographics: list of demographics to extract for patients who have left.
 
     returns:
         dataframe of all patients who have joined and their demographics
     """
 
-    # any patients in monthly cohort who didn't become eligible by turning 18 in prev month
+    # any patients in monthly cohort who didn't become eligible by turning 18 in study
     patients_adults = df.loc[
-        ~((df[age_column] == 18) & (df[age_prev_month_column] == 17)), "patient_id"
+        ~(df[age_start_column] <= 17), "patient_id"
     ]
 
     # anyone of these patients who were not in the first month

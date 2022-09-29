@@ -25,8 +25,8 @@ study = StudyDefinition(
             "int": {"distribution": "population_ages"},
         },
     ),
-    age_prev_month=patients.age_as_of(
-        "index_date - 1 month",
+    age_start=patients.age_as_of(
+        "2019-01-01",
         return_expectations={
             "rate": "universal",
             "int": {"distribution": "population_ages"},
