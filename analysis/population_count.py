@@ -27,7 +27,6 @@ for file in Path("output/joined").iterdir():
             demographics_patients_left = get_patients_left_tpp(
                 df,
                 first_month,
-                "died",
                 ["sex", "age_band", "ethnicity", "imd", "region"],
             )
 
@@ -35,7 +34,7 @@ for file in Path("output/joined").iterdir():
                 df,
                 first_month,
                 "age",
-                "age_prev_month",
+                "age_start",
                 ["sex", "age_band", "ethnicity", "imd", "region"],
             )
 
