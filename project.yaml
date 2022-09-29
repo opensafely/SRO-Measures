@@ -9,7 +9,26 @@ actions:
     outputs:
       highly_sensitive:
         cohort: output/input_population*.feather
-        
+
+  join_ethnicity_population:
+    run: >
+      cohort-joiner:v0.0.46
+        --lhs output/input_population_20*.feather
+        --rhs output/input_ethnicity.feather
+        --output-dir output/joined
+    needs: [generate_study_population_population, generate_study_population_ethnicity]
+    outputs:
+      highly_sensitive:
+        cohort: output/joined/input_population_20*.feather
+
+  get_moved_count:
+    run: python:latest python analysis/population_count.py
+    needs: [join_ethnicity_population]
+    outputs:
+      moderately_sensitive:
+        text: output/move*.json
+
+
   generate_study_population_1:
     run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2019-01-01 to 2019-12-01 by month" --output-dir=output --output-format=feather
     outputs:
@@ -120,8 +139,14 @@ actions:
         code_tables: output/code_table*.csv
         practices: output/num_practices_included*.csv
 
-#   run_tests:
-#     run: python:latest python -m pytest --junit-xml=output/pytest.xml --verbose
-#     outputs:
-#       moderately_sensitive:
-#         log: output/pytest.xml
+  run_tests_population_count:
+    run: python:latest python -m pytest tests/test_population_count.py --junit-xml=output/pytest.xml --verbose
+    outputs:
+      moderately_sensitive:
+        log: output/pytest.xml
+
+  # run_tests:
+  #   run: python:latest python -m pytest --junit-xml=output/pytest.xml --verbose
+  #   outputs:
+  #     moderately_sensitive:
+  #       log: output/pytest.xml

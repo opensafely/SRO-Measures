@@ -168,13 +168,22 @@ def create_child_table(df, code_df, code_column, term_column, measure, nrows=5):
             :, ["code", "Description", "Proportion of codes (%)"]
         ]
 
-    if len(event_counts["code"]) >1:
-        event_counts.loc[event_counts["Proportion of codes (%)"] == 0, "Proportion of codes (%)"] = "< 0.005"
-        event_counts.loc[event_counts["Proportion of codes (%)"] == 100, "Proportion of codes (%)"] = "> 99.995"
+    if len(event_counts["code"]) > 1:
+        event_counts.loc[
+            event_counts["Proportion of codes (%)"] == 0, "Proportion of codes (%)"
+        ] = "< 0.005"
+        event_counts.loc[
+            event_counts["Proportion of codes (%)"] == 100, "Proportion of codes (%)"
+        ] = "> 99.995"
 
-        event_counts_with_count.loc[event_counts_with_count["Proportion of codes (%)"] == 0, "Proportion of codes (%)"] = "< 0.005"
-        event_counts_with_count.loc[event_counts_with_count["Proportion of codes (%)"] == 100, "Proportion of codes (%)"] = "> 99.995"
-
+        event_counts_with_count.loc[
+            event_counts_with_count["Proportion of codes (%)"] == 0,
+            "Proportion of codes (%)",
+        ] = "< 0.005"
+        event_counts_with_count.loc[
+            event_counts_with_count["Proportion of codes (%)"] == 100,
+            "Proportion of codes (%)",
+        ] = "> 99.995"
 
     # return top n rows
     return event_counts.head(5), event_counts_with_count.head()
@@ -297,7 +306,7 @@ def deciles_chart_ebm(
     ax.set_xlim(
         [df[period_column].min(), df[period_column].max()]
     )  # set x axis range as full date range
-    
+
     ax.xaxis.set_major_formatter(matplotlib.dates.DateFormatter("%B %Y"))
     ax.xaxis.set_major_locator(matplotlib.dates.MonthLocator(interval=1))
     if show_legend:
@@ -312,7 +321,7 @@ def deciles_chart_ebm(
     # rotates and right aligns the x labels, and moves the bottom of the
     # axes up to make room for them
     plt.gcf().autofmt_xdate(rotation=90, ha="center", which="both")
-    
+
     plt.show()
     return plt
 
@@ -489,11 +498,11 @@ def generate_sentinel_measure(
     num_patients = get_number_patients(measure)
 
     num_practices_df = pd.DataFrame(
-        {
-            "num_practices_included": pd.Series([practices_included])
-        }
+        {"num_practices_included": pd.Series([practices_included])}
     )
-    num_practices_df.to_csv(f"../output/num_practices_included_{measure}.csv", index=False)
+    num_practices_df.to_csv(
+        f"../output/num_practices_included_{measure}.csv", index=False
+    )
 
     df = data_dict_practice[measure]
 
@@ -508,7 +517,9 @@ def generate_sentinel_measure(
     childs_df = childs_df.rename(columns={code_column: code_column.title()})
     childs_df.to_csv(f"../output/code_table_{measure}.csv")
 
-    childs_df_with_count = childs_df_with_count.rename(columns={code_column: code_column.title()})
+    childs_df_with_count = childs_df_with_count.rename(
+        columns={code_column: code_column.title()}
+    )
     childs_df_with_count.to_csv(f"../output/code_table_{measure}_with_count.csv")
 
     display(
@@ -692,3 +703,122 @@ def produce_stripped_measures(df, sentinel_measure):
     df = df.loc[:, ["rate", "date"]]
     # randomly shuffle (resetting index)
     return df.sample(frac=1).reset_index(drop=True)
+
+
+def match_input_files(file: str) -> bool:
+    """Checks if file name has format outputted by cohort extractor"""
+    pattern = (
+        r"^input_population_20\d\d-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])\.feather"
+    )
+    return True if re.match(pattern, file) else False
+
+
+def get_date_input_file(file: str) -> str:
+    """Gets the date in format YYYY-MM-DD from input file name string"""
+    # check format
+    if not match_input_files(file):
+        raise Exception("Not valid input file format")
+
+    else:
+        date = result = re.search(r"input_population_(.*)\.feather", file)
+        return date.group(1)
+
+
+def get_patients_left_tpp(df, df_comparison, died_column, demographics):
+    """Identifies patients not in a given monthly extract who were in another (previous extract).
+    Excludes patients who are not present because they have since died. Extracts demographics
+    for these patients.
+
+    Args:
+        df: input dataframe to identify patients in
+        df_comparison: input dataframe to compare to. This should be earlier than df.
+        died_column: colum in df that identifies whether a patient has died on or before that month.
+        demographics: list of demographics to extract for patients who have left.
+
+    returns:
+        dataframe of all patients who have left and their demographics
+    """
+
+    # anyone in the first month but not in monthly cohort of people
+    patients_left = df_comparison.loc[
+        ~df_comparison["patient_id"].isin(df.loc[:, "patient_id"]), "patient_id"
+    ]
+   
+    # demographics of those people in a given month (from first month)
+    demographics_patients_left = (
+        df_comparison.loc[
+            df_comparison["patient_id"].isin(patients_left),
+            ["patient_id"] + demographics,
+        ]
+        .reset_index()
+        .drop(["index"], axis=1)
+    )
+
+    # lets assume the people who leave go to EMIS
+    demographics_patients_left["ehr_provider"] = "EMIS"
+    return demographics_patients_left
+
+
+def get_patients_joined_tpp(
+    df, df_first_month, age_column, age_prev_month_column, demographics
+):
+    """Identifies patients in a given monthly extract who are not in another (previous extract).
+    Excludes patients if they are present because they now satisfy the age criteria. Extracts demographics
+    for these patients.
+
+    Args:
+        df: input dataframe to identify patients in
+        df_comparison: input dataframe to compare to. This should be earlier than df.
+        age_column: colum in df that identifies the age of a patient in that month.
+        age_prev_month_column: column in df that identifies the age of a patient in the prev month.
+        demographics: list of demographics to extract for patients who have left.
+
+    returns:
+        dataframe of all patients who have joined and their demographics
+    """
+
+    # any patients in monthly cohort who didn't become eligible by turning 18 in prev month
+    patients_adults = df.loc[
+        ~((df[age_column] == 18) & (df[age_prev_month_column] == 17)), "patient_id"
+    ]
+
+    # anyone of these patients who were not in the first month
+    patients_joined = patients_adults[
+        ~patients_adults.isin(df_first_month["patient_id"])
+    ]
+
+    demographics_patients_joined = (
+        df.loc[
+            df["patient_id"].isin(patients_joined),
+            ["patient_id"] + demographics,
+        ]
+        .reset_index()
+        .drop(["index"], axis=1)
+    )
+    # Anyone who has joined should now be counted as TPP
+    demographics_patients_joined["ehr_provider"] = "TPP"
+
+    return demographics_patients_joined
+
+
+def concatenate_patients_moved(moved):
+    moved_df = pd.concat(moved)
+    # this will contain duplicates. Take the last entry (most recent demographics)
+    moved_df = moved_df.drop_duplicates(subset="patient_id", keep="last")
+
+    total_moved = len(moved_df["patient_id"].unique())
+
+    dem_counts = {}
+    for name, values in moved_df.iteritems():
+        if name != "patient_id":
+
+            count = values.value_counts().to_dict()
+            dem_counts[name] = count
+
+    return total_moved, dem_counts
+
+
+def save_dict_as_json(dict, output_path):
+    """Saves dictionary as json"""
+    with open(output_path, "w") as f:
+        json.dump(dict, f)
