@@ -83,8 +83,6 @@ class TestGetMovedPatients:
     def test_get_patients_joined_tpp(self, input_df_params, input_df_comparator):
         obs = utilities.get_patients_joined_tpp(pd.DataFrame(input_df_params["obs"]), input_df_comparator, "age", "age_start", ["ethnicity"])
         exp = pd.DataFrame(input_df_params["exp_joined"])
-        print(obs)
-        print(exp)
         pd.testing.assert_frame_equal(obs, exp)
 
     def test_get_patients_left_tpp(self,input_df_params, input_df_comparator):
