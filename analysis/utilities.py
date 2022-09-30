@@ -813,6 +813,13 @@ def concatenate_patients_moved(moved):
         if name != "patient_id":
 
             count = values.value_counts().to_dict()
+            for key, value in count.items():
+                if value <=10:
+                    value = np.nan
+                
+                count[key] = round_values(value, 5)
+                
+
             dem_counts[name] = count
 
     return total_moved, dem_counts
@@ -822,3 +829,12 @@ def save_dict_as_json(dict, output_path):
     """Saves dictionary as json"""
     with open(output_path, "w") as f:
         json.dump(dict, f)
+
+def round_values(x, base=5):
+    rounded = x
+    if isinstance(x, (int, float)):
+        if np.isnan(x):
+            rounded = np.nan
+        else:
+            rounded = int(base * round(x / base))
+    return rounded
