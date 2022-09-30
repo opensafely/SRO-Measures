@@ -813,6 +813,9 @@ def concatenate_patients_moved(moved):
         if name != "patient_id":
 
             count = values.value_counts().to_dict()
+            for key, value in count.items():
+                if value <=10:
+                    count[key] = np.nan
             dem_counts[name] = count
 
     return total_moved, dem_counts
