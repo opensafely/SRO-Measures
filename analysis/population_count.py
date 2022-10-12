@@ -37,10 +37,11 @@ for file in Path("output/joined").iterdir():
                 "age_start",
                 ["sex", "age_band", "ethnicity", "imd", "region"],
             )
-
+            demographics_patients_left["ethnicity"] = demographics_patients_left["ethnicity"].astype(str)
+            demographics_patients_joined["ethnicity"] = demographics_patients_joined["ethnicity"].astype(str)
             moved.extend([demographics_patients_left, demographics_patients_joined])
 
-moved["ethnicity"] = moved["ethnicity"].astype(str)
+
 total_moved, dem_counts = concatenate_patients_moved(moved)
 
 save_dict_as_json(total_moved, "output/moved_count.json")
