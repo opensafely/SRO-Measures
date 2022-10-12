@@ -40,7 +40,7 @@ for file in Path("output/joined").iterdir():
 
             moved.extend([demographics_patients_left, demographics_patients_joined])
 
-
+moved["ethnicity"] = moved["ethnicity"].astype(str)
 total_moved, dem_counts = concatenate_patients_moved(moved)
 
 save_dict_as_json(total_moved, "output/moved_count.json")
