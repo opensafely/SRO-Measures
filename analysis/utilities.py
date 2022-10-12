@@ -812,7 +812,7 @@ def concatenate_patients_moved(moved):
     for name, values in moved_df.iteritems():
         if name != "patient_id":
 
-            count = values.value_counts().to_dict()
+            count = values.value_counts(dropna=False).to_dict()
             for key, value in count.items():
                 if value <=10:
                     value = np.nan
