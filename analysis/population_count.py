@@ -27,7 +27,7 @@ for file in Path("output/joined").iterdir():
             demographics_patients_left = get_patients_left_tpp(
                 df,
                 first_month,
-                ["sex", "age_band", "ethnicity_y", "imd", "region"],
+                ["sex", "age_band", "ethnicity_x", "imd", "region"],
             )
 
             demographics_patients_joined = get_patients_joined_tpp(
@@ -35,13 +35,13 @@ for file in Path("output/joined").iterdir():
                 first_month,
                 "age",
                 "age_start",
-                ["sex", "age_band", "ethnicity_y", "imd", "region"],
+                ["sex", "age_band", "ethnicity_x", "imd", "region"],
             )
-            demographics_patients_left["ethnicity_y"] = demographics_patients_left[
-                "ethnicity_y"
+            demographics_patients_left["ethnicity_x"] = demographics_patients_left[
+                "ethnicity_x"
             ].astype(str)
-            demographics_patients_joined["ethnicity_y"] = demographics_patients_joined[
-                "ethnicity_y"
+            demographics_patients_joined["ethnicity_x"] = demographics_patients_joined[
+                "ethnicity_x"
             ].astype(str)
             moved.extend([demographics_patients_left, demographics_patients_joined])
 
