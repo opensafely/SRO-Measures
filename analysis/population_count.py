@@ -17,10 +17,8 @@ first_month = pd.read_feather("output/joined/input_population_2019-01-01.feather
 for file in Path("output/joined").iterdir():
 
     if match_input_files(file.name):
-        print(file.name)
+        
         df = pd.read_feather(file)
-        print(df.columns)
-        print(df["ethnicity"].describe())
         date = get_date_input_file(str(file.name))
 
         # 2019-01-01 is the month being compared, so we ignore it here
@@ -29,7 +27,7 @@ for file in Path("output/joined").iterdir():
             demographics_patients_left = get_patients_left_tpp(
                 df,
                 first_month,
-                ["sex", "age_band", "ethnicity", "imd", "region"],
+                ["sex", "age_band", "ethnicity_y", "imd", "region"],
             )
 
             demographics_patients_joined = get_patients_joined_tpp(
@@ -37,12 +35,12 @@ for file in Path("output/joined").iterdir():
                 first_month,
                 "age",
                 "age_start",
-                ["sex", "age_band", "ethnicity", "imd", "region"],
+                ["sex", "age_band", "ethnicity_y", "imd", "region"],
             )
-            demographics_patients_left["ethnicity"] = demographics_patients_left[
+            demographics_patients_left["ethnicity_y"] = demographics_patients_left[
                 "ethnicity"
             ].astype(str)
-            demographics_patients_joined["ethnicity"] = demographics_patients_joined[
+            demographics_patients_joined["ethnicity_y"] = demographics_patients_joined[
                 "ethnicity"
             ].astype(str)
             moved.extend([demographics_patients_left, demographics_patients_joined])
