@@ -38,10 +38,10 @@ for file in Path("output/joined").iterdir():
                 ["sex", "age_band", "ethnicity_y", "imd", "region"],
             )
             demographics_patients_left["ethnicity_y"] = demographics_patients_left[
-                "ethnicity"
+                "ethnicity_y"
             ].astype(str)
             demographics_patients_joined["ethnicity_y"] = demographics_patients_joined[
-                "ethnicity"
+                "ethnicity_y"
             ].astype(str)
             moved.extend([demographics_patients_left, demographics_patients_joined])
 
