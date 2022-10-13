@@ -17,8 +17,9 @@ first_month = pd.read_feather("output/joined/input_population_2019-01-01.feather
 for file in Path("output/joined").iterdir():
 
     if match_input_files(file.name):
-
+        print(file.name)
         df = pd.read_feather(file)
+        print(df.columns)
         print(df["ethnicity"].describe())
         date = get_date_input_file(str(file.name))
 
