@@ -19,6 +19,7 @@ for file in Path("output/joined").iterdir():
     if match_input_files(file.name):
 
         df = pd.read_feather(file)
+        print(df["ethnicity"].describe())
         date = get_date_input_file(str(file.name))
 
         # 2019-01-01 is the month being compared, so we ignore it here
@@ -37,8 +38,12 @@ for file in Path("output/joined").iterdir():
                 "age_start",
                 ["sex", "age_band", "ethnicity", "imd", "region"],
             )
-            demographics_patients_left["ethnicity"] = demographics_patients_left["ethnicity"].astype(str)
-            demographics_patients_joined["ethnicity"] = demographics_patients_joined["ethnicity"].astype(str)
+            demographics_patients_left["ethnicity"] = demographics_patients_left[
+                "ethnicity"
+            ].astype(str)
+            demographics_patients_joined["ethnicity"] = demographics_patients_joined[
+                "ethnicity"
+            ].astype(str)
             moved.extend([demographics_patients_left, demographics_patients_joined])
 
 
