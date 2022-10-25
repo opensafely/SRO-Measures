@@ -352,6 +352,7 @@ def compute_deciles(measure_table, groupby_col, values_col, has_outer_percentile
     )
    
     percentiles["percentile"] = percentiles["level_1"].apply(lambda x: int(x * 100))
+    percentiles = percentiles.loc[:, [groupby_col, "percentile", values_col]]
     return percentiles
 
 
@@ -494,33 +495,35 @@ def generate_sentinel_measure(
 
     practices_included = get_number_practices(df)
     practices_included_percent = get_percentage_practices(df)
+
     num_events, num_events_mil = get_number_events_mil(df, measure)
+
     num_patients = get_number_patients(measure)
 
     num_practices_df = pd.DataFrame(
         {"num_practices_included": pd.Series([practices_included])}
     )
     num_practices_df.to_csv(
-        f"../output/num_practices_included_{measure}.csv", index=False
+        f"{OUTPUT_DIR}/num_practices_included_{measure}.csv", index=False
     )
 
     df = data_dict_practice[measure]
-
+    print(df)
     deciles_chart(
         df,
         period_column="date",
-        column="rate",
+        column="value",
         ylabel="rate per 1000",
         interactive=interactive,
     )
 
     childs_df = childs_df.rename(columns={code_column: code_column.title()})
-    childs_df.to_csv(f"../output/code_table_{measure}.csv")
+    childs_df.to_csv(f"{OUTPUT_DIR}/code_table_{measure}.csv")
 
     childs_df_with_count = childs_df_with_count.rename(
         columns={code_column: code_column.title()}
     )
-    childs_df_with_count.to_csv(f"../output/code_table_{measure}_with_count.csv")
+    childs_df_with_count.to_csv(f"{OUTPUT_DIR}/code_table_{measure}_with_count.csv")
 
     display(
         Markdown(f"####Most Common Codes <a href={codelist_link}>(Codelist)</a>"),
