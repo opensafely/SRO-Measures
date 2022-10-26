@@ -124,29 +124,9 @@ actions:
         code_tables: output/code_table_*.csv
         events_count: output/event_count.json
 
-  generate_notebook_updating:
-    run: jupyter:latest jupyter nbconvert /workspace/analysis/sentinel_measures_updating.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
-    needs:
-      [
-        generate_measures,
-        generate_measures_cleaned,
-        get_practice_count,
-        get_patient_count,
-      ]
-    outputs:
-      moderately_sensitive:
-        notebook: output/sentinel_measures_updating.html
-        code_tables: output/code_table*.csv
-        practices: output/num_practices_included*.csv
 
-  run_tests_population_count:
-    run: python:latest python -m pytest tests/test_population_count.py --junit-xml=output/pytest.xml --verbose
+  run_tests:
+    run: python:latest python -m pytest --junit-xml=output/pytest.xml --verbose
     outputs:
       moderately_sensitive:
         log: output/pytest.xml
-
-  # run_tests:
-  #   run: python:latest python -m pytest --junit-xml=output/pytest.xml --verbose
-  #   outputs:
-  #     moderately_sensitive:
-  #       log: output/pytest.xml
