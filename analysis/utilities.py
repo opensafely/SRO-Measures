@@ -344,7 +344,7 @@ def compute_deciles(measure_table, groupby_col, values_col, has_outer_percentile
         quantiles = np.concatenate(
             [quantiles, np.round(np.arange(0.01, 0.1, 0.01), 2), np.round(np.arange(0.91, 1, 0.01), 2)]
         )
-
+    
     percentiles = (
         measure_table.groupby(groupby_col)[values_col]
         .quantile(pd.Series(quantiles))
@@ -508,11 +508,11 @@ def generate_sentinel_measure(
     )
 
     df = data_dict_practice[measure]
-    print(df)
+
     deciles_chart(
         df,
         period_column="date",
-        column="value",
+        column="rate",
         ylabel="rate per 1000",
         interactive=interactive,
     )
