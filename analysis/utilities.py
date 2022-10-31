@@ -207,17 +207,17 @@ def convert_weekly_to_monthly(counts_table):
     return
 
 codelist_links = {
-    "qrisk2": "https://www.opencodelists.org/codelist/opensafely/cvd-risk-assessment-score-qof/1adf44a5/",
-    "asthma": "https://www.opencodelists.org/codelist/opensafely/asthma-annual-review-qof/33eeb7da/",
-    "copd": "https://www.opencodelists.org/codelist/opensafely/chronic-obstructive-pulmonary-disease-copd-review-qof/01cfd170/",
-    "sodium": "https://www.opencodelists.org/codelist/opensafely/sodium-tests-numerical-value/32bff605/",
-    "cholesterol": "https://www.opencodelists.org/codelist/opensafely/cholesterol-tests/09896c09/",
-    "alt": "https://www.opencodelists.org/codelist/opensafely/alanine-aminotransferase-alt-tests/2298df3e/",
-    "tsh": "https://www.opencodelists.org/codelist/opensafely/thyroid-stimulating-hormone-tsh-testing/11a1abeb/",
-    "rbc": "https://www.opencodelists.org/codelist/opensafely/red-blood-cell-rbc-tests/576a859e/",
-    "hba1c": "https://www.opencodelists.org/codelist/opensafely/glycated-haemoglobin-hba1c-tests/62358576/",
-    'systolic_bp': "https://www.opencodelists.org/codelist/opensafely/systolic-blood-pressure-qof/3572b5fb/",
-    'medication_review': "https://www.opencodelists.org/codelist/opensafely/care-planning-medication-review-simple-reference-set-nhs-digital/61b13c39/"
+    "qrisk2": ["https://www.opencodelists.org/codelist/opensafely/cvd-risk-assessment-score-qof/1adf44a5/"],
+    "asthma": ["https://www.opencodelists.org/codelist/opensafely/asthma-annual-review-qof/33eeb7da/"],
+    "copd": ["https://www.opencodelists.org/codelist/opensafely/chronic-obstructive-pulmonary-disease-copd-review-qof/01cfd170/"],
+    "sodium": ["https://www.opencodelists.org/codelist/opensafely/sodium-tests-numerical-value/32bff605/"],
+    "cholesterol": ["https://www.opencodelists.org/codelist/opensafely/cholesterol-tests/09896c09/"],
+    "alt": ["https://www.opencodelists.org/codelist/opensafely/alanine-aminotransferase-alt-tests/2298df3e/"],
+    "tsh": ["https://www.opencodelists.org/codelist/opensafely/thyroid-stimulating-hormone-tsh-testing/11a1abeb/"],
+    "rbc": ["https://www.opencodelists.org/codelist/opensafely/red-blood-cell-rbc-tests/576a859e/"],
+    "hba1c": ["https://www.opencodelists.org/codelist/opensafely/glycated-haemoglobin-hba1c-tests/62358576/"],
+    'systolic_bp': ["https://www.opencodelists.org/codelist/opensafely/systolic-blood-pressure-qof/3572b5fb/"],
+    'medication_review': ["https://www.opencodelists.org/codelist/opensafely/care-planning-medication-review-simple-reference-set-nhs-digital/61b13c39/", "https://www.opencodelists.org/codelist/nhsd-primary-care-domain-refsets/medrvw_cod/20200812/"]
 
 }
 
@@ -264,12 +264,20 @@ def generate_sentinel_measure(measure):
         )
     )
 
-    display(
-        Markdown(
-            f"#### Most Common Codes <a href={codelist_links[measure]}>(Codelist)</a>"
-        ),
-        HTML(childs_df.to_html(index=False)),
-    )
+    if len(codelist_links[measure])>1:
+                display(
+                Markdown(f"#### Most Common Codes <a href={codelist_links[measure][0]}>(Codelist 1)</a>, <a href={codelist_links[measure][1]}>(Codelist 2)</a>"),
+                HTML(childs_df.to_html(index=False)),
+                )
+
+    else:
+            
+        display(
+            Markdown(
+                f"#### Most Common Codes <a href={codelist_links[measure][0]}>(Codelist)</a>"
+            ),
+            HTML(childs_df.to_html(index=False)),
+        )
 
     display(Markdown(f"Total patients: {patient_count}M ({event_count}M events)"))
-    display(Markdown(f"Events in latest month: {event_count_latest_period}"))
+    display(Markdown(f"Events in latest month: {event_count_latest_period}M"))
