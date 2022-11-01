@@ -16,9 +16,9 @@ def practice_counts(counts_table, list_sizes, rounding_base_practice_count):
 
     dates = counts_table["date"].unique()
 
-    # if len(dates) > 52:
-    #     counts_table = convert_weekly_to_monthly(counts_table)
-    print(counts_table.head())
+    if len(dates) > 52:
+        counts_table = convert_weekly_to_monthly(counts_table)
+    
     counts_table = counts_table.merge(list_sizes, on=["practice"], how="inner")
 
     counts_table["value"] = counts_table["num"] / counts_table["list_size"]
