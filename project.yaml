@@ -221,7 +221,7 @@ actions:
     config:
       show_outer_percentiles: true
       tables:
-        output: false
+        output: true
       charts:
         output: true
     needs: [measures]
