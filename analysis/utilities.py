@@ -204,7 +204,7 @@ def convert_weekly_to_monthly(counts_table):
         .reset_index(drop=True)
     )
 
-    return
+    return counts_table
 
 codelist_links = {
     "qrisk2": ["https://www.opencodelists.org/codelist/opensafely/cvd-risk-assessment-score-qof/1adf44a5/"],
