@@ -221,23 +221,13 @@ codelist_links = {
 
 }
 
-def generate_sentinel_measure(measure):
+def generate_sentinel_measure(measure, output_dir):
     """Generates tables and charts for the measure with the given ID.
-
-    Args:
-        data_dict: A mapping of measure IDs to measure tables.
-        data_dict_practice: A mapping of measure IDs to "practice only" measure tables.
-        codelist_dict: A mapping of measure IDs to codelist tables.
-        measure: A measure ID.
-        code_column: The name of the code column in the codelist table.
-        term_column: The name of the term column in the codelist table.
-        dates_list: Not used.
-        interactive: Flag indicating whether or not the chart should be interactive.
     """
 
-    childs_df = pd.read_csv(f"../output/{measure}/top_5_code_table.csv", index_col=0)
+    childs_df = pd.read_csv(f"../{output_dir}/{measure}/top_5_code_table.csv", index_col=0)
 
-    event_count_df = pd.read_csv(f"../output/{measure}/event_counts.csv", index_col=0)
+    event_count_df = pd.read_csv(f"../{output_dir}/{measure}/event_counts.csv", index_col=0)
     event_count = event_count_df.loc[
         event_count_df.index == "total_events", "count"
     ].values[0]
@@ -260,7 +250,7 @@ def generate_sentinel_measure(measure):
     display(Markdown("### Rate per 1000 registered patients"))
     display(
         Image(
-            filename=f"../output/{measure}/deciles_chart_counts_per_week_per_practice.png"
+            filename=f"../{output_dir}/{measure}/deciles_chart_counts_per_week_per_practice.png"
         )
     )
 

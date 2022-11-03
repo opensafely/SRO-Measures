@@ -373,26 +373,26 @@ actions:
       moderately_sensitive:
         deciles_charts: output/tsh/deciles_*.*
 
-  generate_notebook_updating:
-    run: jupyter:latest jupyter nbconvert /workspace/analysis/sentinel_measures_updating.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
-    needs:
-      [
-        measures,
-        top_5_tables,
-        deciles_charts_alt,
-        deciles_charts_asthma,
-        deciles_charts_cholesterol,
-        deciles_charts_copd,
-        deciles_charts_hba1c,
-        deciles_charts_medication_review,
-        deciles_charts_qrisk2,
-        deciles_charts_rbc,
-        deciles_charts_sodium,
-        deciles_charts_systolic_bp,
-        deciles_charts_tsh
-      ]
-    outputs:
-      moderately_sensitive:
-        notebook: output/sentinel_measures_updating.html
+  # generate_notebook_updating:
+  #   run: jupyter:latest jupyter nbconvert /workspace/analysis/sentinel_measures_updating.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
+  #   needs:
+  #     [
+  #       measures,
+  #       top_5_tables,
+  #       deciles_charts_alt,
+  #       deciles_charts_asthma,
+  #       deciles_charts_cholesterol,
+  #       deciles_charts_copd,
+  #       deciles_charts_hba1c,
+  #       deciles_charts_medication_review,
+  #       deciles_charts_qrisk2,
+  #       deciles_charts_rbc,
+  #       deciles_charts_sodium,
+  #       deciles_charts_systolic_bp,
+  #       deciles_charts_tsh
+  #     ]
+  #   outputs:
+  #     moderately_sensitive:
+  #       notebook: output/sentinel_measures_updating.html
      
 
