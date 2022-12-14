@@ -10,7 +10,7 @@ actions:
       cohortextractor:latest generate_codelist_report
         --codelist-path=codelists/opensafely-alanine-aminotransferase-alt-tests.csv
         --start-date=2019-01-01
-        --end-date=2022-10-18
+        --end-date=2022-11-23
         --output-dir output/alt
     outputs:
       moderately_sensitive:
@@ -23,7 +23,7 @@ actions:
       cohortextractor:latest generate_codelist_report
         --codelist-path=codelists/opensafely-asthma-annual-review-qof.csv
         --start-date=2019-01-01
-        --end-date=2022-10-18
+        --end-date=2022-11-23
         --output-dir output/asthma
     outputs:
       moderately_sensitive:
@@ -36,7 +36,7 @@ actions:
       cohortextractor:latest generate_codelist_report
         --codelist-path=codelists/opensafely-cholesterol-tests.csv
         --start-date=2019-01-01
-        --end-date=2022-10-18
+        --end-date=2022-11-23
         --output-dir output/cholesterol
     outputs:
       moderately_sensitive:
@@ -49,7 +49,7 @@ actions:
       cohortextractor:latest generate_codelist_report
         --codelist-path=codelists/opensafely-chronic-obstructive-pulmonary-disease-copd-review-qof.csv
         --start-date=2019-01-01
-        --end-date=2022-10-18
+        --end-date=2022-11-23
         --output-dir output/copd
     outputs:
       moderately_sensitive:
@@ -62,7 +62,7 @@ actions:
       cohortextractor:latest generate_codelist_report
         --codelist-path=codelists/opensafely-glycated-haemoglobin-hba1c-tests.csv
         --start-date=2019-01-01
-        --end-date=2022-10-18
+        --end-date=2022-11-23
         --output-dir output/hba1c
     outputs:
       moderately_sensitive:
@@ -75,7 +75,7 @@ actions:
       cohortextractor:latest generate_codelist_report
         --codelist-path=codelists/opensafely-care-planning-medication-review-simple-reference-set-nhs-digital.csv
         --start-date=2019-01-01
-        --end-date=2022-10-18
+        --end-date=2022-11-23
         --output-dir output/medication_review
     outputs:
       moderately_sensitive:
@@ -88,7 +88,7 @@ actions:
       cohortextractor:latest generate_codelist_report
         --codelist-path=codelists/opensafely-cvd-risk-assessment-score-qof.csv
         --start-date=2019-01-01
-        --end-date=2022-10-18
+        --end-date=2022-11-23
         --output-dir output/qrisk2/
     outputs:
       moderately_sensitive:
@@ -102,7 +102,7 @@ actions:
       cohortextractor:latest generate_codelist_report
         --codelist-path=codelists/opensafely-red-blood-cell-rbc-tests.csv
         --start-date=2019-01-01
-        --end-date=2022-10-18
+        --end-date=2022-11-23
         --output-dir output/rbc
     outputs:
       moderately_sensitive:
@@ -115,7 +115,7 @@ actions:
       cohortextractor:latest generate_codelist_report
         --codelist-path=codelists/opensafely-sodium-tests-numerical-value.csv
         --start-date=2019-01-01
-        --end-date=2022-10-18
+        --end-date=2022-11-23
         --output-dir output/sodium
     outputs:
       moderately_sensitive:
@@ -128,7 +128,7 @@ actions:
       cohortextractor:latest generate_codelist_report
         --codelist-path=codelists/opensafely-systolic-blood-pressure-qof.csv
         --start-date=2019-01-01
-        --end-date=2022-10-18
+        --end-date=2022-11-23
         --output-dir output/systolic_bp
     outputs:
       moderately_sensitive:
@@ -141,7 +141,7 @@ actions:
       cohortextractor:latest generate_codelist_report
         --codelist-path=codelists/opensafely-thyroid-stimulating-hormone-tsh-testing.csv
         --start-date=2019-01-01
-        --end-date=2022-10-18
+        --end-date=2022-11-23
         --output-dir output/tsh
     outputs:
       moderately_sensitive:
@@ -373,26 +373,26 @@ actions:
       moderately_sensitive:
         deciles_charts: output/tsh/deciles_*.*
 
-  # generate_notebook_updating:
-  #   run: jupyter:latest jupyter nbconvert /workspace/analysis/sentinel_measures_updating.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
-  #   needs:
-  #     [
-  #       measures,
-  #       top_5_tables,
-  #       deciles_charts_alt,
-  #       deciles_charts_asthma,
-  #       deciles_charts_cholesterol,
-  #       deciles_charts_copd,
-  #       deciles_charts_hba1c,
-  #       deciles_charts_medication_review,
-  #       deciles_charts_qrisk2,
-  #       deciles_charts_rbc,
-  #       deciles_charts_sodium,
-  #       deciles_charts_systolic_bp,
-  #       deciles_charts_tsh
-  #     ]
-  #   outputs:
-  #     moderately_sensitive:
-  #       notebook: output/sentinel_measures_updating.html
+  generate_notebook_updating:
+    run: jupyter:latest jupyter nbconvert /workspace/analysis/sentinel_measures_updating.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
+    needs:
+      [
+        measures,
+        top_5_tables,
+        deciles_charts_alt,
+        deciles_charts_asthma,
+        deciles_charts_cholesterol,
+        deciles_charts_copd,
+        deciles_charts_hba1c,
+        deciles_charts_medication_review,
+        deciles_charts_qrisk2,
+        deciles_charts_rbc,
+        deciles_charts_sodium,
+        deciles_charts_systolic_bp,
+        deciles_charts_tsh
+      ]
+    outputs:
+      moderately_sensitive:
+        notebook: output/sentinel_measures_updating.html
      
 
