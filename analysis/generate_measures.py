@@ -16,6 +16,8 @@ def practice_counts(counts_table, list_sizes, rounding_base_practice_count):
 
     dates = counts_table["date"].unique()
     
+    counts_table = counts_table.loc[counts_table["date"] != dates[-1], :]
+    dates = dates[:-1]
 
     if len(dates) > 52:
         counts_table = convert_weekly_to_monthly(counts_table)
