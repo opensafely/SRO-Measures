@@ -113,6 +113,10 @@ def create_top_5_code_table(
     # Rename the code column to something consistent
     event_counts.rename(columns={code_column: "Code"}, inplace=True)
 
+    
+    event_counts_with_count = event_counts[["Code", "Description", "num", "Proportion of codes (%)"]]
+    event_counts_with_count.rename(columns={"num": "Events"}, inplace=True)
+    
     # drop events column
     event_counts = event_counts.loc[
         :, ["Code", "Description", "Proportion of codes (%)"]
@@ -123,7 +127,7 @@ def create_top_5_code_table(
         event_counts.loc[event_counts["Proportion of codes (%)"] == 100, "Proportion of codes (%)"] = "> 99.995"
 
     # return top n rows
-    return event_counts.head(5)
+    return event_counts.head(5), event_counts_with_count.head(5)
 
 
 def calculate_rate(df, value_col, rate_per=1000, round_rate=False):
