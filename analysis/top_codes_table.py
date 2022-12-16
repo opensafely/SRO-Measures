@@ -30,7 +30,7 @@ def main():
         code_df = pd.read_csv(f"{input_dir}/{measure}/counts_per_code.csv")
         codelist = pd.read_csv(f"codelists/{sentinel_measure_codelist_mapping_dict[measure]}.csv")
 
-        top_5_code_table = create_top_5_code_table(
+        top_5_code_table, top_5_code_table_with_count = create_top_5_code_table(
             df=code_df,
             code_df=codelist,
             code_column="code",
@@ -39,7 +39,7 @@ def main():
             rounding_base=rounding_base,
         )
         write_csv(top_5_code_table, Path(f"{input_dir}/{measure}/top_5_code_table.csv", index=False))
-
+        write_csv(top_5_code_table_with_count, Path(f"{input_dir}/{measure}/top_5_code_table_with_count.csv", index=False))
 
 if __name__ == "__main__":
     main()

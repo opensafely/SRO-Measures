@@ -194,6 +194,7 @@ actions:
     outputs:
       moderately_sensitive:
         table: output/*/top_5_code_table.csv
+        table_count: output/*/top_5_code_table_with_count.csv
   
   
   deciles_charts_alt:
