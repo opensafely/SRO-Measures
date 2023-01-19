@@ -196,7 +196,8 @@ def convert_weekly_to_monthly(counts_table):
     for i in range(0, len(dates), 4):
         date_group = dates[i : i + 4]
         for date in date_group:
-            dates_map[date] = date_group[0]
+            # using the last date in the group as the 4 weekly date
+            dates_map[date] = date_group[-1]
     counts_table.loc[counts_table.index, "date"] = counts_table.loc[
         counts_table.index, "date"
     ].map(dates_map)
