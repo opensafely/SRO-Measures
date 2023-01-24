@@ -2,6 +2,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from IPython.display import HTML, display, Markdown, Image
+import datetime
 
 BASE_DIR = Path(__file__).parents[1]
 OUTPUT_DIR = BASE_DIR / "output"
@@ -200,7 +201,17 @@ def convert_weekly_to_monthly(counts_table):
         date_group = dates[i : i + 5]
         for date in date_group[:4]:
             # using the last date in the group as the 4 weekly date
-            dates_map[date] = date_group[-1]
+
+            # for the last period, the date group will only have 4 dates, so we need to add a week
+            # to the last date to get the 4 weekly date
+            if len(date_group) == 4:
+                # add a week to the last date in the group
+                date = pd.to_datetime(date)
+                dates_map[date] = date + datetime.timedelta(weeks=1)
+               
+            else:
+                dates_map[date] = date_group[-1]
+                
     counts_table.loc[counts_table.index, "date"] = counts_table.loc[
         counts_table.index, "date"
     ].map(dates_map)
