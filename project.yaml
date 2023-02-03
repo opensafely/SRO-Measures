@@ -5,7 +5,7 @@ expectations:
 
 actions:
   generate_study_population_population:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_population --index-date-range "2019-01-01 to 2022-05-01 by month" --output-dir=output --output-format=feather
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_population --index-date-range "2019-01-01 to 2023-01-01 by month" --output-dir=output --output-format=feather
     outputs:
       highly_sensitive:
         cohort: output/input_population*.feather
@@ -54,18 +54,11 @@ actions:
         cohort: output/in*.feather
 
   generate_study_population_5:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2022-01-01 to 2022-05-01 by month" --output-dir=output --output-format=feather
+    run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2022-01-01 to 2023-01-01 by month" --output-dir=output --output-format=feather
     outputs:
       highly_sensitive:
         cohort: output/i*.feather
 
-
-  get_patient_count:
-    run: python:latest python analysis/get_patients_counts.py
-    needs: [generate_study_population_4, generate_study_population_5, join_ethnicity]
-    outputs:
-      moderately_sensitive:
-        text: output/patient_count.json
 
   generate_study_population_ethnicity:
     run: cohortextractor:latest generate_cohort --study-definition study_definition_ethnicity --output-dir=output --output-format=feather
@@ -80,22 +73,31 @@ actions:
         generate_study_population_1,
         generate_study_population_2,
         generate_study_population_3,
+        generate_study_population_4,
+        generate_study_population_5,
         generate_study_population_ethnicity,
       ]
     outputs:
       highly_sensitive:
         cohort: output/inp*.feather
 
+  get_patient_count:
+    run: python:latest python analysis/get_patients_counts.py
+    needs: [join_ethnicity]
+    outputs:
+      moderately_sensitive:
+        text: output/patient_count.json
+      
   get_practice_count:
     run: python:latest python analysis/get_practice_count.py
-    needs: [join_ethnicity, generate_study_population_4, generate_study_population_5]
+    needs: [join_ethnicity]
     outputs:
       moderately_sensitive:
         text: output/practice_count.json
 
   generate_measures:
     run: cohortextractor:latest generate_measures --study-definition study_definition --output-dir=output
-    needs: [join_ethnicity, generate_study_population_4, generate_study_population_5]
+    needs: [join_ethnicity]
     outputs:
       moderately_sensitive:
         measure_csv: output/measure_*_rate.csv
@@ -124,6 +126,20 @@ actions:
         code_tables: output/code_table_*.csv
         events_count: output/event_count.json
 
+  generate_notebook_updating:
+      run: jupyter:latest jupyter nbconvert /workspace/analysis/sentinel_measures_updating.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
+      needs:
+        [
+          generate_measures,
+          generate_measures_cleaned,
+          get_practice_count,
+          get_patient_count,
+        ]
+      outputs:
+        moderately_sensitive:
+          notebook: output/sentinel_measures_updating.html
+          code_tables: output/code_table*.csv
+          practices: output/num_practices_included*.csv
 
   run_tests:
     run: python:latest python -m pytest --junit-xml=output/pytest.xml --verbose
