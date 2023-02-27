@@ -1,14 +1,15 @@
 # SRO-Measures
 
-This is the code and configuration for the OpenSAFELY Service Restoration Observatory (SRO) key measures of primary care activity.
+You can run this project via [Gitpod](https://gitpod.io) in a web browser by clicking on this badge: [![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-908a85?logo=gitpod)](https://gitpod.io/#https://github.com/opensafely/SRO-Measures)
 
-You can run this project via [Gitpod](https://gitpod.io) in a web browser by clicking on this badge: [![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-908a85?logo=gitpod)](https://gitpod.io/#https://github.com/opensafely/pincer-measures)
+[View on OpenSAFELY](https://jobs.opensafely.org/repo/https%253A%252F%252Fgithub.com%252Fopensafely%252FSRO-Measures)
 
-* The preprint is [here](https://www.medrxiv.org/content/10.1101/2022.10.17.22281058v1).
-* Analysis outputs, including charts, crosstabs, etc, can be found [here](https://jobs.opensafely.org/datalab/service-restoration-observatory/sro-measures/outputs/).
-* If you are interested in how we defined our variables, take a look at the [study definition](analysis/study_definition.py); this is written in `python`, but non-programmers should be able to understand what is going on there
-* If you are interested in how we defined our code lists, look in the [codelists folder](./codelists/).
-* Developers and epidemiologists interested in the framework should review [the OpenSAFELY documentation](https://docs.opensafely.org)
+Details of the purpose and any published outputs from this project can be found at the link above.
+
+The contents of this repository MUST NOT be considered an accurate or valid representation of the study or its purpose. 
+This repository may reflect an incomplete or incorrect analysis with no further ongoing work.
+The content has ONLY been made public to support the OpenSAFELY [open science and transparency principles](https://www.opensafely.org/about/#contributing-to-best-practice-around-open-science) and to support the sharing of re-usable code for other subsequent users.
+No clinical, policy or safety conclusions must be drawn from the contents of this repository.
 
 # About the OpenSAFELY framework
 
@@ -21,48 +22,3 @@ Read more at [OpenSAFELY.org](https://opensafely.org).
 # Licences
 As standard, research projects have a MIT license. 
 
-# Local Development
-
-For local (non-Docker) development, first install [pyenv][] and execute:
-
-```sh
-pyenv install $(pyenv local)
-```
-
-Then, execute:
-
-```sh
-python3 -m venv venv
-source venv/bin/activate
-pip install --upgrade pip
-
-# Either one or the other of the following
-pip install -r requirements.txt
-pip install -r requirements.dev.txt # For also running bin/codestyle.sh
-
-# For QA
-bin/codestyle.sh .
-```
-[pyenv]: https://github.com/pyenv/pyenv
-
-## Tests
-
-If you have a local development environment,
-then the following command will write pytest's output to the terminal:
-
-```sh
-python -m pytest
-```
-
-You can also pass test modules, classes, and methods to pytest:
-
-```sh
-python -m pytest tests/test_notebooks_utilities.py::TestDropIrrelevantPractices::test_irrelevant_practices_dropped
-```
-
-If you don't have a local development environment,
-then the following command will write pytest's output to *metadata/run_tests.log*.
-
-```sh
-opensafely run run_tests
-```
