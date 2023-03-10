@@ -5,7 +5,7 @@ expectations:
 
 actions:
   generate_study_population_population:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_population --index-date-range "2019-01-01 to 2023-01-01 by month" --output-dir=output --output-format=feather
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_population --index-date-range "2019-01-01 to 2023-02-01 by month" --output-dir=output --output-format=feather
     outputs:
       highly_sensitive:
         cohort: output/input_population*.feather
@@ -54,7 +54,7 @@ actions:
         cohort: output/in*.feather
 
   generate_study_population_5:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2022-01-01 to 2023-01-01 by month" --output-dir=output --output-format=feather
+    run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2022-01-01 to 2023-02-01 by month" --output-dir=output --output-format=feather
     outputs:
       highly_sensitive:
         cohort: output/i*.feather
