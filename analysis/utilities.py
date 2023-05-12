@@ -517,6 +517,10 @@ def generate_sentinel_measure(
         interactive=interactive,
     )
 
+    display(
+        Markdown(f"Practices included: {practices_included} ({practices_included_percent:.2f}%)"),
+    )
+
     childs_df = childs_df.rename(columns={code_column: code_column.title()})
     childs_df.to_csv(f"{OUTPUT_DIR}/code_table_{measure}.csv")
 
@@ -538,7 +542,7 @@ def generate_sentinel_measure(
         )
 
     display(
-        Markdown(f"Total patients: {num_patients:.2f}M ({num_events_mil:.2f}M events)")
+        Markdown(f"Total patients: {num_patients:.2f}M ({num_events_mil:.2f}M events)"),
     )
 
     return df, num_events
