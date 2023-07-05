@@ -5,71 +5,148 @@ expectations:
 
 actions:
   
-  # get_patient_count:
-  #   run: python:latest python analysis/get_patients_counts.py
-  #   needs: [join_ethnicity]
-  #   outputs:
-  #     moderately_sensitive:
-  #       text: output/patient_count.json
+  generate_study_population_population:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_population --index-date-range "2019-01-01 to 2023-05-01 by month" --output-dir=output --output-format=feather
+    outputs:
+      highly_sensitive:
+        cohort: output/input_population*.feather
+
+  join_ethnicity_population:
+    run: >
+      cohort-joiner:v0.0.46
+        --lhs output/input_population_20*.feather
+        --rhs output/input_ethnicity.feather
+        --output-dir output/joined
+    needs: [generate_study_population_population, generate_study_population_ethnicity]
+    outputs:
+      highly_sensitive:
+        cohort: output/joined/input_population_20*.feather
+
+  get_moved_count:
+    run: python:latest python analysis/population_count.py
+    needs: [join_ethnicity_population]
+    outputs:
+      moderately_sensitive:
+        text: output/move*.json
+
+
+  generate_study_population_1:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2019-01-01 to 2019-12-01 by month" --output-dir=output --output-format=feather
+    outputs:
+      highly_sensitive:
+        cohort: output/input_*.feather
+
+  generate_study_population_2:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2020-01-01 to 2020-12-01 by month" --output-dir=output --output-format=feather
+    outputs:
+      highly_sensitive:
+        cohort: output/input*.feather
+
+  generate_study_population_3:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2021-01-01 to 2021-06-01 by month" --output-dir=output --output-format=feather
+    outputs:
+      highly_sensitive:
+        cohort: output/inpu*.feather
+
+  generate_study_population_4:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2021-07-01 to 2021-12-01 by month" --output-dir=output --output-format=feather
+    outputs:
+      highly_sensitive:
+        cohort: output/in*.feather
+
+  generate_study_population_5:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2022-01-01 to 2023-05-01 by month" --output-dir=output --output-format=feather
+    outputs:
+      highly_sensitive:
+        cohort: output/i*.feather
+
+
+  generate_study_population_ethnicity:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_ethnicity --output-dir=output --output-format=feather
+    outputs:
+      highly_sensitive:
+        cohort: output/input_ethnicity.feather
+
+  join_ethnicity:
+    run: python:latest python analysis/join_ethnicity.py
+    needs:
+      [
+        generate_study_population_1,
+        generate_study_population_2,
+        generate_study_population_3,
+        generate_study_population_4,
+        generate_study_population_5,
+        generate_study_population_ethnicity,
+      ]
+    outputs:
+      highly_sensitive:
+        cohort: output/inp*.feather
+
+  get_patient_count:
+    run: python:latest python analysis/get_patients_counts.py
+    needs: [join_ethnicity]
+    outputs:
+      moderately_sensitive:
+        text: output/patient_count.json
       
-  # get_practice_count:
-  #   run: python:latest python analysis/get_practice_count.py
-  #   needs: [join_ethnicity]
-  #   outputs:
-  #     moderately_sensitive:
-  #       text: output/practice_count.json
+  get_practice_count:
+    run: python:latest python analysis/get_practice_count.py
+    needs: [join_ethnicity]
+    outputs:
+      moderately_sensitive:
+        text: output/practice_count.json
 
-  # generate_measures:
-  #   run: cohortextractor:latest generate_measures --study-definition study_definition --output-dir=output
-  #   needs: [join_ethnicity]
-  #   outputs:
-  #     moderately_sensitive:
-  #       measure_csv: output/measure_*_rate.csv
+  generate_measures:
+    run: cohortextractor:latest generate_measures --study-definition study_definition --output-dir=output
+    needs: [join_ethnicity]
+    outputs:
+      moderately_sensitive:
+        measure_csv: output/measure_*_rate.csv
 
-  # generate_measures_cleaned:
-  #   run: python:latest python analysis/clean_measures.py
-  #   needs: [generate_measures]
-  #   outputs:
-  #     moderately_sensitive:
-  #       measure_csv: output/measure_cleaned_*.csv
+  generate_measures_cleaned:
+    run: python:latest python analysis/clean_measures.py
+    needs: [generate_measures]
+    outputs:
+      moderately_sensitive:
+        measure_csv: output/measure_cleaned_*.csv
 
 
-  # generate_notebook:
-  #   run: jupyter:latest jupyter nbconvert /workspace/analysis/sentinel_measures.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
-  #   needs:
-  #     [
-  #       generate_measures,
-  #       generate_measures_cleaned,
-  #       get_practice_count,
-  #       get_patient_count,
-  #     ]
-  #   outputs:
-  #     moderately_sensitive:
-  #       notebook: output/sentinel_measures.html
-  #       subplots: output/sentinel_measures_subplots.png
-  #       code_tables: output/code_table_*.csv
-  #       events_count: output/event_count.json
+  generate_notebook:
+    run: jupyter:latest jupyter nbconvert /workspace/analysis/sentinel_measures.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
+    needs:
+      [
+        generate_measures,
+        generate_measures_cleaned,
+        get_practice_count,
+        get_patient_count,
+      ]
+    outputs:
+      moderately_sensitive:
+        notebook: output/sentinel_measures.html
+        subplots: output/sentinel_measures_subplots.png
+        code_tables: output/code_table_*.csv
+        events_count: output/event_count.json
 
-  # generate_notebook_updating:
-  #     run: jupyter:latest jupyter nbconvert /workspace/analysis/sentinel_measures_updating.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
-  #     needs:
-  #       [
-  #         generate_measures,
-  #         generate_measures_cleaned,
-  #         get_practice_count,
-  #         get_patient_count,
-  #       ]
-  #     outputs:
-  #       moderately_sensitive:
-  #         notebook: output/sentinel_measures_updating.html
-  #         code_tables: output/code_table*.csv
-  #         practices: output/num_practices_included*.csv
+  generate_notebook_updating:
+      run: jupyter:latest jupyter nbconvert /workspace/analysis/sentinel_measures_updating.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
+      needs:
+        [
+          generate_measures,
+          generate_measures_cleaned,
+          get_practice_count,
+          get_patient_count,
+        ]
+      outputs:
+        moderately_sensitive:
+          notebook: output/sentinel_measures_updating.html
+          code_tables: output/code_table*.csv
+          practices: output/num_practices_included*.csv
 
-  # run_tests:
-  #   run: python:latest python -m pytest --junit-xml=output/pytest.xml --verbose
-  #   outputs:
-  #     moderately_sensitive:
-  #       log: output/pytest.xml
+  run_tests:
+    run: python:latest python -m pytest --junit-xml=output/pytest.xml --verbose
+    outputs:
+      moderately_sensitive:
+        log: output/pytest.xml
 
   measures_ehrql:
     run: ehrql:v0 generate-measures analysis/dataset_definition.py --output output/measures.csv
