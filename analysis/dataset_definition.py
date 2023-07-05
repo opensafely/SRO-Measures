@@ -3,7 +3,6 @@ from ehrql.codes import codelist_from_csv
 from ehrql.tables.beta.core import patients, clinical_events
 from ehrql.tables.beta.tpp import addresses, practice_registrations
 
-
 codelists = {
     "asthma": codelist_from_csv(
         "codelists/opensafely-asthma-annual-review-qof.csv", column="code"
@@ -51,56 +50,19 @@ codelists = {
     ),
 }
 
-start_date = "2019-01-01"
-end_date = "2021-04-30"
-
 dataset = Dataset()
 age = patients.age_on(date=INTERVAL.start_date)
 age_18_to_120 = (age >= 18) & (age < 120)
-age_band = case(
-    when((age >= 18) & (age < 20)).then("18-19"),
-    when((age >= 20) & (age < 30)).then("20-29"),
-    when((age >= 30) & (age < 40)).then("30-39"),
-    when((age >= 40) & (age < 50)).then("40-49"),
-    when((age >= 50) & (age < 60)).then("50-59"),
-    when((age >= 60) & (age < 70)).then("60-69"),
-    when((age >= 70) & (age < 80)).then("70-79"),
-    when((age >= 80) & (age < 120)).then("80+"),
-    default="missing",
-)
 
 registered_practice = practice_registrations.for_patient_on(INTERVAL.start_date)
 registered_practice_id = registered_practice.practice_pseudo_id
 
 registered_at_start_of_interval = registered_practice.exists_for_patient()
 
-region = registered_practice.practice_nuts1_region_name
-
 sex = patients.sex
 
 date_of_death = patients.date_of_death
 died_before_interval_start = date_of_death.is_before(INTERVAL.start_date)
-
-imd = addresses.for_patient_on(INTERVAL.start_date).imd_rounded
-imd_quintile = case(
-    when((imd >= 0) & (imd < int(32844 * 1 / 5))).then("1 (most deprived)"),
-    when(imd < int(32844 * 2 / 5)).then("2"),
-    when(imd < int(32844 * 3 / 5)).then("3"),
-    when(imd < int(32844 * 4 / 5)).then("4"),
-    when(imd < int(32844 * 5 / 5)).then("5 (least deprived)"),
-    default="unknown",
-)
-
-latest_ethnicity_start_of_period = (
-    clinical_events.where(clinical_events.snomedct_code.is_in(codelists["eth2001"]))
-    .where(clinical_events.date.is_on_or_before(INTERVAL.start_date))
-    .sort_by(clinical_events.date)
-    .last_for_patient()
-    .snomedct_code
-)
-latest_ethnicity_start_of_period_group = latest_ethnicity_start_of_period.to_category(
-    codelists["eth2001"]
-)
 
 key_measures = [
     "asthma",
@@ -155,34 +117,19 @@ denominator = (
 )
 
 measures = Measures()
-
+measures.define_defaults(
+    denominator=denominator,
+)
 
 for m in key_measures:
     measures.define_measure(
         name=m,
         numerator=measures_variables[m + "_binary_flag"],
-        denominator=denominator,
         intervals=months(42).starting_on("2019-01-01"),
         group_by={
             "practice": registered_practice_id,
+            m + "_code": measures_variables[m + "_code"]
         },
     )
 
-demographics = {
-    "age_band": age_band,
-    "ethnicity": latest_ethnicity_start_of_period_group,
-    "imd": imd_quintile,
-    "region": region,
-    "sex": sex,
-}
 
-for k, d in demographics.items():
-    measures.define_measure(
-        name=k,
-        numerator=denominator,
-        denominator=denominator,
-        intervals=months(1).starting_on("2023-06-01"),
-        group_by={
-            k: d,
-        },
-    )
