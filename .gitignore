@@ -3,7 +3,7 @@
 .python-version
 __pycache__/
 metadata/
-./output/
+output/
 backend_outputs/
 tags
 venv/

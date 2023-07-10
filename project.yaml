@@ -4,6 +4,7 @@ expectations:
   population_size: 1000
 
 actions:
+  
   generate_study_population_population:
     run: cohortextractor:latest generate_cohort --study-definition study_definition_population --index-date-range "2019-01-01 to 2023-05-01 by month" --output-dir=output --output-format=feather
     outputs:
@@ -146,3 +147,17 @@ actions:
     outputs:
       moderately_sensitive:
         log: output/pytest.xml
+
+  measures_ehrql:
+    run: ehrql:v0 generate-measures analysis/dataset_definition.py --output output/measures.csv
+    outputs:
+      moderately_sensitive:
+        measure_csv: output/measures.csv
+
+  generate_notebook_updating_ehrql:
+    run: jupyter:latest jupyter nbconvert /workspace/analysis/sentinel_measures_updating_ehrql.ipynb --execute --to html --template basic --output-dir=/workspace/output --ExecutePreprocessor.timeout=86400 --no-input
+    needs:
+      [measures_ehrql]
+    outputs:
+      moderately_sensitive:
+        notebook: output/sentinel_measures_updating_ehrql.html

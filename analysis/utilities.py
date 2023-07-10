@@ -456,8 +456,8 @@ def deciles_chart(
 
         deciles_chart_ebm(
             df,
-            period_column="date",
-            column="rate",
+            period_column=period_column,
+            column=column,
             ylabel="rate per 1000",
             show_outer_percentiles=True,
             ax=ax,
