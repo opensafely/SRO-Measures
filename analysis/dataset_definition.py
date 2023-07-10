@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from ehrql import Dataset, INTERVAL, Measures, case, months, when
 from ehrql.codes import codelist_from_csv
 from ehrql.tables.beta.core import patients, clinical_events
@@ -121,11 +123,32 @@ measures.define_defaults(
     denominator=denominator,
 )
 
+
+
+def calculate_num_interals(start_date):
+    """
+    Calculate the number of intervals between the start date and the start of the latest full month
+    Args:
+        start_date: the start date of the study period
+    Returns:
+        num_intervals (int): the number of intervals between the start date and the start of the latest full month
+    """
+    now = datetime.now()
+    start_of_latest_full_month = datetime(now.year, now.month, 1)
+
+    num_intervals = (start_of_latest_full_month.year - datetime.strptime(start_date, "%Y-%m-%d").year) * 12 + (start_of_latest_full_month.month - datetime.strptime(start_date, "%Y-%m-%d").month)
+
+    return num_intervals
+
+start_date = "2019-01-01"
+num_intervals = calculate_num_interals(start_date)
+
+
 for m in key_measures:
     measures.define_measure(
         name=m,
         numerator=measures_variables[m + "_binary_flag"],
-        intervals=months(42).starting_on("2019-01-01"),
+        intervals=months(num_intervals).starting_on(start_date),
         group_by={
             "practice": registered_practice_id,
             m + "_code": measures_variables[m + "_code"]
