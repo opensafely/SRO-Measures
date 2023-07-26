@@ -125,7 +125,7 @@ measures.define_defaults(
 
 
 
-def calculate_num_interals(start_date):
+def calculate_num_intervals(start_date):
     """
     Calculate the number of intervals between the start date and the start of the latest full month
     Args:
@@ -141,18 +141,24 @@ def calculate_num_interals(start_date):
     return num_intervals
 
 start_date = "2019-01-01"
-num_intervals = calculate_num_interals(start_date)
+num_intervals = calculate_num_intervals(start_date)
 
 
 for m in key_measures:
     measures.define_measure(
-        name=m,
+        name=f"{m}_practice",
         numerator=measures_variables[m + "_binary_flag"],
         intervals=months(num_intervals).starting_on(start_date),
         group_by={
             "practice": registered_practice_id,
-            m + "_code": measures_variables[m + "_code"]
         },
     )
 
-
+    measures.define_measure(
+        name=f"{m}_code",
+        numerator=measures_variables[m + "_binary_flag"],
+        intervals=months(num_intervals).starting_on(start_date),
+        group_by={
+            m + "_code": measures_variables[m + "_code"]
+        },
+    )
