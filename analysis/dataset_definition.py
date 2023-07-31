@@ -64,7 +64,13 @@ registered_at_start_of_interval = registered_practice.exists_for_patient()
 sex = patients.sex
 
 date_of_death = patients.date_of_death
-died_before_interval_start = date_of_death.is_before(INTERVAL.start_date)
+has_died = date_of_death.is_not_null()
+
+died_before_interval_start = (
+    has_died &
+    date_of_death.is_before(INTERVAL.start_date)
+)
+
 
 key_measures = [
     "asthma",
