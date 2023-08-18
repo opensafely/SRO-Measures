@@ -161,3 +161,4 @@ actions:
     outputs:
       moderately_sensitive:
         notebook: output/sentinel_measures_updating_ehrql.html
+        code_table: output/code_table*.csv
