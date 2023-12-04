@@ -300,12 +300,25 @@ def deciles_chart_ebm(
     ax.set_ylabel(ylabel, size=15, alpha=0.6)
     if title:
         ax.set_title(title, size=18)
-    # set ymax across all subplots as largest value across dataset
-    ax.set_ylim([0, df[column].max() * 1.05])
+    
+    # Replace 'np.inf' and '-np.inf' with 'NaN'
+    df[column].replace([np.inf, -np.inf], np.nan, inplace=True)
+
+    # Drop rows with NaN in the specified column
+    df.dropna(subset=[column], inplace=True)
+
+    if not df[column].empty:
+        ax.set_ylim([0, df[column].max() * 1.05])
+    
     ax.tick_params(labelsize=12)
-    ax.set_xlim(
-        [df[period_column].min(), df[period_column].max()]
-    )  # set x axis range as full date range
+
+    df[period_column].replace([np.inf, -np.inf], np.nan, inplace=True)
+    df.dropna(subset=[period_column], inplace=True)
+
+    if not df[period_column].empty:
+        ax.set_xlim(
+            [df[period_column].min(), df[period_column].max()]
+        )  # set x axis range as full date range
 
     ax.xaxis.set_major_formatter(matplotlib.dates.DateFormatter("%B %Y"))
     ax.xaxis.set_major_locator(matplotlib.dates.MonthLocator(interval=1))

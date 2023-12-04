@@ -41,7 +41,7 @@ codelists = {
     "eth2001": codelist_from_csv(
         "codelists/primis-covid19-vacc-uptake-eth2001.csv",
         column="code",
-        category_column="grouping_16_label",
+        category_column="grouping_16_id",
     ),
     "medication_review_1": codelist_from_csv(
         "codelists/opensafely-care-planning-medication-review-simple-reference-set-nhs-digital.csv",
