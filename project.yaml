@@ -145,7 +145,7 @@ actions:
   measures_ehrql:
     run: ehrql:v0 generate-measures analysis/dataset_definition.py --output output/measures.csv
     outputs:
-      moderately_sensitive:
+      highly_sensitive:
         measure_csv: output/measures.csv
 
   generate_notebook_updating_ehrql:
