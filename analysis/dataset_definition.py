@@ -66,10 +66,7 @@ sex = patients.sex
 date_of_death = patients.date_of_death
 has_died = date_of_death.is_not_null()
 
-died_before_interval_start = (
-    has_died &
-    date_of_death.is_before(INTERVAL.start_date)
-)
+died_before_interval_start = has_died & date_of_death.is_before(INTERVAL.start_date)
 
 
 key_measures = [
@@ -100,7 +97,6 @@ for m in key_measures:
             )
         )
     else:
-
         measures_variables[m] = clinical_events.where(
             clinical_events.snomedct_code.is_in(codelists[m])
         ).where(
@@ -125,10 +121,10 @@ denominator = (
 )
 
 measures = Measures()
+measures.configure_disclosure_control(enabled=False)
 measures.define_defaults(
     denominator=denominator,
 )
-
 
 
 def calculate_num_intervals(start_date):
@@ -142,9 +138,15 @@ def calculate_num_intervals(start_date):
     now = datetime.now()
     start_of_latest_full_month = datetime(now.year, now.month, 1)
 
-    num_intervals = (start_of_latest_full_month.year - datetime.strptime(start_date, "%Y-%m-%d").year) * 12 + (start_of_latest_full_month.month - datetime.strptime(start_date, "%Y-%m-%d").month)
+    num_intervals = (
+        start_of_latest_full_month.year - datetime.strptime(start_date, "%Y-%m-%d").year
+    ) * 12 + (
+        start_of_latest_full_month.month
+        - datetime.strptime(start_date, "%Y-%m-%d").month
+    )
 
     return num_intervals
+
 
 start_date = "2019-01-01"
 num_intervals = calculate_num_intervals(start_date)
@@ -164,7 +166,5 @@ for m in key_measures:
         name=f"{m}_code",
         numerator=measures_variables[m + "_binary_flag"],
         intervals=months(num_intervals).starting_on(start_date),
-        group_by={
-            m + "_code": measures_variables[m + "_code"]
-        },
+        group_by={m + "_code": measures_variables[m + "_code"]},
     )
