@@ -244,6 +244,7 @@ def deciles_chart_ebm(
     show_outer_percentiles=True,
     show_legend=True,
     ax=None,
+    output_path=None,
 ):
     """period_column must be dates / datetimes"""
     sns.set_style("whitegrid", {"grid.color": ".9"})
@@ -300,7 +301,7 @@ def deciles_chart_ebm(
     ax.set_ylabel(ylabel, size=15, alpha=0.6)
     if title:
         ax.set_title(title, size=18)
-    
+
     # Replace 'np.inf' and '-np.inf' with 'NaN'
     df[column].replace([np.inf, -np.inf], np.nan, inplace=True)
 
@@ -336,6 +337,11 @@ def deciles_chart_ebm(
     plt.gcf().autofmt_xdate(rotation=90, ha="center", which="both")
 
     plt.show()
+
+    if output_path:
+        ax.get_figure().savefig(output_path, bbox_inches="tight")
+        
+
     return plt
 
 
@@ -378,6 +384,7 @@ def deciles_chart(
     interactive=True,
     width=800,
     height=400,
+    output_path=None,
 ):
     """period_column must be dates / datetimes"""
 
@@ -474,6 +481,7 @@ def deciles_chart(
             ylabel="rate per 1000",
             show_outer_percentiles=True,
             ax=ax,
+            output_path=output_path,
         )
 
 
